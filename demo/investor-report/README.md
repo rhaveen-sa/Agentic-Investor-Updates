@@ -1,7 +1,9 @@
 # Investor report
 
-A full monthly investor update for Reson8's October 2026, built from the same data the app
-uses. Send it to investors as a PDF, or open it in a browser to show what the agent produces.
+A sample monthly investor update for Reson8's October 2026, built from the same data the app
+uses, without running the app. Since `0926e58` the app's Report page produces the same update
+from a live run, and its **Download PDF** button saves it. Use that one for the demo. This
+folder is the reference sample, and it's what the app's report was ported from.
 
 <p align="center"><img src="../img/report-default-alive.png" width="560" alt="Default alive section: verdict, revenue against expenses, cash, and the dead or alive map"></p>
 

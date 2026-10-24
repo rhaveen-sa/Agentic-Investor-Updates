@@ -91,15 +91,15 @@ A written version for submission forms and the repo description. It follows the 
 > late on the 31st, rebuilding the month from Slack, Stripe and memory, and memory keeps
 > the wins and drops the churn. Your investors can't check any of it.
 >
-> Investor Update Agent collects the month while it happens. Every week it reads GitHub,
+> Ledger collects the month while it happens. Every week it reads GitHub,
 > Stripe, HubSpot, LinkedIn and your meeting notes, then shows you what it found. You
 > confirm, edit or dismiss each fact. When a number drops, it works out who owns it and
 > drafts them a message, which sends only after you approve it.
 >
 > At month end the update is built only from facts you confirmed, and the numbers are
-> computed in code. Click any figure to see where it came from. A second check flags every
-> claim with no written source, like a customer's "all 14 clinics in Q1" that was only said
-> in a meeting.
+> computed in code. Click any figure to see where it came from. A second check keeps out
+> every claim with no written source, like a customer's "all 14 clinics in Q1" that was only
+> said in a meeting.
 >
 > Owe investors an update this month? Run it on yours tonight:
 > github.com/seanjanke/Agentic-Investor-Updates. No API key needed.

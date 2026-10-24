@@ -4,6 +4,25 @@ What changed in the demo kit, when and why. Newest first. Every entry is also a 
 GitHub, so this file and the PR list should always agree. If you change anything in `demo/`,
 add an entry here and update `HANDOFF.md` and the READMEs in the same PR.
 
+## 24 Oct 2026 · Docs synced with the app at `0926e58`
+
+Sean's commits `6b37f49`, `333f32c` and `0926e58` applied the Reson8 switch, renamed the
+product to **Ledger**, replaced "Next week" with a week selector, moved messages into the
+chat, and built the investor report into the app with charts and **Download PDF**. They
+didn't touch `demo/`, so this update brings it in line:
+
+- **`shotlist.md`:** the take is rewritten for the week selector, the chat cards
+  (**Add**, **Send**, **Simulate reply from Mirte**), the "1 claim not counted" badge and
+  **Approve & send**.
+- **`script.md` and `deck.html`:** the product is called Ledger. The verifier now keeps the
+  14 clinics claim out (shown as NOT COUNTED), and the "Morning Thomas" line is gone.
+- **`HANDOFF.md`:** rewritten for the current app: the switch is done, the live check uses the
+  amber backup-run row, and it explains the two copies of the report.
+  - **Gap flagged:** the Report page has no demo-data note. Only its PDF does.
+- **READMEs, `pitch-review.md` and the sample report:** renamed to Ledger and updated.
+
+The shot list was written from the code and hasn't been checked against a running app.
+
 ## 24 Oct 2026 · PR #3 · Pitch score and investor report
 
 **Pitch.** Three rounds of edits to `deck.html` and `script.md`. Two independent judges

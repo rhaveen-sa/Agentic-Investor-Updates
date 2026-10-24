@@ -1,9 +1,9 @@
 # Demo kit
 
-Everything needed to present Investor Update Agent: the deck, what to say, how to record
+Everything needed to present Ledger: the deck, what to say, how to record
 the backup video, and the Reson8 dataset the demo runs on.
 
-<p align="center"><img src="img/slide-close.png" width="720" alt="Closing slide: the claim 'All 14 clinics in Q1' marked Unconfirmed because it was only said in a meeting"></p>
+<p align="center"><img src="img/slide-close.png" width="720" alt="Closing slide: the claim 'All 14 clinics in Q1' marked NOT COUNTED because it was only said in a meeting"></p>
 
 ## What's in here
 
@@ -12,11 +12,11 @@ the backup video, and the Reson8 dataset the demo runs on.
 | [`deck.html`](deck.html) | The slides. Open in Chrome, press `F` for fullscreen. Self-contained, so it needs no network, fonts or build step. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
-| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, what the latest deck changes mean for the demo, and how to build the investor report into the app. For whoever drives the app. |
+| [`HANDOFF.md`](HANDOFF.md) | How to run and check the demo on the current app, what the deck promises, and the two copies of the investor report. For whoever drives the app. |
 | [`WORKLOG.md`](WORKLOG.md) | Every change to the kit, PR by PR, with what is still open. Add an entry with every PR. |
-| [`reson8-switch.patch`](reson8-switch.patch) | The code and data changes behind `HANDOFF.md`, as one patch to review and `git apply`. |
+| [`reson8-switch.patch`](reson8-switch.patch) | The Reson8 switch as one patch. Already applied on `main` in `6b37f49`, kept as a record. Don't apply it again. |
 | [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
-| [`investor-report/`](investor-report/) | A full October investor update for Reson8, as PDF and HTML, with the default alive map, new customers and challenges. Generated from `reson8-mock/`. |
+| [`investor-report/`](investor-report/) | A sample October investor update for Reson8, as PDF and HTML, generated from `reson8-mock/`. The app's Report page and **Download PDF** now produce the same update from the run. |
 | [`pitch-review.md`](pitch-review.md) | The pitch scored by independent judges against 15 Ogilvy principles over three rounds of edits, plus a written version for submission forms. |
 | [`img/`](img/) | Slide renders used in the READMEs. |
 
@@ -43,9 +43,9 @@ Do these in order. The first four take five minutes. The rest depend on the app.
       it took. Say the best answer on slide 2 in place of the Visible line. This is the
       biggest score gain left (see `pitch-review.md`).
 - [ ] Run the rehearsal checks at the end of `script.md` on someone who hasn't seen it.
-- [ ] Apply `reson8-switch.patch` as described in `HANDOFF.md`, and tick its checklist.
-- [ ] Do a live run and confirm the model row reads `claude-sonnet-5-5`, not `scripted` or
-      `fallback`.
+- [ ] Tick the checklist in `HANDOFF.md` section 3. The Reson8 switch is already on `main`.
+- [ ] Do a live run and confirm no step list shows the amber "Live run failed, finished with
+      the backup run" row.
 - [ ] Record `demo-backup.mp4` following `shotlist.md` and save it next to `deck.html`.
       Slide 6 plays it. Without the file, the deck drops that slide and the slides after it
       move up by one.
@@ -68,11 +68,11 @@ keep narrating the same beats over the video. Don't debug on stage.
 
 ## The demo company
 
-The app ships with Shelfwise, a fictional grocery SaaS. For the pitch we run the same
-October story on [Reson8](https://www.reson8.dev/), the speech-to-text partner, because
-their own numbers make a better demo than an invented company. `HANDOFF.md` and
-`reson8-switch.patch` make the switch. The patch also adds two things to the report:
-SDK downloads as a sixth source, and a default-alive check under the KPI table.
+The app runs the October story on [Reson8](https://www.reson8.dev/), the speech-to-text
+partner, because their own numbers make a better demo than an invented company. It
+originally shipped with Shelfwise, a fictional grocery SaaS, and switched in `6b37f49`. The
+switch also added SDK downloads as a sixth source and the default-alive check. Since
+`0926e58` the Report page is the full investor update, with charts and **Download PDF**.
 
 Reson8's funding, founders, languages, API surface, certifications and pricing are public,
 and so are the PyPI and npm download counts. Every revenue, burn, cash, runway and
