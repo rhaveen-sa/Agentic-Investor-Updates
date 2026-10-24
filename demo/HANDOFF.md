@@ -1,11 +1,82 @@
-# Handoff: switch the demo to Reson8
+# Handoff: run the demo on Reson8
 
-For whoever is running the app. Everything here is a copy-paste edit against
-`seanjanke/Agentic-Investor-Updates` at the commit I read on 24 Oct.
+For whoever drives the app. The deck and script tell the October story on Reson8, but the
+app still ships with the Shelfwise data. Nothing in `lib/`, `test/` or `assets/` has been
+changed for you: every change is in one patch for you to review and apply.
 
----
+## 1. Apply the patch
 
-## 1. Check the demo is really live
+```bash
+git checkout -b reson8-demo
+git apply --check demo/reson8-switch.patch   # prints nothing if it applies
+git apply demo/reson8-switch.patch
+flutter test
+```
+
+The patch was written against `main` at `43d0e8c` and applies cleanly there. It has not
+been compiled or run: there was no Flutter SDK on the machine it was written on. Read it
+before applying. If `flutter test` fails, the new code is the place to look first:
+`buildDefaultAlive()` in `lib/app_state.dart` and `_DefaultAliveBlock` in
+`lib/ui/report_screen.dart`.
+
+If `main` has moved and the patch no longer applies, `git apply --reject
+demo/reson8-switch.patch` applies what it can and leaves `.rej` files for the rest.
+
+## 2. What the patch changes
+
+**Data.** The seven files in `assets/mock/` become the Reson8 versions from
+`demo/reson8-mock/`, and a new `packages.json` adds SDK download counts.
+
+**A sixth source, PyPI · npm.** Download counts for Reson8's LiveKit plugins, as a
+developer-adoption source. These numbers are real (see the note at the end). It is wired
+into `sourceInfos` in `connectors.dart`, the connector list in `app_state.dart`, both
+source enums in `tools.dart`, and the "all six sources" line in `prompts.dart`. The
+Sources screen picks it up on its own.
+
+**Names.** Lena, Tom and Anna become Thomas, Jarno and Mirte. Shelfwise becomes Reson8, and
+Northstar becomes Balderton and NP-Hard. This covers the team directory, prompts, sidebar,
+window title, the report's To line and sign-off, the Slack webhook text and the welcome
+card. Two of these break the demo if they are missed:
+
+- The strict tool schemas in `tools.dart` only accept `Lena`, `Tom` and `Anna` as owners.
+- The Reson8 vocabulary in `reson8_client.dart` is what makes "Noorderlicht" and "NRR"
+  come back spelled right. That is the point of the voice beat.
+
+**Scripted fallback.** `scripted.dart` holds a hardcoded report that cites source records
+by ID. Every ID moves to its Reson8 equivalent:
+
+| Shelfwise | Reson8 |
+| --- | --- |
+| `hs-deal-2310` | `hs-deal-1160` (Noorderlicht pilot) |
+| `gh-rel-2.0`, `gh-rel-2.1` | `gh-rel-1.8`, `gh-rel-1.9` |
+| `gh-pr-412`, `gh-pr-447` | `gh-pr-318`, `gh-pr-349` |
+| `hs-churn-0457` | `hs-churn-0231` |
+| `jamie-mtg-1016` | `jamie-mtg-1019` |
+
+The rewritten report adds two highlights: SDK downloads (`pkg-oct-23`) and Free to Pro
+conversion (`stripe-plg-oct`). Only the "all 14 clinics in Q1" claim cites a meeting-only
+fact, so the verifier still flags exactly one claim.
+
+**Default alive.** A new section under the KPI table answers Paul Graham's
+[default alive or default dead](https://paulgraham.com/aord.html) question. It is
+computed in code from confirmed ARR (September and October), net burn and cash, and the
+model never writes it. It assumes flat costs and simulates month by month, then finds the
+growth rate where the answer flips. On the Reson8 data it says default alive: break-even
+in 13 months with €1.83M left, and default dead below about 8.6% monthly growth. It also
+goes into the copy-as-text export.
+
+- `lib/models/report.dart`: a `DefaultAlive` class and a `Report.defaultAlive` field.
+- `lib/app_state.dart`: `buildDefaultAlive()`.
+- `lib/agent/runs.dart`: sets it after either the live or the scripted report run.
+- `lib/ui/report_screen.dart`: shows it, and adds it to `reportAsText`.
+
+**Test.** `test/demo_flow_test.dart` now expects €413k, ARR change `+17%`, 30.7k downloads,
+the 14 clinics flag, and the default-alive numbers.
+
+**README.** Describes Reson8 as the demo company, the sixth source and the default-alive
+check.
+
+## 3. Check the demo is really live
 
 Keep the model as it is in `lib/agent/claude_client.dart:8`:
 
@@ -25,214 +96,30 @@ the same either way. Expand any agent message and read the model row:
 - `scripted`: no key, or scripted mode is on.
 - `fallback`: the live call failed. The step shows the error.
 
----
+## 4. Before you present
 
-## 2. Drop in the Reson8 data
-
-```bash
-cp demo/reson8-mock/*.json assets/mock/
-```
-
-Seven files, same schema and same filenames as the originals: `baseline.json`,
-`github.json`, `hubspot.json`, `jamie.json`, `linkedin.json`, `stripe.json`,
-`slack_replies.json`. All validated as JSON.
-
-The demo arc is unchanged, so the scripted path and the anomaly detector behave exactly as
-before. Weekly demo bookings run 29, 41, 11, 34. The week 2 to week 3 drop is 73.2%, which
-matches the 73% the old Shelfwise data produced, so nothing that keys off the anomaly
-threshold needs retuning.
-
-Numbers, for reference:
-
-| | September | October |
-|---|---|---|
-| ARR | €352k | €413k (+17.3%) |
-| Paying teams | 41 | 44 |
-| NRR | 104% | 112% |
-| Net burn | €198k | €231k |
-| Cash | €4.12M | €3.89M |
-| Runway | 21 months | 17 months |
-
-September figures live in `baseline.json`, October in `stripe.json` and `hubspot.json`.
-
----
-
-## 3. Team directory
-
-`lib/data/connectors.dart:105`
-
-```dart
-const teamDirectory = [
-  Teammate('Thomas', 'CEO & co-founder', ['sales', 'CRM (HubSpot)', 'finance (Stripe, bank)', 'investor relations'],
-      {'slack': '@thomas', 'email': 'thomas@reson8.dev'}),
-  Teammate('Jarno', 'CTO & co-founder', ['product', 'engineering', 'GitHub', 'model training', 'uptime', 'hiring engineers'],
-      {'slack': '@jarno', 'whatsapp': '+31 6 0000 0001', 'email': 'jarno@reson8.dev'}),
-  Teammate('Mirte', 'Head of Growth', ['marketing', 'LinkedIn ads & posts', 'website analytics', 'demo bookings'],
-      {'slack': '@mirte', 'whatsapp': '+31 6 0000 0002', 'email': 'mirte@reson8.dev'}),
-];
-```
-
-Thomas Kluiters and Jarno Verhagen are real co-founders and only ever appear in a good
-light. Mirte is invented, and that is deliberate: the week 3 anomaly names a teammate as
-the cause of a problem, and that should not land on a real person. Keep it that way.
-
-Raoul Ritter, the third real co-founder, is mentioned once in a Jamie meeting note as an
-attendee and nowhere else.
-
----
-
-## 4. Sidebar
-
-`lib/ui/shell.dart:103` and `:120`
-
-```dart
-Text('Reson8', style: tt.large.copyWith(fontSize: 15)),
-```
-
-```dart
-ShadAvatar('', placeholder: const Text('T'), size: const Size(30, 30)),
-const SizedBox(width: 10),
-Expanded(child: Text('Thomas', style: tt.small)),
-```
-
----
-
-## 5. Prompts
-
-`lib/agent/prompts.dart:2`
-
-```
-You are the investor-update agent of Reson8 (Resonate Labs B.V.), an Amsterdam speech-recognition
-company selling a domain-adaptable ASR API for 10 European languages (€5M pre-seed in March 2026
-led by Balderton Capital, 11 people). You work for Thomas (CEO, co-founder). Jarno is CTO,
-Mirte is Head of Growth.
-```
-
-Line 15 uses a Shelfwise example inside the `statement_only` definition. Swap it so the
-model is not primed with grocery vocabulary:
-
-```
-... e.g. "they want to roll out to all 14 clinics".
-```
-
-Lines 36, 37, 45, 52, 53, 72: replace `Lena` with `Thomas`.
-
-Lines 75 and 86: replace `Shelfwise` with `Reson8`, so the subject line reads
-`"Reson8 – October 2026 update"`.
-
----
-
-## 6. Scripted fallback
-
-`lib/agent/scripted.dart`. This is the path that runs with no API key, so it has to match
-or the backup demo contradicts the live one.
-
-Line 35:
-```dart
-['Demo bookings fell from 41 to 11. I\'m checking with Mirte. Do you already know what happened?'],
-```
-
-Line 38:
-```dart
-['Noorderlicht said they want all 14 clinics in Q1. Is there anything in writing yet?'],
-```
-
-Lines 101 to 109: `'Anna'` becomes `'Mirte'`, `Lena\'s update agent` becomes
-`Thomas\'s update agent`, and the reason becomes
-`'Mirte owns LinkedIn and demo bookings. The sources show the drop but not why.'`
-
-Line 124:
-```dart
-{'text': 'LinkedIn posts paused for two days (Mirte out sick), back on schedule', 'kind': 'context'},
-```
-
-Line 131: `Lena estimates` becomes `Thomas estimates`.
-
-Line 167: `subject: 'Reson8 – October 2026 update',`
-
-The five `_summaries` entries, lines 41 to 48:
-
-```dart
-const _summaries = [
-  'Good first week: 2 new teams (+€19k ARR), barge-in tuning shipped for the Turns API, and 29 demos from the new LinkedIn campaign. '
-      'Balderton asked for NRR in the next update, so I suggest adding it to the KPIs.',
-  'Big week: Release 1.8 takes us to 10 GA languages, and Noorderlicht Zorggroep signed a paid pilot for 9 clinics (+€41k ARR). '
-      'The WER benchmark post drove a record 41 demos.',
-  'Mixed week: realtime p95 latency is down 38%, but one team churned (−€7k ARR) and demo bookings dropped to 11 with no LinkedIn activity.',
-  'Release 1.9 shipped diarization v2, 1 new team (+€8k ARR) and demos recovered to 34. Noorderlicht wants all 14 clinics in Q1, but that was only said in the pilot review.',
-  'October closed at €413k ARR (+17.3%) and 44 paying teams. Net burn rose to €231k, runway is now 17 months.',
-];
-```
-
----
-
-## 7. Names hardcoded elsewhere
-
-Sections 3 to 6 cover the big ones. These are the rest. The first two break the demo if
-you skip them.
-
-`lib/agent/tools.dart:58` and `:101`. The tool schemas are strict, so the model can only
-name owners from these enums. The Reson8 data uses Thomas, Jarno and Mirte.
-
-```dart
-'owner': {'type': 'string', 'enum': ['Thomas', 'Jarno', 'Mirte']},
-```
-
-```dart
-'person': {'type': 'string', 'enum': ['Jarno', 'Mirte']},
-```
-
-`lib/voice/reson8_client.dart:16`. This is the vocabulary Reson8 is biased with, and it is
-the whole point of the voice beat. Replace the Shelfwise line with:
-
-```dart
-  'Reson8', 'Resonate Labs', 'Noorderlicht', 'Noorderlicht Zorggroep', 'Balderton', 'Thomas', 'Jarno', 'Mirte',
-  'Turns API', 'diarization', 'speech engineers', 'Release 1.8', 'Release 1.9',
-```
-
-On line 19, swap `'171k', '668k'` for `'231k', '413k'`. On lines 73 and 74, rename the
-custom model to `reson8-investor-updates` and the description to `... for Reson8`.
-
-The remaining spots are display text. Replace `Lena` with `Thomas`, `Shelfwise` with
-`Reson8`, and `Northstar Ventures` with `Balderton Capital`:
-
-| File | Lines |
-| --- | --- |
-| `lib/main.dart` | 18 (window title) |
-| `lib/app_state.dart` | 127, 139, 141, 291 (Slack webhook text), 342, 360 |
-| `lib/agent/runs.dart` | 233, 242, 249, 343 (`'Reson8 – October 2026 update'`) |
-| `lib/agent/tools.dart` | 246 (default owner) |
-| `lib/agent/scripted.dart` | 83: the reason becomes `'Lead investor (Balderton) asked for NRR in the next update (Jamie, Oct 3).'` |
-| `lib/ui/report_screen.dart` | 69 (the To line), 81 and 318 (the sign-off) |
-
----
-
-## 8. Tests
-
-`test/demo_flow_test.dart` asserts the old October numbers, so it will fail after the swap.
-Update the expected ARR to 413000, customers to 44 and runway to 17, or mark it skipped
-before the demo. Do not leave it failing and unexplained if a judge looks at CI.
-
----
-
-## 9. Before you present
-
-- [ ] A live run shows `claude-sonnet-5-5` in the model row of an expanded message, not `scripted` or `fallback`
-- [ ] No Shelfwise names left. This should print nothing: `grep -rniwE "shelfwise|lena|anna|tom|mara|northstar|freshmart" lib/ assets/mock/`
-- [ ] The week 3 anomaly still fires and drafts a message to Mirte
-- [ ] Dictate a sentence with "Noorderlicht" and "NRR" in it. Both come back spelled right
-- [ ] The verifier still flags the 14 clinics claim
-- [ ] `flutter test` passes or is knowingly skipped
-
----
+- [ ] `flutter test` passes.
+- [ ] No Shelfwise names left. This should print nothing:
+      `grep -rniwE "shelfwise|lena|anna|tom|mara|northstar|freshmart" lib/ assets/mock/`
+- [ ] Sources shows six cards, including PyPI · npm.
+- [ ] A live run shows `claude-sonnet-5-5` in the model row of an expanded message.
+- [ ] Dictate a sentence with "Noorderlicht" and "NRR" in it. Both come back spelled right.
+- [ ] The week 3 anomaly fires and drafts a message to Mirte.
+- [ ] The report reads 413k, 44, 112%, 231k, 3.89M, 17 months, shows the default-alive
+      section, and flags only the 14 clinics claim.
 
 ## A note on the data
 
-Everything in `reson8-mock/` that is not public is invented. Public and checkable: the
-€5M pre-seed led by Balderton with NP-Hard, March 2026, Amsterdam, Resonate Labs B.V., the
-three founders, 10 supported languages, the Prerecorded, Realtime and Turns endpoints, ISO
-27001, GDPR, EU AI Act, zero audio retention, and the Free, Pro at €20, Growth at €100 and
-Enterprise pricing tiers.
+Public and checkable: the €5M pre-seed led by Balderton with NP-Hard, March 2026,
+Amsterdam, Resonate Labs B.V., the three founders, 10 supported languages, the
+Prerecorded, Realtime and Turns endpoints, ISO 27001, GDPR, EU AI Act, zero audio
+retention, and the Free, Pro at €20, Growth at €100 and Enterprise pricing tiers.
+
+Real, pulled on 24 Oct 2026: the SDK download counts in `packages.json`. PyPI
+`livekit-plugins-reson8` (pypistats.org, without mirrors) had 4,929 downloads in September
+and 3,941 from 1 to 23 October. npm `@reson8-labs/agents-plugin-reson8` (api.npmjs.org) had
+16,639 and 26,794. Downloads include CI installs, so they track developer adoption, not
+users.
 
 Invented: every revenue, burn, cash, runway, customer-count and demo figure, all customer
 names (Noorderlicht Zorggroep, Van Dijk Advocaten, Contactpunt BV, Helder Notarissen,

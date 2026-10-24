@@ -168,7 +168,7 @@ video with the same beats.
 > Underneath it's one agent loop with four runs sharing ten tools. The weekly check-in, the
 > anomaly chase, inbound from chat or voice or documents, and the period report.
 >
-> Five connectors behind one interface. Everything the agent learns becomes a fact in a
+> Six connectors behind one interface. Everything the agent learns becomes a fact in a
 > ledger with a status, and the report is drafted only from the confirmed ones.
 >
 > Then a separate Claude call audits that draft.
@@ -269,8 +269,15 @@ Stop. Don't add anything after that.
 
 **How is this different from Jamie, or any notetaker?**
 
-> Jamie captures a meeting. This captures a month across five systems and turns it into a
-> document where every number is traceable. Jamie is one of our five sources.
+> Jamie captures a meeting. This captures a month across six systems and turns it into a
+> document where every number is traceable. Jamie is one of our six sources.
+
+**Is Reson8 going to make it?**
+
+> The update answers that itself. It runs Paul Graham's default alive test on the confirmed
+> numbers: at October's growth, revenue covers costs in 13 months with €1.83M left. It also
+> says where that flips, at about 8.6% a month. The test is computed in code, so the model
+> can't make it sound better than it is.
 
 **What happens without an API key?**
 
@@ -286,8 +293,8 @@ Stop. Don't add anything after that.
 
 **Are those Reson8's real numbers?**
 
-> No, and the deck says so on screen. The funding, the founders, the ten languages, the API
-> surface and the pricing are public. Revenue, burn, runway and the customer names are
+> Mostly no, and the deck says so on screen. The funding, the founders, the ten languages,
+> the API surface, the pricing and the SDK download counts are public. Revenue, burn, runway and the customer names are
 > invented for the demo.
 
 ---

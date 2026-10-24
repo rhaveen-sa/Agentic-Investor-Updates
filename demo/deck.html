@@ -148,7 +148,7 @@ body.compact .optional{display:none !important}
       Claude, Jamie and Reson8
     </div>
   </div>
-  <div class="footnote">Demo runs on <strong>Reson8</strong>. Funding, languages and pricing are public. Revenue, burn and customer names are invented for the demo.</div>
+  <div class="footnote">Demo runs on <strong>Reson8</strong>. Funding, languages, pricing and SDK downloads are public. Revenue, burn and customer names are invented for the demo.</div>
 </section>
 
 <!-- 2 PROBLEM -->
@@ -274,7 +274,7 @@ body.compact .optional{display:none !important}
 <section class="slide" data-notes="For the technical judges. The line that matters: the verifier is a <b>separate Claude call that only sees the ledger</b>, so it cannot be talked into agreeing with the report. Also mention the KPI table is computed in code, never written by the model. | 30s">
   <div class="eyebrow">Under the hood</div>
   <h2 class="wide">One agent loop, four runs, ten shared tools.</h2>
-  <svg viewBox="0 0 1136 300" width="100%" style="margin-top:18px" aria-label="Five connectors feed a Claude agent loop that writes to a ledger, which produces the report and the verifier">
+  <svg viewBox="0 0 1136 312" width="100%" style="margin-top:12px" aria-label="Six connectors feed a Claude agent loop that writes to a ledger, which produces the report and the verifier">
     <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
     <style>
@@ -290,8 +290,9 @@ body.compact .optional{display:none !important}
     <rect class="bx" x="0" y="114" width="158" height="36"/><text class="lbl" x="15" y="137">HubSpot</text>
     <rect class="bx" x="0" y="158" width="158" height="36"/><text class="lbl" x="15" y="181">LinkedIn</text>
     <rect class="bx" x="0" y="202" width="158" height="36"/><text class="lbl" x="15" y="225">Stripe</text>
-    <text class="mono" x="0" y="262">one SourceConnector interface</text>
-    <path class="ln" d="M166,132 L242,132"/>
+    <rect class="bx" x="0" y="246" width="158" height="36"/><text class="lbl" x="15" y="269">PyPI · npm</text>
+    <text class="mono" x="0" y="304">one SourceConnector interface</text>
+    <path class="ln" d="M166,154 L242,132"/>
     <rect x="250" y="26" width="286" height="212" rx="10" fill="#0f1419"/>
     <text x="272" y="54" font-family="-apple-system,sans-serif" font-size="12.5" font-weight="700" fill="#7d8d9c" letter-spacing=".11em">CLAUDE AGENT LOOP</text>
     <text x="272" y="86"  font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">A</tspan>  Weekly check-in</text>
@@ -310,7 +311,7 @@ body.compact .optional{display:none !important}
     <path class="ln" d="M810,154 L886,178"/>
     <rect class="bx" x="894" y="48" width="226" height="60"/>
     <text class="lbl" x="914" y="74" font-weight="650">Report</text>
-    <text class="mono" x="914" y="95">confirmed facts only</text>
+    <text class="mono" x="914" y="95">+ default alive, in code</text>
     <rect x="894" y="148" width="226" height="60" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
     <text class="lbl" x="914" y="174" font-weight="650" fill="#b45309">Verifier</text>
     <text class="mono" x="914" y="195" fill="#b45309">separate Claude call</text>
@@ -423,7 +424,7 @@ body.compact .optional{display:none !important}
     <div class="report">
       <div class="report-top">KPIs · October 2026</div>
       <dl class="kpi">
-        <dt>ARR</dt><dd class="v clickable">€413k</dd><dd class="d">+17.3%</dd>
+        <dt>ARR</dt><dd class="v clickable">€413k</dd><dd class="d">+17%</dd>
         <dt>Paying teams</dt><dd class="v clickable">44</dd><dd class="d">+3</dd>
         <dt>NRR</dt><dd class="v clickable">112%</dd><dd class="d">+8pp</dd>
         <dt>Net burn</dt><dd class="v clickable">€231k</dd><dd class="d neg">+33k</dd>
@@ -434,6 +435,10 @@ body.compact .optional{display:none !important}
       <div style="padding:11px 17px 4px;font-size:15.5px;line-height:1.5;color:var(--ink-2)">
         One team churned after an acquisition, −€7k ARR. Burn up €33k on two speech engineers.
         Runway down four months.
+      </div>
+      <div class="report-top" style="border-top:2px solid var(--rule)">Default alive?</div>
+      <div style="padding:11px 17px 4px;font-size:15.5px;line-height:1.5;color:var(--ink-2)">
+        <strong style="color:var(--good)">Yes</strong>, if ARR keeps growing 17.3% a month: break-even in 13 months with €1.83M left. Below 8.6% it flips to dead.
       </div>
       <div class="flagged-claim" style="margin-top:11px">
         <strong>“All 14 clinics in Q1”</strong> flagged Unconfirmed: said in a meeting only.
@@ -477,8 +482,9 @@ body.compact .optional{display:none !important}
     <div class="card" style="border-style:dashed">
       <h3 style="color:var(--muted)">Mocked</h3>
       <p style="line-height:1.72">
-        The five connectors read timestamped JSON instead of live APIs, and a simulated
+        The six connectors read timestamped JSON instead of live APIs, and a simulated
         clock moves a week per click, so a month of founder life fits into ninety seconds.
+        The PyPI and npm download counts in that JSON are real.
         Teammate replies arrive from a button rather than Slack.
       </p>
     </div>

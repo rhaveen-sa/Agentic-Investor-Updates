@@ -50,7 +50,7 @@ than a perfect one. Small hesitations are fine. A wrong click that needs undoing
 | 6 | 0:54 to 1:12 | Agent | Land on **week 3**. Let the anomaly card breathe for three seconds, then click **Approve** on the drafted Slack message. | Demos fell from 41 to 11, and the agent already knows who to ask. Give this room, it is the first moment that gets a reaction. |
 | 7 | 1:12 to 1:26 | Messages | Open Messages, show the sent message, click **Simulate reply**. Mirte's reply lands. Go back to Agent, where run C has turned it into a pending fact. Confirm it. | Gap, question, message, reply, fact. The loop closes on screen. |
 | 8 | 1:26 to 1:34 | Time bar | Click **Next week** to reach the end of October. The report generates. | The month is over and the update already exists. |
-| 9 | 1:34 to 1:50 | Report | Scroll steadily through TL;DR, the KPI table, highlights, **lowlights**, asks. Pause a beat on the lowlights. | The churn and the shorter runway are in the update. Neutrality is visible rather than claimed. |
+| 9 | 1:34 to 1:50 | Report | Scroll steadily through TL;DR, the KPI table, **Default alive?**, highlights, **lowlights**, asks. Pause a beat on default alive and on the lowlights. | The update answers the investor's real question, and the churn and shorter runway are in it too. Neutrality is visible rather than claimed. |
 | 10 | 1:50 to 2:00 | Report | Click **€413k**. The dialog opens, titled "Source for €413k". Close it. | Every number is traceable. This is the product's signature. |
 | 11 | 2:00 to 2:12 | Report | Scroll to the claim about **all 14 clinics in Q1**, which carries the amber **Unconfirmed** tag. Click it. The source shows a Jamie meeting note and nothing else. Hover the tag so the tooltip shows. | The money shot. Hold three full seconds. The tooltip reads "Only said in a meeting or chat, not backed by a system of record." |
 | 12 | 2:12 to 2:16 | Report | Click **Approve**. End on the approved state. | The founder stays in control. Clean ending. |
@@ -79,6 +79,7 @@ If you are running long, shots 2 and 3 are the ones to shorten. They are the lea
       `secrets.json` and start the app with `--dart-define-from-file=secrets.json`.
 - [ ] No "Shelfwise", "Lena", "Anna" or "FreshMart" visible anywhere on screen.
 - [ ] The report KPI table reads 413k, 44, 112%, 231k, 3.89M, 17 months.
+- [ ] The Default alive section says break-even in 13 months with €1.83M left.
 - [ ] The 14 clinics claim carries the amber Unconfirmed tag.
 
 ---
