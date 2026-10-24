@@ -20,22 +20,136 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
+    final items = s.feed.where((f) => f.week == s.viewWeek).toList();
+    final card = nextStepCard(s);
+    if (items.isEmpty) return _EmptyAgent(card: card);
     return Column(children: [
       Expanded(
         child: ListView.builder(
           reverse: true,
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-          itemCount: s.feed.length,
-          itemBuilder: (_, i) => Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: _chatWidth),
-              child: ChatTurn(s.feed[i], key: ObjectKey(s.feed[i])),
-            ),
-          ),
+          itemCount: items.length + (card == null ? 0 : 1),
+          itemBuilder: (_, i) {
+            final child = card != null && i == 0
+                ? Padding(padding: const EdgeInsets.only(bottom: 8), child: card)
+                : ChatTurn(items[card == null ? i : i - 1], key: ObjectKey(items[card == null ? i : i - 1]));
+            return Center(
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: _chatWidth), child: child),
+            );
+          },
         ),
       ),
       const Composer(),
     ]);
+  }
+}
+
+/// What the founder can start next in the week being viewed, if anything.
+Widget? nextStepCard(AppState s) {
+  if (s.isBusy) return null;
+  if (s.canRunCheckIn) {
+    final w = simWeeks[s.viewWeek];
+    final since = w.since.add(const Duration(minutes: 1));
+    return _SuggestionCard(
+      icon: LucideIcons.calendarCheck,
+      title: 'Run the ${w.label.toLowerCase()} check-in',
+      detail: '${shortDate.format(since)} – ${shortDate.format(w.until)}',
+      onTap: s.runCheckIn,
+    );
+  }
+  if (s.canCloseMonth) {
+    return _SuggestionCard(
+      icon: LucideIcons.fileText,
+      title: 'Close October and draft the update',
+      detail: 'Oct 29 – Oct 31',
+      onTap: s.closeMonth,
+    );
+  }
+  return null;
+}
+
+/// Start screen of a week: greeting, centered composer and the next step.
+class _EmptyAgent extends StatelessWidget {
+  const _EmptyAgent({this.card});
+
+  final Widget? card;
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = context.tt;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 80),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('Good morning, Thomas', style: tt.h2.copyWith(fontWeight: FontWeight.w600, letterSpacing: -0.5)),
+          const SizedBox(height: 28),
+          const Composer(),
+          if (card != null) ...[
+            const SizedBox(height: 4),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: _chatWidth + 20 + 48),
+              child: Padding(padding: const EdgeInsets.symmetric(horizontal: 24), child: card),
+            ),
+          ],
+        ]),
+      ),
+    );
+  }
+}
+
+class _SuggestionCard extends StatefulWidget {
+  const _SuggestionCard({required this.icon, required this.title, required this.detail, this.onTap});
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final VoidCallback? onTap;
+
+  @override
+  State<_SuggestionCard> createState() => _SuggestionCardState();
+}
+
+class _SuggestionCardState extends State<_SuggestionCard> {
+  bool hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = context.cs;
+    final tt = context.tt;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => hover = true),
+      onExit: (_) => setState(() => hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: hover ? cs.muted.withValues(alpha: 0.6) : cs.background,
+            borderRadius: BorderRadius.circular(rLg),
+            border: Border.all(color: cs.border),
+          ),
+          child: Row(children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(rSm)),
+              child: Icon(widget.icon, size: 18),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(widget.title, style: tt.small.copyWith(fontSize: 14.5)),
+                const SizedBox(height: 2),
+                Text(widget.detail, style: tt.muted.copyWith(fontSize: 13)),
+              ]),
+            ),
+            Icon(LucideIcons.arrowRight, size: 16, color: cs.mutedForeground),
+          ]),
+        ),
+      ),
+    );
   }
 }
 
@@ -82,9 +196,10 @@ class ChatTurn extends StatelessWidget {
                 const SizedBox(height: 14),
                 FactList(facts),
                 if (pendingIds.length > 1 && !item.offersReport)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: ShadButton.ghost(
+                  Container(
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ShadButton(
                       size: ShadButtonSize.sm,
                       onPressed: () => s.confirmAll(pendingIds),
                       leading: const Icon(LucideIcons.checkCheck, size: 14),
@@ -108,14 +223,14 @@ class ChatTurn extends StatelessWidget {
                       s.confirmAll(pendingIds);
                       await s.draftReport();
                     },
-                    leading: const Icon(LucideIcons.sparkles, size: 16),
+                    leading: const Icon(LucideIcons.fileText, size: 16),
                     child: Text(pendingIds.isEmpty ? 'Draft the update' : 'Confirm & draft the update'),
                   ),
                 ),
               if (item.type == FeedType.report && s.report != null && run != null && run.done)
                 Padding(
                   padding: const EdgeInsets.only(top: 14),
-                  child: _ReportLink(onTap: () => s.setTab(4)),
+                  child: _ReportLink(onTap: () => s.setTab(3)),
                 ),
             ]),
           ),
@@ -151,13 +266,8 @@ class _AgentAvatar extends StatelessWidget {
   const _AgentAvatar();
 
   @override
-  Widget build(BuildContext context) => Container(
-        width: 28,
-        height: 28,
-        margin: const EdgeInsets.only(top: 2),
-        decoration: BoxDecoration(color: context.cs.primary, borderRadius: BorderRadius.circular(8)),
-        child: Icon(LucideIcons.sparkles, size: 15, color: context.cs.primaryForeground),
-      );
+  Widget build(BuildContext context) =>
+      const Padding(padding: EdgeInsets.only(top: 1), child: AppLogo(size: 30));
 }
 
 class _UserBubble extends StatelessWidget {
@@ -483,10 +593,6 @@ class _ComposerState extends State<Composer> {
                   icon: const Icon(LucideIcons.plus),
                   onPressed: _attach,
                 ),
-                if (_fromVoice) ...[
-                  const SizedBox(width: 6),
-                  const TintBadge('Voice', green, icon: LucideIcons.audioLines),
-                ],
                 const Spacer(),
                 if (_transcribing)
                   const Padding(

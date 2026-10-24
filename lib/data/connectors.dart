@@ -21,6 +21,8 @@ const sourceInfos = <String, SourceInfo>{
   'hubspot': SourceInfo('hubspot', 'HubSpot', 'CRM', Icons.handshake_outlined, Color(0xFFFF7A59), logo: 'assets/logos/hubspot.png'),
   'linkedin': SourceInfo('linkedin', 'LinkedIn', 'Growth', Icons.campaign_outlined, Color(0xFF0A66C2), logo: 'assets/logos/linkedin.png'),
   'stripe': SourceInfo('stripe', 'Stripe', 'Finance', Icons.account_balance_outlined, Color(0xFF635BFF), logo: 'assets/logos/stripe.png'),
+  'packages': SourceInfo('packages', 'PyPI · npm', 'Developer adoption', Icons.download_outlined, Color(0xFF3775A9),
+      logo: 'assets/logos/npm.png'),
   'founder': SourceInfo('founder', 'Chat', 'Founder input', Icons.person_outline, Color(0xFF2E7D32)),
   'voice': SourceInfo('voice', 'Voice', 'Founder input', Icons.graphic_eq, Color(0xFF2E7D32)),
   'document': SourceInfo('document', 'Document', 'Founder input', Icons.description_outlined, Color(0xFF5D4037)),
@@ -103,10 +105,11 @@ class Teammate {
 }
 
 const teamDirectory = [
-  Teammate('Lena', 'CEO & founder', ['sales', 'CRM (HubSpot)', 'finance (Stripe, bank)', 'investor relations'],
-      {'slack': '@lena', 'email': 'lena@shelfwise.ai'}),
-  Teammate('Tom', 'CTO', ['product', 'engineering', 'GitHub', 'Linear', 'uptime', 'hiring engineers'],
-      {'slack': '@tom', 'whatsapp': '+49 151 0000 0001', 'email': 'tom@shelfwise.ai'}),
-  Teammate('Anna', 'Head of Growth', ['marketing', 'LinkedIn ads & posts', 'website analytics', 'demo bookings'],
-      {'slack': '@anna', 'whatsapp': '+49 151 0000 0002', 'email': 'anna@shelfwise.ai'}),
+  Teammate('Thomas', 'CEO & co-founder', ['sales', 'CRM (HubSpot)', 'finance (Stripe, bank)', 'investor relations'],
+      {'slack': '@thomas', 'email': 'thomas@reson8.dev'}),
+  Teammate('Jarno', 'CTO & co-founder',
+      ['product', 'engineering', 'GitHub', 'SDK downloads (PyPI, npm)', 'model training', 'uptime', 'hiring engineers'],
+      {'slack': '@jarno', 'whatsapp': '+31 6 0000 0001', 'email': 'jarno@reson8.dev'}),
+  Teammate('Mirte', 'Head of Growth', ['marketing', 'LinkedIn ads & posts', 'website analytics', 'demo bookings'],
+      {'slack': '@mirte', 'whatsapp': '+31 6 0000 0002', 'email': 'mirte@reson8.dev'}),
 ];

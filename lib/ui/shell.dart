@@ -1,15 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:window_manager/window_manager.dart';
 
-import '../agent/claude_client.dart';
 import '../app_state.dart';
 import '../models/fact.dart';
-import '../models/outbound_message.dart';
 import 'facts_screen.dart';
 import 'feed_screen.dart';
-import 'messages_screen.dart';
 import 'report_screen.dart';
 import 'settings_sheet.dart';
 import 'sources_screen.dart';
@@ -34,7 +32,6 @@ class Shell extends StatelessWidget {
                 FeedScreen(),
                 FactsScreen(),
                 SourcesScreen(),
-                MessagesScreen(),
                 ReportScreen(),
               ]),
             ),
@@ -54,7 +51,6 @@ class _Sidebar extends StatelessWidget {
     final cs = context.cs;
     final tt = context.tt;
     final pending = s.facts.where((f) => f.status == FactStatus.pending).length;
-    final open = s.outbox.where((m) => m.status == MessageStatus.draft || m.status == MessageStatus.sent).length;
 
     Widget item(int i, IconData icon, String label, {int count = 0}) {
       final selected = s.tab == i;
@@ -88,27 +84,12 @@ class _Sidebar extends StatelessWidget {
     return Container(
       width: 248,
       color: cs.muted.withValues(alpha: 0.6),
-      padding: const EdgeInsets.fromLTRB(12, 20, 12, 14),
+      padding: const EdgeInsets.fromLTRB(12, 56, 12, 14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(color: cs.primary, borderRadius: BorderRadius.circular(8)),
-              child: Icon(LucideIcons.sparkles, size: 15, color: cs.primaryForeground),
-            ),
-            const SizedBox(width: 10),
-            Text('Shelfwise', style: tt.large.copyWith(fontSize: 15)),
-          ]),
-        ),
-        const SizedBox(height: 24),
         item(0, LucideIcons.messageCircle, 'Agent'),
         item(1, LucideIcons.listChecks, 'Facts', count: pending),
         item(2, LucideIcons.plug, 'Sources'),
-        item(3, LucideIcons.send, 'Messages', count: open),
-        item(4, LucideIcons.fileText, 'Report'),
+        item(3, LucideIcons.fileText, 'Report'),
         const Spacer(),
         MouseRegion(
           cursor: SystemMouseCursors.click,
@@ -117,10 +98,10 @@ class _Sidebar extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Row(children: [
-                ShadAvatar('', placeholder: const Text('L'), size: const Size(30, 30)),
+                ClipOval(child: Image.asset('assets/logos/reson8.png', width: 30, height: 30, filterQuality: FilterQuality.medium)),
                 const SizedBox(width: 10),
-                Expanded(child: Text('Lena', style: tt.small)),
-                Icon(LucideIcons.settings2, size: 16, color: cs.mutedForeground),
+                Expanded(child: Text('Reson8', style: tt.small)),
+                Icon(LucideIcons.settings, size: 17, color: cs.mutedForeground),
               ]),
             ),
           ),
@@ -136,52 +117,67 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
+    final tt = context.tt;
+    final bar = SizedBox(
+      height: 60,
+      child: Stack(alignment: Alignment.center, children: [
+        if (s.busy != null)
+          Positioned(
+            left: 20,
+            child: Row(children: [
+              const SizedBox(width: 13, height: 13, child: CircularProgressIndicator(strokeWidth: 1.6)),
+              const SizedBox(width: 8),
+              Text(s.busy!, style: tt.muted.copyWith(fontSize: 13)),
+            ]),
+          ),
+        const WeekStepper(),
+      ]),
+    );
+    return kIsWeb ? bar : DragToMoveArea(child: bar);
+  }
+}
+
+/// The four simulated weeks of October. Any week can be opened; check-ins
+/// are started from the card in the chat.
+class WeekStepper extends StatelessWidget {
+  const WeekStepper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.watch<AppState>();
     final cs = context.cs;
     final tt = context.tt;
-    final live = !s.scripted && ClaudeClient().hasKey;
+
+    Widget week(int i) {
+      final done = s.ranWeeks.contains(i);
+      final viewed = i == s.viewWeek;
+      final child = AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: viewed ? cs.background : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: viewed ? [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 4, offset: const Offset(0, 1))] : null,
+        ),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          if (done) ...[
+            Icon(LucideIcons.check, size: 13, color: viewed ? cs.foreground : cs.mutedForeground),
+            const SizedBox(width: 5),
+          ],
+          Text(shortDate.format(simWeeks[i].until),
+              style: tt.small.copyWith(
+                fontWeight: viewed ? FontWeight.w600 : FontWeight.w500,
+                color: viewed ? cs.foreground : cs.mutedForeground,
+              )),
+        ]),
+      );
+      return MouseRegion(cursor: SystemMouseCursors.click, child: GestureDetector(onTap: () => s.selectWeek(i), child: child));
+    }
+
     return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(children: [
-        if (s.busy != null) ...[
-          const SizedBox(width: 13, height: 13, child: CircularProgressIndicator(strokeWidth: 1.6)),
-          const SizedBox(width: 8),
-          Text(s.busy!, style: tt.muted.copyWith(fontSize: 13)),
-        ],
-        const Spacer(),
-        if (!live) ...[
-          ShadTooltip(
-            builder: (_) => const Text('No API key: runs are replayed from the mock data'),
-            child: TintBadge('Scripted', cs.mutedForeground),
-          ),
-          const SizedBox(width: 8),
-        ],
-        ShadIconButton.ghost(
-          enabled: !s.isBusy,
-          width: 34,
-          height: 34,
-          iconSize: 16,
-          icon: const Icon(LucideIcons.rotateCcw),
-          onPressed: s.reset,
-        ),
-        const SizedBox(width: 6),
-        Container(
-          padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: cs.border)),
-          child: Row(children: [
-            Text(DateFormat('EEE, MMM d').format(s.today), style: tt.small),
-            const SizedBox(width: 10),
-            ShadButton(
-              size: ShadButtonSize.sm,
-              enabled: s.canAdvance,
-              decoration: ShadDecoration(border: ShadBorder.all(radius: BorderRadius.circular(999))),
-              onPressed: s.advance,
-              trailing: const Icon(LucideIcons.chevronRight, size: 15),
-              child: Text(s.monthClosed ? 'Closed' : s.nextLabel),
-            ),
-          ]),
-        ),
-      ]),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(999)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [for (var i = 0; i < 4; i++) week(i)]),
     );
   }
 }

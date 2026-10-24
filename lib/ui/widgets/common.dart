@@ -24,6 +24,23 @@ const rSm = 10.0;
 const rMd = 14.0;
 const rLg = 20.0;
 
+bool isDark(BuildContext context) => ShadTheme.of(context).brightness == Brightness.dark;
+
+/// The Ledger logo, in the variant made for the current theme.
+class AppLogo extends StatelessWidget {
+  const AppLogo({super.key, this.size = 28});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Image.asset(
+        isDark(context) ? 'assets/brand/logo_dark.png' : 'assets/brand/logo_light.png',
+        width: size,
+        height: size,
+        filterQuality: FilterQuality.medium,
+      );
+}
+
 /// The company logo of a source (or an icon for founder input).
 class SourceLogo extends StatelessWidget {
   const SourceLogo(this.sourceId, {super.key, this.size = 16});
@@ -35,9 +52,16 @@ class SourceLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = sourceInfo(sourceId);
     if (info.logo == null) return Icon(info.icon, size: size, color: context.cs.mutedForeground);
-    return ClipRRect(
+    final image = ClipRRect(
       borderRadius: BorderRadius.circular(size * 0.22),
       child: Image.asset(info.logo!, width: size, height: size, filterQuality: FilterQuality.medium),
+    );
+    if (!isDark(context)) return image;
+    // Some logos are dark on transparent; give them a light tile in dark mode.
+    return Container(
+      padding: EdgeInsets.all(size * 0.08),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(size * 0.26)),
+      child: SizedBox(width: size * 0.84, height: size * 0.84, child: FittedBox(child: image)),
     );
   }
 }

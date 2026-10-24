@@ -1,12 +1,12 @@
 {
-  "note": "September 2026 close, carried over from the September investor update.",
+  "note": "September 2026 close, carried over from the September investor update. ILLUSTRATIVE figures for a demo: not Reson8's real financials.",
   "facts": [
-    {"source": "stripe", "ref": "stripe-sep-close", "metric": "arr", "value": 610000, "unit": "EUR", "text": "ARR at end of September: €610k"},
-    {"source": "hubspot", "ref": "hubspot-sep-close", "metric": "customers", "value": 48, "unit": "stores", "text": "Paying customers at end of September: 48 stores"},
-    {"source": "stripe", "ref": "stripe-sep-close", "metric": "nrr", "value": 106, "unit": "%", "text": "NRR (trailing 12 months) in September: 106%"},
-    {"source": "linkedin", "ref": "analytics-sep-close", "metric": "demos", "value": 104, "unit": "demos", "text": "Demos booked in September: 104"},
-    {"source": "stripe", "ref": "bank-sep-close", "metric": "burn", "value": 142000, "unit": "EUR", "text": "Net burn in September: €142k"},
-    {"source": "stripe", "ref": "bank-sep-close", "metric": "cash", "value": 2910000, "unit": "EUR", "text": "Cash at end of September: €2.91M"},
-    {"source": "stripe", "ref": "bank-sep-close", "metric": "runway", "value": 20, "unit": "months", "text": "Runway at end of September: 20 months"}
+    {"source": "stripe", "ref": "stripe-sep-close", "metric": "arr", "value": 352000, "unit": "EUR", "text": "ARR at end of September: €352k"},
+    {"source": "hubspot", "ref": "hubspot-sep-close", "metric": "customers", "value": 41, "unit": "teams", "text": "Paying teams at end of September: 41"},
+    {"source": "stripe", "ref": "stripe-sep-close", "metric": "nrr", "value": 104, "unit": "%", "text": "NRR (trailing 12 months) in September: 104%"},
+    {"source": "linkedin", "ref": "analytics-sep-close", "metric": "demos", "value": 96, "unit": "demos", "text": "Demos booked in September: 96"},
+    {"source": "stripe", "ref": "bank-sep-close", "metric": "burn", "value": 198000, "unit": "EUR", "text": "Net burn in September: €198k"},
+    {"source": "stripe", "ref": "bank-sep-close", "metric": "cash", "value": 4120000, "unit": "EUR", "text": "Cash at end of September: €4.12M"},
+    {"source": "stripe", "ref": "bank-sep-close", "metric": "runway", "value": 21, "unit": "months", "text": "Runway at end of September: 21 months"}
   ]
 }

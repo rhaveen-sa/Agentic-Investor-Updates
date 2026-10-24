@@ -1,0 +1,12 @@
+{
+  "source": "packages",
+  "items": [
+    {
+      "id": "pkg-oct-23", "ts": "2026-10-24T09:00:00", "type": "downloads",
+      "title": "SDK downloads, 1 to 23 October (PyPI + npm)",
+      "body": "REAL public data, pulled 24 Oct 2026 from pypistats.org (without mirrors) and api.npmjs.org. livekit-plugins-reson8 on PyPI: 3,941 (September: 4,929). @reson8-labs/agents-plugin-reson8 on npm: 26,794 (September: 16,639). Total 30,735 in 23 days, against 21,568 in all of September. Downloads include CI installs, so they track developer adoption, not users.",
+      "data": {"pypi": 3941, "npm": 26794, "total": 30735, "sep_pypi": 4929, "sep_npm": 16639, "sep_total": 21568},
+      "facts": [{"text": "SDK downloads hit 30.7k in 1 to 23 October (PyPI + npm), already past September's 21.6k", "kind": "highlight", "owner": "Jarno"}]
+    }
+  ]
+}

@@ -2,97 +2,32 @@
   "source": "linkedin",
   "items": [
     {
-      "id": "li-wk40",
-      "ts": "2026-10-06T08:00:00",
-      "type": "weekly_stats",
-      "title": "Week 40: Campaign 'Stop the spoilage' live",
-      "body": "Ad campaign launched Oct 1. 3 organic posts. Demo bookings this week: 31.",
-      "data": {
-        "posts": 3,
-        "demos": 31,
-        "ad_spend_eur": 2100,
-        "ad_status": "active"
-      },
-      "facts": [
-        {
-          "text": "LinkedIn campaign 'Stop the spoilage' live; 31 demos booked this week",
-          "kind": "context",
-          "metric": "demos_week",
-          "value": 31,
-          "unit": "demos",
-          "owner": "Anna"
-        }
-      ]
+      "id": "li-wk40", "ts": "2026-10-06T08:00:00", "type": "weekly_stats",
+      "title": "Week 40: Campaign 'Hear every word' live",
+      "body": "Ad campaign launched Oct 1, targeting healthcare and legal ops in NL and DE. 3 organic posts. Demo bookings this week: 29.",
+      "data": {"posts": 3, "demos": 29, "ad_spend_eur": 2400, "ad_status": "active"},
+      "facts": [{"text": "LinkedIn campaign 'Hear every word' live; 29 demos booked this week", "kind": "context", "metric": "demos_week", "value": 29, "unit": "demos", "owner": "Mirte"}]
     },
     {
-      "id": "li-wk41",
-      "ts": "2026-10-13T08:00:00",
-      "type": "weekly_stats",
-      "title": "Week 41: Case study post (Bio Markt Lindner)",
-      "body": "Case study post reached 52,000 impressions. 4 posts. Demo bookings this week: 44 (record).",
-      "data": {
-        "posts": 4,
-        "impressions": 52000,
-        "demos": 44,
-        "ad_spend_eur": 2300,
-        "ad_status": "active"
-      },
-      "facts": [
-        {
-          "text": "LinkedIn case study reached 52k impressions and drove a record 44 demos in one week",
-          "kind": "highlight",
-          "metric": "demos_week",
-          "value": 44,
-          "unit": "demos",
-          "owner": "Anna"
-        }
-      ]
+      "id": "li-wk41", "ts": "2026-10-13T08:00:00", "type": "weekly_stats",
+      "title": "Week 41: WER benchmark post",
+      "body": "Post comparing word error rate on Dutch medical dictation against two generic engines reached 47,000 impressions. 4 posts. Demo bookings this week: 41 (record).",
+      "data": {"posts": 4, "impressions": 47000, "demos": 41, "ad_spend_eur": 2600, "ad_status": "active"},
+      "facts": [{"text": "WER benchmark post reached 47k impressions and drove a record 41 demos in one week", "kind": "highlight", "metric": "demos_week", "value": 41, "unit": "demos", "owner": "Mirte"}]
     },
     {
-      "id": "li-wk42",
-      "ts": "2026-10-20T08:00:00",
-      "type": "weekly_stats",
+      "id": "li-wk42", "ts": "2026-10-20T08:00:00", "type": "weekly_stats",
       "title": "Week 42: weekly stats",
-      "body": "0 posts this week. Ad spend: €0 since Oct 14. Demo bookings this week: 12.",
-      "data": {
-        "posts": 0,
-        "demos": 12,
-        "ad_spend_eur": 0,
-        "ad_status": "not delivering"
-      },
-      "facts": [
-        {
-          "text": "Demo bookings fell to 12 this week (from 44); no LinkedIn posts and no ad delivery since Oct 14",
-          "kind": "lowlight",
-          "metric": "demos_week",
-          "value": 12,
-          "unit": "demos",
-          "owner": "Anna"
-        }
-      ]
+      "body": "0 posts this week. Ad spend: €0 since Oct 14. Demo bookings this week: 11.",
+      "data": {"posts": 0, "demos": 11, "ad_spend_eur": 0, "ad_status": "not delivering"},
+      "facts": [{"text": "Demo bookings fell to 11 this week (from 41); no LinkedIn posts and no ad delivery since Oct 14", "kind": "lowlight", "metric": "demos_week", "value": 11, "unit": "demos", "owner": "Mirte"}]
     },
     {
-      "id": "li-wk43",
-      "ts": "2026-10-27T08:00:00",
-      "type": "weekly_stats",
+      "id": "li-wk43", "ts": "2026-10-27T08:00:00", "type": "weekly_stats",
       "title": "Week 43: weekly stats",
-      "body": "2 posts. Ads delivering again since Oct 21. Demo bookings this week: 38.",
-      "data": {
-        "posts": 2,
-        "demos": 38,
-        "ad_spend_eur": 1900,
-        "ad_status": "active"
-      },
-      "facts": [
-        {
-          "text": "Demo bookings recovered to 38 this week; ads delivering again",
-          "kind": "context",
-          "metric": "demos_week",
-          "value": 38,
-          "unit": "demos",
-          "owner": "Anna"
-        }
-      ]
+      "body": "2 posts. Ads delivering again since Oct 21. Demo bookings this week: 34.",
+      "data": {"posts": 2, "demos": 34, "ad_spend_eur": 2200, "ad_status": "active"},
+      "facts": [{"text": "Demo bookings recovered to 34 this week; ads delivering again", "kind": "context", "metric": "demos_week", "value": 34, "unit": "demos", "owner": "Mirte"}]
     }
   ]
 }

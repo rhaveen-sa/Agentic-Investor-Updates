@@ -11,6 +11,10 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     self.minSize = NSSize(width: 1100, height: 700)
+    // Content runs under a transparent title bar; only the traffic lights stay.
+    self.titlebarAppearsTransparent = true
+    self.titleVisibility = .hidden
+    self.styleMask.insert(.fullSizeContentView)
     super.awakeFromNib()
   }
 }

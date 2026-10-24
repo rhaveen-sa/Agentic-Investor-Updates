@@ -25,6 +25,9 @@ class FeedItem {
   /// Set when [userText] came from a teammate instead of the founder.
   final String? author;
 
+  /// Which October week (0-3) this belongs to; set when added to the feed.
+  int week = 0;
+
   /// For month-close check-ins: show the "Draft report" action.
   bool offersReport = false;
 }

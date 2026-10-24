@@ -118,9 +118,8 @@ class Agent {
   // ---------------------------------------------------------------------------
   // Run B
 
-  Future<void> anomaly(SimWeek w, (Fact, Fact) drop) async {
-    final (prev, curr) = drop;
-    final pct = ((1 - curr.value! / prev.value!) * 100).round();
+  Future<void> anomaly(SimWeek w, int prev, int curr) async {
+    final pct = ((1 - curr / prev) * 100).round();
     final run = AgentRun(RunKind.anomaly);
     final item = FeedItem(
       type: FeedType.approval,
@@ -141,8 +140,7 @@ class Agent {
           [
             anomalyPrompt(
               date: _day.format(s.today),
-              detail: 'weekly demo bookings fell from ${prev.value!.round()} (${prev.id}) to ${curr.value!.round()} '
-                  '(${curr.id}), −$pct% week over week.',
+              detail: 'weekly demo bookings fell from $prev to $curr, −$pct% week over week.',
               since: _day.format(since),
               until: _day.format(w.until),
             ),
@@ -230,7 +228,7 @@ class Agent {
               'type': 'text',
               'text': inboundPrompt(
                 date: _day.format(s.today),
-                from: 'Lena',
+                from: 'Thomas',
                 channel: 'document "$name" (attached)',
                 sourceId: 'document',
                 ref: ref,
@@ -239,14 +237,14 @@ class Agent {
             },
           ]);
         },
-        (h) => scriptedInbound(s, h, 'Document $name', sourceId: 'document', from: 'Lena', ref: ref),
+        (h) => scriptedInbound(s, h, 'Document $name', sourceId: 'document', from: 'Thomas', ref: ref),
       );
       item.body = run.summary;
       s.touch();
       return;
     }
     final text = utf8.decode(bytes, allowMalformed: true);
-    await inbound(text.length > 20000 ? text.substring(0, 20000) : text, sourceId: 'document', from: 'Lena', docName: name);
+    await inbound(text.length > 20000 ? text.substring(0, 20000) : text, sourceId: 'document', from: 'Thomas', docName: name);
   }
 
   // ---------------------------------------------------------------------------
@@ -319,6 +317,8 @@ class Agent {
       },
     );
     final r = s.report;
+    // Computed like the KPI table, after either path, so no model writes it.
+    r?.defaultAlive = s.buildDefaultAlive();
     item.title = 'October update ready for approval';
     item.body = r == null
         ? 'Something went wrong while drafting.'
@@ -340,7 +340,7 @@ class Agent {
         ];
     return Report(
       period: 'October 2026',
-      subject: '${sub['subject'] ?? 'Shelfwise – October 2026 update'}',
+      subject: '${sub['subject'] ?? 'Reson8 – October 2026 update'}',
       kpis: kpis,
       sections: [
         ReportSection('TL;DR', claims('tldr')),

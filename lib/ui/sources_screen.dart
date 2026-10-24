@@ -86,9 +86,16 @@ class _AvailableCard extends StatelessWidget {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(rLg), border: Border.all(color: cs.border)),
       child: Row(children: [
         if (a.logo != null)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: Image.asset(a.logo!, width: 28, height: 28, filterQuality: FilterQuality.medium),
+          Container(
+            padding: EdgeInsets.all(isDark(context) ? 2 : 0),
+            decoration: BoxDecoration(
+              color: isDark(context) ? Colors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.asset(a.logo!, width: isDark(context) ? 24 : 28, height: isDark(context) ? 24 : 28, filterQuality: FilterQuality.medium),
+            ),
           )
         else
           Container(

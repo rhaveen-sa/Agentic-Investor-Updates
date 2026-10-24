@@ -1,18 +1,18 @@
 {
   "source": "hubspot",
   "items": [
-    {"id": "hs-deal-2291", "ts": "2026-10-02T14:00:00", "type": "deals_won", "title": "2 deals closed won: Bio Markt Lindner, Frischeck Sauer", "body": "Two independent stores signed annual plans. Combined new ARR €24,000.",
-     "facts": [{"text": "2 new stores signed (Bio Markt Lindner, Frischeck Sauer), +€24k ARR", "kind": "highlight", "metric": "new_arr", "value": 24000, "unit": "EUR", "owner": "Lena"}]},
-    {"id": "hs-deal-2310", "ts": "2026-10-12T17:30:00", "type": "deal_won", "title": "Closed won: FreshMart Nord paid pilot (12 stores)", "body": "First chain customer. Paid pilot across 12 FreshMart Nord stores, €36,000 ARR. Contract signed by Head of Procurement.",
-     "facts": [{"text": "Paid pilot with FreshMart Nord, our first chain: 12 stores, +€36k ARR", "kind": "highlight", "metric": "new_arr", "value": 36000, "unit": "EUR", "owner": "Lena"}]},
-    {"id": "hs-churn-0457", "ts": "2026-10-17T10:15:00", "type": "churn", "title": "Closed lost (churn): Kaufhaus Brandt", "body": "Store closed permanently (owner retired). Cancellation reason: business closed, unrelated to product. -€9,000 ARR.",
-     "facts": [{"text": "One store (Kaufhaus Brandt) closed for reasons unrelated to us, −€9k ARR", "kind": "lowlight", "metric": "churned_arr", "value": -9000, "unit": "EUR", "owner": "Lena"}]},
-    {"id": "hs-deal-2334", "ts": "2026-10-24T12:00:00", "type": "deal_won", "title": "Closed won: Markthalle Ochs", "body": "One new independent store. €7,000 ARR.",
-     "facts": [{"text": "1 new store signed (Markthalle Ochs), +€7k ARR", "kind": "context", "metric": "new_arr", "value": 7000, "unit": "EUR", "owner": "Lena"}]},
-    {"id": "hs-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October pipeline & customer summary", "body": "Paying customers: 51 (+3 net). Demos booked in October (all channels): 125.",
+    {"id": "hs-deal-1142", "ts": "2026-10-02T14:00:00", "type": "deals_won", "title": "2 deals closed won: Van Dijk Advocaten, Contactpunt BV", "body": "A law firm and a contact centre both moved from Pro to annual Growth contracts. Combined new ARR €19,000.",
+     "facts": [{"text": "2 new paying teams (Van Dijk Advocaten, Contactpunt BV), +€19k ARR", "kind": "highlight", "metric": "new_arr", "value": 19000, "unit": "EUR", "owner": "Thomas"}]},
+    {"id": "hs-deal-1160", "ts": "2026-10-12T17:30:00", "type": "deal_won", "title": "Closed won: Noorderlicht Zorggroep paid pilot (9 clinics)", "body": "First healthcare customer. Paid pilot across 9 clinics for Dutch clinical dictation, €41,000 ARR. Zero audio retention and the ISO 27001 certificate were both procurement requirements.",
+     "facts": [{"text": "Paid pilot with Noorderlicht Zorggroep, our first healthcare customer: 9 clinics, +€41k ARR", "kind": "highlight", "metric": "new_arr", "value": 41000, "unit": "EUR", "owner": "Thomas"}]},
+    {"id": "hs-churn-0231", "ts": "2026-10-16T10:15:00", "type": "churn", "title": "Closed lost (churn): Helder Notarissen", "body": "Notary practice merged into a larger firm already standardised on another vendor. Cancellation reason: acquisition. -€7,000 ARR.",
+     "facts": [{"text": "One team (Helder Notarissen) churned after being acquired by a firm on another vendor, −€7k ARR", "kind": "lowlight", "metric": "churned_arr", "value": -7000, "unit": "EUR", "owner": "Thomas"}]},
+    {"id": "hs-deal-1178", "ts": "2026-10-24T12:00:00", "type": "deal_won", "title": "Closed won: Brugman Verzekeringen", "body": "One new team on an annual Growth contract. €8,000 ARR.",
+     "facts": [{"text": "1 new paying team (Brugman Verzekeringen), +€8k ARR", "kind": "context", "metric": "new_arr", "value": 8000, "unit": "EUR", "owner": "Thomas"}]},
+    {"id": "hs-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October pipeline & customer summary", "body": "Paying teams: 44 (+3 net). Demos booked in October (all channels): 115.",
      "facts": [
-       {"text": "Paying customers at end of October: 51", "kind": "kpi", "metric": "customers", "value": 51, "unit": "stores", "period": "2026-10", "owner": "Lena"},
-       {"text": "Demos booked in October: 125", "kind": "kpi", "metric": "demos", "value": 125, "unit": "demos", "period": "2026-10", "owner": "Anna"}
+       {"text": "Paying teams at end of October: 44", "kind": "kpi", "metric": "customers", "value": 44, "unit": "teams", "period": "2026-10", "owner": "Thomas"},
+       {"text": "Demos booked in October: 115", "kind": "kpi", "metric": "demos", "value": 115, "unit": "demos", "period": "2026-10", "owner": "Mirte"}
      ]}
   ]
 }

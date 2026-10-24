@@ -7,7 +7,7 @@ import '../app_state.dart';
 import '../models/report.dart';
 import 'widgets/common.dart';
 
-final _numberRe = RegExp(r'[−+\-]?€?\d[\d.,]*(?:\s?(?:k|M|%| pts| months| stores| demos| impressions))?');
+final _numberRe = RegExp(r'[−+\-]?€?\d[\d.,]*(?:\s?(?:k|M|%| pts| months| stores| teams| clinics| demos| impressions))?');
 
 class ReportScreen extends StatelessWidget {
   const ReportScreen({super.key});
@@ -27,7 +27,7 @@ class ReportScreen extends StatelessWidget {
                 ? ShadButton(
                     enabled: !s.isBusy,
                     onPressed: s.draftReport,
-                    leading: const Icon(LucideIcons.sparkles, size: 16),
+                    leading: const Icon(LucideIcons.fileText, size: 16),
                     child: const Text('Draft now'),
                   )
                 : null,
@@ -66,7 +66,7 @@ class ReportScreen extends StatelessWidget {
                 radius: BorderRadius.circular(rLg),
                 padding: const EdgeInsets.fromLTRB(44, 36, 44, 32),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  _Meta('To', 'Northstar Ventures, 5 angels'),
+                  _Meta('To', 'Balderton Capital, NP-Hard, angels'),
                   const SizedBox(height: 10),
                   Text(r.subject, style: tt.h3),
                   const SizedBox(height: 18),
@@ -75,10 +75,14 @@ class ReportScreen extends StatelessWidget {
                   Text('Hi all,', style: tt.p),
                   const SizedBox(height: 18),
                   for (final sec in r.sections) ...[
-                    if (sec.title == 'Highlights') ...[_KpiTable(r.kpis), const SizedBox(height: 22)],
+                    if (sec.title == 'Highlights') ...[
+                      _KpiTable(r.kpis),
+                      const SizedBox(height: 22),
+                      if (r.defaultAlive != null) ...[_DefaultAliveBlock(r.defaultAlive!), const SizedBox(height: 22)],
+                    ],
                     _Section(sec),
                   ],
-                  Text('Thanks for your support,\nLena', style: tt.p.copyWith(height: 1.6)),
+                  Text('Thanks for your support,\nThomas', style: tt.p.copyWith(height: 1.6)),
                   const SizedBox(height: 28),
                   const ShadSeparator.horizontal(),
                   const SizedBox(height: 18),
@@ -299,6 +303,67 @@ class _KpiTable extends StatelessWidget {
   }
 }
 
+String _pct(double g) => '${(g * 100).toStringAsFixed(1)}%';
+
+/// The answer in one line, shared by the screen and the text export.
+String defaultAliveVerdict(DefaultAlive d) {
+  final g = _pct(d.monthlyGrowth);
+  if (d.alive) {
+    return 'Default alive. If costs stay flat and ARR keeps growing $g a month, revenue covers costs in '
+        '${d.months} months, with ${AppState.formatValue(d.cashLeft, 'EUR')} still in the bank.';
+  }
+  if (d.months >= 120) return 'Default dead. At $g monthly growth, revenue does not cover costs within ten years.';
+  return 'Default dead. At $g monthly growth the cash runs out in ${d.months} months, before revenue covers costs.';
+}
+
+/// The growth rate where the answer flips.
+String defaultAliveThreshold(DefaultAlive d) => d.alive
+    ? 'The line is ${_pct(d.minGrowth)} a month. Grow slower than that and the answer flips to default dead.'
+    : 'It takes at least ${_pct(d.minGrowth)} monthly growth to become default alive.';
+
+class _DefaultAliveBlock extends StatelessWidget {
+  const _DefaultAliveBlock(this.d);
+
+  final DefaultAlive d;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = context.cs;
+    final tt = context.tt;
+    final body = tt.p.copyWith(fontSize: 15, height: 1.6);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Text('Default alive?', style: tt.large),
+        const SizedBox(width: 10),
+        TintBadge(
+          d.alive ? 'Default alive' : 'Default dead',
+          d.alive ? green : red,
+          icon: d.alive ? LucideIcons.circleCheck : LucideIcons.flag,
+        ),
+      ]),
+      const SizedBox(height: 8),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+        decoration: BoxDecoration(border: Border.all(color: cs.border), borderRadius: BorderRadius.circular(rMd)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(defaultAliveVerdict(d), style: body),
+          const SizedBox(height: 4),
+          Text(defaultAliveThreshold(d), style: body),
+          const SizedBox(height: 10),
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => showFactSources(context, d.factIds, title: 'Inputs for the default alive test'),
+              child: Text('Show the inputs', style: tt.small.copyWith(color: blue, fontSize: 13)),
+            ),
+          ),
+        ]),
+      ),
+    ]);
+  }
+}
+
 String reportAsText(Report r) {
   final b = StringBuffer('Subject: ${r.subject}\n\nHi all,\n\n');
   for (final sec in r.sections) {
@@ -308,6 +373,13 @@ String reportAsText(Report r) {
         b.writeln('${k.label.padRight(26)}${(k.prev ?? '–').padRight(11)}${(k.curr ?? '–').padRight(11)}${k.change ?? ''}');
       }
       b.writeln();
+      final d = r.defaultAlive;
+      if (d != null) {
+        b.writeln('Default alive?');
+        b.writeln('- ${defaultAliveVerdict(d)}');
+        b.writeln('- ${defaultAliveThreshold(d)}');
+        b.writeln();
+      }
     }
     b.writeln(sec.title);
     for (var i = 0; i < sec.claims.length; i++) {
@@ -315,6 +387,6 @@ String reportAsText(Report r) {
     }
     b.writeln();
   }
-  b.write('Thanks for your support,\nLena');
+  b.write('Thanks for your support,\nThomas');
   return b.toString();
 }

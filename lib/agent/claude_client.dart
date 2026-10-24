@@ -58,7 +58,11 @@ class ClaudeClient {
   }) async {
     if (!hasKey) throw ClaudeException('No ANTHROPIC_API_KEY set');
     final messages = <Map<String, dynamic>>[
-      {'role': 'user', 'content': userContent},
+      {
+        'role': 'user',
+        // A content list must hold content blocks, so plain strings become text blocks.
+        'content': [for (final c in userContent) c is String ? {'type': 'text', 'text': c} : c],
+      },
     ];
     var finalText = '';
     for (var i = 0; i < maxIterations; i++) {

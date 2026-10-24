@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,7 +19,7 @@ const slackWebhookUrl = String.fromEnvironment('SLACK_WEBHOOK_URL');
 /// The fixed KPI order of the investor update.
 const kpiCatalog = <String, String>{
   'arr': 'ARR',
-  'customers': 'Paying customers',
+  'customers': 'Paying teams',
   'nrr': 'NRR (trailing 12 months)',
   'demos': 'Demos booked',
   'burn': 'Net burn',
@@ -59,11 +60,18 @@ class AppState extends ChangeNotifier {
   late final Agent agent;
 
   // Simulated time
-  int weekIndex = -1;
-  DateTime today = DateTime(2026, 10, 1);
+  /// The simulated week we are in (0-3 = Oct weeks, 4 = month close).
+  int weekIndex = 0;
+  DateTime today = DateTime(2026, 10, 7);
+
+  /// Weeks whose check-in has run.
+  final Set<int> ranWeeks = {};
+
+  /// The week whose conversation the Agent screen shows.
+  int viewWeek = 0;
 
   // Data
-  final connectors = {for (final id in ['github', 'jamie', 'hubspot', 'linkedin', 'stripe']) id: MockConnector(id)};
+  final connectors = {for (final id in ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages']) id: MockConnector(id)};
   final List<Fact> facts = [];
   final List<FeedItem> feed = [];
   final List<OutboundMessage> outbox = [];
@@ -73,7 +81,8 @@ class AppState extends ChangeNotifier {
   int _msgSeq = 0;
 
   // Settings
-  String cadence = 'Weekly';
+  ThemeMode themeMode = ThemeMode.system;
+  String cadence = 'Week';
   String period = 'Monthly';
   final Set<String> kpis = {'arr', 'customers', 'demos', 'burn', 'cash', 'runway'};
   final Map<String, bool> channels = {'Slack': true, 'WhatsApp': false, 'Email': true};
@@ -84,10 +93,14 @@ class AppState extends ChangeNotifier {
   String? busy;
   bool get isBusy => busy != null;
 
-  SimWeek? get currentWeek => weekIndex >= 0 ? simWeeks[weekIndex] : null;
+  SimWeek? get currentWeek => simWeeks[weekIndex];
   bool get monthClosed => weekIndex >= simWeeks.length - 1;
-  bool get canAdvance => !isBusy && !monthClosed;
-  String get nextLabel => weekIndex == simWeeks.length - 2 ? 'Close month' : 'Next week';
+
+  /// The last of the four October weeks we have reached.
+  int get lastWeek => weekIndex.clamp(0, 3);
+  bool get currentWeekRan => ranWeeks.contains(weekIndex);
+  bool get canRunCheckIn => !isBusy && !ranWeeks.contains(viewWeek);
+  bool get canCloseMonth => !isBusy && !monthClosed && viewWeek == 3 && ranWeeks.contains(3);
 
   void setTab(int i) {
     tab = i;
@@ -102,8 +115,10 @@ class AppState extends ChangeNotifier {
   void touch() => notifyListeners();
 
   Future<void> reset() async {
-    weekIndex = -1;
-    today = DateTime(2026, 10, 1);
+    weekIndex = 0;
+    today = DateTime(2026, 10, 7);
+    ranWeeks.clear();
+    viewWeek = 0;
     facts.clear();
     feed.clear();
     outbox.clear();
@@ -124,7 +139,7 @@ class AppState extends ChangeNotifier {
         kind: FactKind.kpi,
         sourceId: f['source'],
         sourceRef: f['ref'],
-        owner: 'Lena',
+        owner: 'Thomas',
         date: DateTime(2026, 9, 30),
         metric: f['metric'],
         value: (f['value'] as num).toDouble(),
@@ -134,13 +149,6 @@ class AppState extends ChangeNotifier {
         status: FactStatus.confirmed,
       );
     }
-    feed.add(FeedItem(
-      type: FeedType.welcome,
-      title: 'Agent is set up for Shelfwise',
-      date: today,
-      body: 'Hi Lena. I\'m connected to GitHub, Jamie, HubSpot, LinkedIn and Stripe. I\'ll check in every week '
-          'and have the October update ready on Oct 31.',
-    ));
     notifyListeners();
   }
 
@@ -288,7 +296,7 @@ class AppState extends ChangeNotifier {
       try {
         await http.post(Uri.parse(slackWebhookUrl),
             headers: {'content-type': 'application/json'},
-            body: jsonEncode({'text': '*To ${m.to}* (sent by Shelfwise update agent on behalf of Lena)\n${m.text}'}));
+            body: jsonEncode({'text': '*To ${m.to}* (sent by Reson8 update agent on behalf of Thomas)\n${m.text}'}));
       } catch (_) {
         // Demo keeps working without the real webhook.
       }
@@ -313,56 +321,94 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Simulated time + runs
 
-  Future<void> advance() async {
-    if (!canAdvance) return;
-    weekIndex++;
-    final w = simWeeks[weekIndex];
-    today = DateTime(w.until.year, w.until.month, w.until.day);
+  /// Week selector: any October week can be opened. Opening a later week
+  /// moves the simulated date there; check-ins are started separately.
+  void selectWeek(int i) {
+    viewWeek = i;
+    if (i > weekIndex) {
+      weekIndex = i;
+      final w = simWeeks[i];
+      today = DateTime(w.until.year, w.until.month, w.until.day);
+    }
     notifyListeners();
-    await agent.checkIn(w, isClose: monthClosed);
-    final drop = demoDrop();
-    if (drop != null && !monthClosed) await agent.anomaly(w, drop);
   }
 
-  /// Deterministic anomaly trigger: this week's demos fell by more than 50%.
-  (Fact, Fact)? demoDrop() {
-    final w = currentWeek;
-    if (w == null) return null;
-    final weekly = facts.where((f) => f.metric == 'demos_week' && f.status != FactStatus.dismissed).toList()
-      ..sort((a, b) => a.date.compareTo(b.date));
-    if (weekly.length < 2) return null;
-    final curr = weekly.last;
-    final prev = weekly[weekly.length - 2];
-    if (!curr.date.isAfter(w.since)) return null;
-    if (curr.value != null && prev.value != null && curr.value! < prev.value! * 0.5) return (prev, curr);
-    return null;
+  /// Runs the check-in of the week being viewed.
+  Future<void> runCheckIn() async {
+    if (!canRunCheckIn) return;
+    final week = viewWeek;
+    ranWeeks.add(week);
+    final w = simWeeks[week];
+    await agent.checkIn(w, isClose: false);
+    final drop = await demoDrop(week);
+    if (drop != null) await agent.anomaly(w, drop.prev, drop.curr);
   }
 
-  Future<void> sendInbound(String text, {String sourceId = 'founder', String? docName}) =>
-      agent.inbound(text, sourceId: sourceId, from: 'Lena', docName: docName);
+  Future<void> closeMonth() async {
+    if (!canCloseMonth) return;
+    weekIndex = 4;
+    viewWeek = 3;
+    ranWeeks.add(4);
+    today = DateTime(2026, 10, 31);
+    notifyListeners();
+    await agent.checkIn(simWeeks[4], isClose: true);
+  }
+
+  /// Runs the next step of the month: this week's check-in, else the next
+  /// week's, else the month close.
+  Future<void> advance() async {
+    if (canRunCheckIn) return runCheckIn();
+    if (canCloseMonth) return closeMonth();
+    if (viewWeek < 3) {
+      selectWeek(viewWeek + 1);
+      return runCheckIn();
+    }
+  }
+
+  /// Deterministic anomaly trigger: demo bookings in [week] fell by more
+  /// than 50% versus the week before. Read from the growth source, so it
+  /// works in whatever order the weeks are run.
+  Future<({int prev, int curr})?> demoDrop(int week) async {
+    if (week == 0) return null;
+    Future<int?> demos(SimWeek w) async {
+      final items = await connectors['linkedin']!.fetch(w.since, w.until);
+      for (final i in items) {
+        final d = (i.json['data'] as Map?)?['demos'];
+        if (d is num) return d.toInt();
+      }
+      return null;
+    }
+
+    final prev = await demos(simWeeks[week - 1]);
+    final curr = await demos(simWeeks[week]);
+    if (prev == null || curr == null || curr >= prev * 0.5) return null;
+    return (prev: prev, curr: curr);
+  }
+
+  Future<void> sendInbound(String text, {String sourceId = 'founder', String? docName}) {
+    return agent.inbound(text, sourceId: sourceId, from: 'Thomas', docName: docName);
+  }
 
   Future<void> sendDocument(String name, Uint8List bytes, String mime) => agent.document(name, bytes, mime);
 
   Future<void> draftReport() async {
     await agent.report();
-    tab = 4;
+    tab = 3;
     notifyListeners();
   }
 
   void approveReport() {
     report?.approved = true;
-    feed.insert(
-        0,
-        FeedItem(
+    addFeed(FeedItem(
           type: FeedType.info,
           title: 'October update approved',
           date: today,
-          body: 'Queued for Northstar Ventures and 5 angels (simulated). Next check-in: Nov 7.',
+          body: 'Queued for Balderton Capital, NP-Hard and angels (simulated). Next check-in: Nov 7.',
         ));
-    notifyListeners();
   }
 
   void addFeed(FeedItem item) {
+    item.week = viewWeek;
     feed.insert(0, item);
     notifyListeners();
   }
@@ -388,6 +434,57 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  /// Default alive or default dead (Paul Graham): if expenses stay flat and
+  /// revenue keeps growing at this month's rate, does revenue catch up with
+  /// expenses before the cash runs out? Null until ARR for both months, net
+  /// burn and cash are all confirmed.
+  DefaultAlive? buildDefaultAlive() {
+    final arrPrev = latestMetric('arr', period: '2026-09', confirmedOnly: true);
+    final arr = latestMetric('arr', period: '2026-10', confirmedOnly: true);
+    final burn = latestMetric('burn', period: '2026-10', confirmedOnly: true);
+    final cash = latestMetric('cash', period: '2026-10', confirmedOnly: true);
+    final a0 = arrPrev?.value, a1 = arr?.value, b = burn?.value, c0 = cash?.value;
+    if (a0 == null || a1 == null || b == null || c0 == null || a0 <= 0) return null;
+
+    final revenue = a1 / 12;
+    final expenses = b + revenue; // net burn = expenses - revenue
+    final growth = a1 / a0 - 1;
+
+    // Month by month: pay the gap from cash, then grow revenue. 120 months
+    // without break-even counts as dead.
+    (bool, int, double) simulate(double g) {
+      var r = revenue, c = c0;
+      for (var m = 0; m < 120; m++) {
+        if (r >= expenses) return (true, m, c);
+        c -= expenses - r;
+        if (c <= 0) return (false, m + 1, 0);
+        r *= 1 + g;
+      }
+      return (false, 120, c);
+    }
+
+    // Lowest steady monthly growth that still breaks even, by bisection.
+    var lo = 0.0, hi = 1.0;
+    for (var i = 0; i < 40; i++) {
+      final mid = (lo + hi) / 2;
+      if (simulate(mid).$1) {
+        hi = mid;
+      } else {
+        lo = mid;
+      }
+    }
+
+    final (alive, months, cashLeft) = simulate(growth);
+    return DefaultAlive(
+      alive: alive,
+      monthlyGrowth: growth,
+      months: months,
+      cashLeft: cashLeft,
+      minGrowth: hi,
+      factIds: [arrPrev!.id, arr!.id, burn!.id, cash!.id],
+    );
+  }
+
   List<KpiRow> buildKpiRows() {
     final rows = <KpiRow>[];
     for (final entry in kpiCatalog.entries) {
@@ -408,7 +505,7 @@ class AppState extends ChangeNotifier {
             change = null;
           default:
             final pct = (c - p) / p * 100;
-            change = '${pct >= 0 ? '+' : ''}${pct.abs() >= 10 ? pct.round() : pct.toStringAsFixed(1)}%';
+            change = '${pct >= 0 ? '+' : ''}${pct.toStringAsFixed(1)}%';
         }
       }
       rows.add(KpiRow(

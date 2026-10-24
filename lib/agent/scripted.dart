@@ -31,20 +31,21 @@ void _think(AppState s, ToolHost h, String note) {
 
 const _questions = [
   ['Anything from the team this week the tools can\'t see, like hires, departures or big customer conversations?'],
-  ['FreshMart Nord is our first chain customer. Should it lead the October update?'],
-  ['Demo bookings fell from 44 to 12. I\'m checking with Anna. Do you already know what happened?'],
-  ['FreshMart said they want 40 stores in Q1. Is there anything in writing yet?'],
+  ['Noorderlicht Zorggroep is our first healthcare customer. Should it lead the October update?'],
+  ['Demo bookings fell from 41 to 11. I\'m checking with Mirte. Do you already know what happened?'],
+  ['Noorderlicht said they want all 14 clinics in Q1. Is there anything in writing yet?'],
   ['October numbers are in. Confirm them and I\'ll draft the investor update.'],
 ];
 
 const _summaries = [
-  'Good first week: 2 new stores (+€24k ARR), supplier order export shipped, and 31 demos from the new LinkedIn campaign. '
-      'Mara from Northstar asked for NRR in the next update, so I suggest adding it to the KPIs.',
-  'Big week: Release 2.0 brings fresh produce forecasting, and FreshMart Nord signed a paid pilot for 12 stores (+€36k ARR). '
-      'The LinkedIn case study drove a record 44 demos.',
-  'Mixed week: forecast latency is down 60%, but one store closed (−€9k ARR) and demo bookings dropped to 12 with no LinkedIn activity.',
-  'Release 2.1 shipped, 1 new store (+€7k ARR) and demos recovered to 38. FreshMart wants 40 stores in Q1, but that was only said in the pilot review.',
-  'October closed at €668k ARR (+9.5%) and 51 customers. Net burn rose to €171k, runway is now 16 months.',
+  'Good first week: 2 new teams (+€19k ARR), barge-in tuning shipped for the Turns API, and 29 demos from the new LinkedIn campaign. '
+      'Balderton asked for NRR in the next update, so I suggest adding it to the KPIs.',
+  'Big week: Release 1.8 takes us to 10 GA languages, and Noorderlicht Zorggroep signed a paid pilot for 9 clinics (+€41k ARR). '
+      'The WER benchmark post drove a record 41 demos.',
+  'Mixed week: realtime p95 latency is down 38%, but one team churned (−€7k ARR) and demo bookings dropped to 11 with no LinkedIn activity.',
+  'Release 1.9 shipped diarization v2, 1 new team (+€8k ARR) and demos recovered to 34. SDK downloads are already past September at 30.7k. '
+      'Noorderlicht wants all 14 clinics in Q1, but that was only said in the pilot review.',
+  'October closed at €413k ARR (+17.3%) and 44 paying teams. Net burn rose to €231k, runway is now 17 months.',
 ];
 
 Future<void> scriptedCheckIn(AppState s, ToolHost h, SimWeek w, DateTime since, bool isClose) async {
@@ -80,7 +81,7 @@ Future<void> scriptedCheckIn(AppState s, ToolHost h, SimWeek w, DateTime since, 
     if (r['suggest_kpi'] != null) {
       await _t(s, h, 'suggest_kpi', {
         'metric': r['suggest_kpi'],
-        'reason': 'Lead investor (Mara, Northstar Ventures) asked for NRR in the next update (Jamie, Oct 3).',
+        'reason': 'Lead investor (Balderton) asked for NRR in the next update (Jamie, Oct 3).',
         'fact_id': out['id'],
       });
     }
@@ -89,8 +90,8 @@ Future<void> scriptedCheckIn(AppState s, ToolHost h, SimWeek w, DateTime since, 
   h.run.summary = _summaries[idx];
 }
 
-Future<void> scriptedAnomaly(AppState s, ToolHost h, SimWeek w, DateTime since, Fact prev, Fact curr) async {
-  _think(s, h, 'Demos fell ${prev.value!.round()} → ${curr.value!.round()}. Look for the cause.');
+Future<void> scriptedAnomaly(AppState s, ToolHost h, SimWeek w, DateTime since, int prev, int curr) async {
+  _think(s, h, 'Demos fell $prev → $curr. Look for the cause.');
   final range = {'since': _day.format(since), 'until': _day.format(w.until)};
   await _t(s, h, 'fetch_source', {'source': 'linkedin', ...range});
   await _t(s, h, 'fetch_source', {'source': 'hubspot', ...range});
@@ -98,15 +99,15 @@ Future<void> scriptedAnomaly(AppState s, ToolHost h, SimWeek w, DateTime since, 
   _think(s, h, 'No posts and no ad delivery since Oct 14. Find the owner.');
   await _t(s, h, 'team_directory', {});
   await _t(s, h, 'message_teammate', {
-    'person': 'Anna',
+    'person': 'Mirte',
     'channel': 'Slack',
-    'text': 'Hi Anna, quick one for the October investor update: demo bookings dropped from ${prev.value!.round()} last week '
-        'to ${curr.value!.round()} this week, and LinkedIn shows no posts and no ad delivery since Oct 14. '
-        'Do you know what happened, and is it fixed? Thanks! (sent by Lena\'s update agent)',
-    'reason': 'Anna owns LinkedIn and demo bookings. The sources show the drop but not why.',
+    'text': 'Hi Mirte, quick one for the October investor update: demo bookings dropped from $prev last week '
+        'to $curr this week, and LinkedIn shows no posts and no ad delivery since Oct 14. '
+        'Do you know what happened, and is it fixed? Thanks! (sent by Thomas\'s update agent)',
+    'reason': 'Mirte owns LinkedIn and demo bookings. The sources show the drop but not why.',
   });
-  h.run.summary = 'Demos fell from ${prev.value!.round()} to ${curr.value!.round()}; LinkedIn had no posts and the ads stopped '
-      'delivering on Oct 14. Anna owns this, so I drafted a Slack message for you to approve.';
+  h.run.summary = 'Demos fell from $prev to $curr; LinkedIn had no posts and the ads stopped '
+      'delivering on Oct 14. Mirte owns this, so I drafted a Slack message for you to approve.';
 }
 
 Future<void> scriptedInbound(AppState s, ToolHost h, String text,
@@ -121,14 +122,14 @@ Future<void> scriptedInbound(AppState s, ToolHost h, String text,
         'text': 'LinkedIn ad account was suspended on Oct 14 over an expired company card; fixed, ads running again, backup payment method added',
         'kind': 'lowlight',
       },
-      {'text': 'LinkedIn posts paused for two days (Anna out sick), back on schedule', 'kind': 'context'},
+      {'text': 'LinkedIn posts paused for two days (Mirte out sick), back on schedule', 'kind': 'context'},
     ]);
   } else if (t.contains('engineer')) {
-    proposals.add({'text': 'Two backend engineers started this month', 'kind': 'team'});
+    proposals.add({'text': 'Two engineers started this month', 'kind': 'team'});
     final m = RegExp(r'(\d{3})\s?k').firstMatch(t);
     if (m != null) {
       proposals.add({
-        'text': 'Lena estimates October net burn at about €${m.group(1)}k after the two hires',
+        'text': 'Thomas estimates October net burn at about €${m.group(1)}k after the two hires',
         'kind': 'context',
         'metric': 'burn_estimate',
         'value': double.parse(m.group(1)!) * 1000,
@@ -164,39 +165,42 @@ Future<Report> scriptedReport(AppState s, ToolHost h, List<KpiRow> kpis) async {
 
   final sub = Report(
     period: 'October 2026',
-    subject: 'Shelfwise – October 2026 update',
+    subject: 'Reson8 – October 2026 update',
     kpis: kpis,
     sections: [
       ReportSection('TL;DR', [
-        c('ARR up 9.5% to €668k, driven by our first chain pilot (FreshMart Nord, 12 stores).',
-            [...metric('arr'), ...metric('arr', '2026-09'), ...refs(['hs-deal-2310'])]),
-        c('Release 2.0 brings forecasting to fresh produce, our most requested feature.', refs(['gh-rel-2.0'])),
-        c('Net burn rose to €171k after two hires; runway is now 16 months.',
-            [...metric('burn'), ...metric('runway'), ...hires]),
+        c('ARR up 17.3% to €413k, driven by our first healthcare pilot (Noorderlicht Zorggroep, 9 clinics).',
+            [...metric('arr'), ...metric('arr', '2026-09'), ...refs(['hs-deal-1160'])]),
+        c('Release 1.8 takes the API to 10 European languages, and SDK downloads are already past September.',
+            refs(['gh-rel-1.8', 'pkg-oct-23'])),
+        c('Net burn rose to €231k after two hires; runway is now 17 months.', [...metric('burn'), ...metric('runway'), ...hires]),
       ]),
       ReportSection('Highlights', [
-        c('Paid pilot with FreshMart Nord: 12 stores, +€36k ARR. They want to roll out to 40 stores in Q1.',
-            refs(['hs-deal-2310', 'jamie-mtg-1027'])),
-        c('Release 2.0: fresh produce forecasting is live for all customers.', refs(['gh-rel-2.0'])),
-        c('Our case study on LinkedIn reached 52k impressions and drove a record 44 demos in one week.', refs(['li-wk41'])),
+        c('Paid pilot with Noorderlicht Zorggroep: 9 clinics, +€41k ARR. They want to roll out to all 14 clinics in Q1.',
+            refs(['hs-deal-1160', 'jamie-mtg-1027'])),
+        c('Release 1.8: Frisian and Swedish are generally available, taking us to 10 European languages.', refs(['gh-rel-1.8'])),
+        c('Developers downloaded our SDKs 30.7k times from 1 to 23 October, against 21.6k in all of September (PyPI and npm).',
+            refs(['pkg-oct-23'])),
+        c('Our WER benchmark post on LinkedIn reached 47k impressions and drove a record 41 demos in one week.', refs(['li-wk41'])),
+        c('Free to Pro conversion improved to 6.4%, from 5.1% in September.', refs(['stripe-plg-oct'])),
       ]),
       ReportSection('Lowlights', [
-        c('Demo bookings fell to 12 in week 3: our LinkedIn ad account was suspended over an expired card. '
+        c('Demo bookings fell to 11 in week 3: our LinkedIn ad account was suspended over an expired card. '
             'Fixed, and we added a backup payment method.', [...refs(['li-wk42']), ...slack]),
-        c('One store closed for reasons unrelated to us (−€9k ARR).', refs(['hs-churn-0457'])),
-        c('Net burn is up 20% after two engineering hires; runway is 16 months.',
+        c('One team churned after being acquired by a firm on another vendor (−€7k ARR).', refs(['hs-churn-0231'])),
+        c('Net burn is up 16.7% after two engineering hires; runway is 17 months.',
             [...metric('burn'), ...metric('burn', '2026-09'), ...metric('runway'), ...hires]),
       ]),
       ReportSection('Product', [
-        c('Releases 2.0 and 2.1, supplier order export, forecast latency down 60%.',
-            refs(['gh-rel-2.0', 'gh-rel-2.1', 'gh-pr-412', 'gh-pr-447'])),
+        c('Releases 1.8 and 1.9 (diarization v2), barge-in tuning for the Turns API, realtime p95 latency down 38%.',
+            refs(['gh-rel-1.8', 'gh-rel-1.9', 'gh-pr-318', 'gh-pr-349'])),
       ]),
       ReportSection('Team', [
-        c('Two engineers joined; we are interviewing for a senior ML engineer.', [...hires, ...refs(['jamie-mtg-1016'])]),
+        c('Two engineers joined; we are interviewing for a senior speech scientist.', [...hires, ...refs(['jamie-mtg-1019'])]),
       ]),
       ReportSection('Asks', [
-        c('Intros to category managers at regional grocery chains.', refs(['hs-deal-2310'])),
-        c('Referrals for a senior ML engineer with forecasting experience.', refs(['jamie-mtg-1016'])),
+        c('Intros to operations leads at healthcare groups and clinic chains.', refs(['hs-deal-1160'])),
+        c('Referrals for a senior speech scientist.', refs(['jamie-mtg-1019'])),
       ]),
     ],
   );

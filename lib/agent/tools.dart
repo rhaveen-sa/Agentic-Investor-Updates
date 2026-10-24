@@ -25,7 +25,7 @@ final fetchSourceTool = _tool(
   {
     'source': {
       'type': 'string',
-      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe'],
+      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages'],
     },
     'since': _str,
     'until': _str,
@@ -52,17 +52,17 @@ final ledgerProposeTool = _tool(
     },
     'source': {
       'type': 'string',
-      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'founder', 'voice', 'document', 'slack'],
+      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages', 'founder', 'voice', 'document', 'slack'],
     },
-    'source_ref': {'type': 'string', 'description': 'Record id from the source, e.g. hs-deal-2310.'},
-    'owner': {'type': 'string', 'enum': ['Lena', 'Tom', 'Anna']},
+    'source_ref': {'type': 'string', 'description': 'Record id from the source, e.g. hs-deal-1160.'},
+    'owner': {'type': 'string', 'enum': ['Thomas', 'Jarno', 'Mirte']},
     'metric': {
       'type': 'string',
       'description': 'Optional metric key: arr, customers, nrr, demos, burn, cash, runway (monthly KPIs, need period), '
           'demos_week (weekly demo bookings), new_arr, churned_arr.',
     },
     'value': {'type': 'number', 'description': 'Raw number: EUR as full amount (668000), % as 108, months as 16.'},
-    'unit': {'type': 'string', 'enum': ['EUR', '%', 'months', 'stores', 'demos']},
+    'unit': {'type': 'string', 'enum': ['EUR', '%', 'months', 'teams', 'demos']},
     'period': {'type': 'string', 'description': 'For monthly KPIs: YYYY-MM.'},
     'statement_only': {
       'type': 'boolean',
@@ -98,7 +98,7 @@ final messageTeammateTool = _tool(
   'message_teammate',
   'Draft a message to a teammate on the founder\'s behalf. It is NOT sent until the founder approves it.',
   {
-    'person': {'type': 'string', 'enum': ['Tom', 'Anna']},
+    'person': {'type': 'string', 'enum': ['Jarno', 'Mirte']},
     'channel': {'type': 'string', 'enum': ['Slack', 'WhatsApp', 'Email']},
     'text': {'type': 'string', 'description': 'Friendly, short, specific: state what you saw and what you need.'},
     'reason': {'type': 'string', 'description': 'One line for the founder on why you want to send this.'},
@@ -243,7 +243,7 @@ class ToolHost {
       kind: factKindFrom(input['kind'] as String?),
       sourceId: sourceId,
       sourceRef: ref,
-      owner: input['owner'] as String? ?? 'Lena',
+      owner: input['owner'] as String? ?? 'Thomas',
       date: item?.ts ?? inboundDate ?? s.today,
       metric: metric,
       value: (input['value'] as num?)?.toDouble(),

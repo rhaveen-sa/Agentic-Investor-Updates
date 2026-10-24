@@ -1,59 +1,15 @@
 {
   "source": "stripe",
   "items": [
-    {
-      "id": "stripe-oct-close",
-      "ts": "2026-10-31T18:00:00",
-      "type": "month_close",
-      "title": "October finance close (Stripe + bank)",
-      "body": "ARR €668,000 (+9.5% MoM). NRR trailing 12 months: 108%. Net burn €171,000. Cash €2.74M. Runway at current burn: 16 months.",
-      "facts": [
-        {
-          "text": "ARR at end of October: €668k (+9.5% MoM)",
-          "kind": "kpi",
-          "metric": "arr",
-          "value": 668000,
-          "unit": "EUR",
-          "period": "2026-10",
-          "owner": "Lena"
-        },
-        {
-          "text": "NRR (trailing 12 months) in October: 108%",
-          "kind": "kpi",
-          "metric": "nrr",
-          "value": 108,
-          "unit": "%",
-          "period": "2026-10",
-          "owner": "Lena"
-        },
-        {
-          "text": "Net burn in October: €171k",
-          "kind": "kpi",
-          "metric": "burn",
-          "value": 171000,
-          "unit": "EUR",
-          "period": "2026-10",
-          "owner": "Lena"
-        },
-        {
-          "text": "Cash at end of October: €2.74M",
-          "kind": "kpi",
-          "metric": "cash",
-          "value": 2740000,
-          "unit": "EUR",
-          "period": "2026-10",
-          "owner": "Lena"
-        },
-        {
-          "text": "Runway at end of October: 16 months",
-          "kind": "kpi",
-          "metric": "runway",
-          "value": 16,
-          "unit": "months",
-          "period": "2026-10",
-          "owner": "Lena"
-        }
-      ]
-    }
+    {"id": "stripe-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October finance close (Stripe + bank)", "body": "ARR €413,000 (+17.3% MoM). NRR trailing 12 months: 112%. Net burn €231,000. Cash €3.89M. Runway at current burn: 17 months. Headcount cost up after two speech engineers started Oct 5.",
+     "facts": [
+       {"text": "ARR at end of October: €413k (+17.3% MoM)", "kind": "kpi", "metric": "arr", "value": 413000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
+       {"text": "NRR (trailing 12 months) in October: 112%", "kind": "kpi", "metric": "nrr", "value": 112, "unit": "%", "period": "2026-10", "owner": "Thomas"},
+       {"text": "Net burn in October: €231k", "kind": "kpi", "metric": "burn", "value": 231000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
+       {"text": "Cash at end of October: €3.89M", "kind": "kpi", "metric": "cash", "value": 3890000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
+       {"text": "Runway at end of October: 17 months", "kind": "kpi", "metric": "runway", "value": 17, "unit": "months", "period": "2026-10", "owner": "Thomas"}
+     ]},
+    {"id": "stripe-plg-oct", "ts": "2026-10-28T09:00:00", "type": "self_serve", "title": "Self-serve conversion, October", "body": "Free to Pro conversion 6.4% (September: 5.1%). 38 teams on Pro, 11 on Growth, 4 on Enterprise contracts.",
+     "facts": [{"text": "Free to Pro conversion improved to 6.4% in October, from 5.1% in September", "kind": "context", "owner": "Thomas"}]}
   ]
 }

@@ -13,9 +13,10 @@ const _base = 'https://api.reson8.dev/v1';
 const startupVocabulary = [
   'ARR', 'MRR', 'NRR', 'net revenue retention', 'churn', 'runway', 'net burn', 'burn rate', 'CAC', 'LTV',
   'payback', 'pipeline', 'seed round', 'Series A', 'term sheet', 'cap table', 'SAFE', 'ESOP',
-  'Shelfwise', 'FreshMart Nord', 'Northstar Ventures', 'Lena', 'Tom', 'Anna', 'Mara',
-  'backend engineers', 'ML engineer', 'pilot', 'Release 2.0', 'LinkedIn', 'HubSpot', 'Stripe', 'Jamie',
-  '171k', '668k', 'k ARR',
+  'Reson8', 'Resonate Labs', 'Noorderlicht', 'Noorderlicht Zorggroep', 'Balderton', 'Thomas', 'Jarno', 'Mirte',
+  'Turns API', 'diarization', 'speech engineers', 'Release 1.8', 'Release 1.9',
+  'backend engineers', 'speech scientist', 'pilot', 'clinics', 'LinkedIn', 'HubSpot', 'Stripe', 'Jamie',
+  '231k', '413k', 'k ARR',
 ];
 
 /// Record from the mic, then transcribe with Reson8 (prerecorded endpoint,
@@ -70,8 +71,8 @@ class Reson8Client {
             Uri.parse('$_base/custom-model'),
             headers: {'Authorization': 'ApiKey $reson8ApiKey', 'Content-Type': 'application/json'},
             body: jsonEncode({
-              'name': 'shelfwise-investor-updates',
-              'description': 'Startup finance and investor-update vocabulary for Shelfwise',
+              'name': 'reson8-investor-updates',
+              'description': 'Startup finance and investor-update vocabulary for Reson8',
               'phrases': startupVocabulary,
             }),
           )

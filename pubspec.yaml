@@ -17,6 +17,7 @@ dependencies:
   record: ^6.2.1
   shadcn_ui: ^0.53.6
   uuid: ^4.6.0
+  window_manager: ^0.5.2
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +29,4 @@ flutter:
   assets:
     - assets/mock/
     - assets/logos/
+    - assets/brand/

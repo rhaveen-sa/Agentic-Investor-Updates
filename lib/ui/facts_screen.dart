@@ -71,13 +71,13 @@ class _FactsScreenState extends State<FactsScreen> {
         ),
       ),
       const SizedBox(height: 16),
-      Expanded(
+      Flexible(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(36, 0, 36, 32),
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(border: Border.all(color: cs.border), borderRadius: BorderRadius.circular(rLg)),
-            child: Column(children: [
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: cs.border))),
@@ -88,10 +88,14 @@ class _FactsScreenState extends State<FactsScreen> {
                   SizedBox(width: 90, child: Text('Status', style: head)),
                 ]),
               ),
-              Expanded(
+              Flexible(
                 child: shown.isEmpty
-                    ? const EmptyState(icon: LucideIcons.listChecks, title: 'No facts yet')
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: EmptyState(icon: LucideIcons.listChecks, title: 'No facts yet'),
+                      )
                     : ListView.separated(
+                        shrinkWrap: true,
                         itemCount: shown.length,
                         separatorBuilder: (_, _) => Divider(height: 1, color: cs.border),
                         itemBuilder: (_, i) => _Row(shown[i]),

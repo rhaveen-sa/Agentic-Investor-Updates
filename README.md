@@ -1,4 +1,4 @@
-# Investor Update Agent
+# Ledger
 
 **Every number in your investor update, with its source.**
 
@@ -38,18 +38,25 @@ there.
 
 ## The demo
 
-The app follows **Shelfwise**, a fictional seed-stage B2B SaaS (AI demand forecasting for
-independent grocery stores), through October 2026. Click **Next week** to move the
-simulated date forward. Each click runs the weekly check-in, and the last one closes the
-month.
+The app follows **Reson8**, an Amsterdam speech-recognition company (a domain-adaptable ASR
+API for 10 European languages, €5M pre-seed led by Balderton), through October 2026. The
+financials, customers and Mirte are invented for the demo; the founders, funding and product
+facts are public. Pick a week in the week selector at the top, then start its check-in from
+the card in the chat. After week 4, the card closes the month.
 
 | Week | What happens |
 | --- | --- |
-| 1 | Check-in: 2 new stores, supplier export shipped, 31 demos. The agent sees in a Jamie meeting note that the lead investor asked for NRR, and suggests adding it to the KPIs. The founder adds by voice that two engineers started. |
-| 2 | Release 2.0, FreshMart Nord pilot (12 stores, +€36k ARR), a record 44 demos. |
-| 3 | Demos drop to 12. The agent investigates, finds that Anna owns LinkedIn, and drafts a Slack message. The founder approves it, and Anna's reply becomes a fact. |
-| 4 | Release 2.1. FreshMart says it wants 40 stores in Q1, but only in a meeting. |
-| Close | October numbers come in. The agent drafts the update, and a separate verifier flags the "40 stores" claim as unconfirmed. |
+| 1 | Check-in: 2 new paying teams, barge-in tuning for the Turns API, 29 demos. The agent sees in a Jamie meeting note that Balderton asked for NRR, and suggests adding it to the KPIs. Thomas adds by voice that two engineers started. |
+| 2 | Release 1.8 (10 GA languages), Noorderlicht Zorggroep pilot (9 clinics, +€41k ARR), a record 41 demos. |
+| 3 | Demos drop to 11. The agent investigates, finds that Mirte owns LinkedIn, and drafts a Slack message. Thomas approves it, and Mirte's reply becomes a fact. |
+| 4 | Release 1.9. Noorderlicht says it wants all 14 clinics in Q1, but only in a meeting. |
+| Close | October numbers come in (€413k ARR, +17.3%). The agent drafts the update, and a separate verifier flags the "14 clinics" claim as unconfirmed. |
+
+Under the KPI table, the update answers Paul Graham's
+[default alive or default dead](https://paulgraham.com/aord.html) question. It is computed
+in code from confirmed ARR, net burn and cash, assuming flat costs; the model never writes
+it. On the demo data: default alive, break-even in 13 months with €1.83M left, and default
+dead below about 8.6% monthly growth.
 
 The week 3 chase, step by step:
 
@@ -58,10 +65,10 @@ sequenceDiagram
     participant S as Sources
     participant A as Agent
     participant F as Founder
-    participant T as Anna, Head of Growth
-    S->>A: LinkedIn: demos 44 → 12
+    participant T as Mirte, Head of Growth
+    S->>A: LinkedIn: demos 41 → 11
     A->>A: Anomaly. Look for the cause in other sources
-    A->>A: team_directory: LinkedIn belongs to Anna
+    A->>A: team_directory: LinkedIn belongs to Mirte
     A->>F: Draft Slack message, waiting for approval
     F->>A: Approve
     A->>T: Message sent
@@ -69,10 +76,6 @@ sequenceDiagram
     A->>F: New pending fact from the reply
     F->>A: Confirm
 ```
-
-For the hackathon pitch the same story runs on the speech-to-text partner
-[Reson8](https://www.reson8.dev/), using the dataset and code changes in
-[`demo/`](demo/).
 
 ## How it works
 
@@ -104,7 +107,7 @@ interface. Everything runs locally except the Claude and Reson8 API calls.
 
 | Run | Trigger | Ends with |
 | --- | --- | --- |
-| A. Weekly check-in | Founder-set cadence ("Next week") | Check-in card: facts to confirm, 1 to 3 questions |
+| A. Weekly check-in | Founder-set cadence (week selector + check-in card) | Check-in card: facts to confirm, 1 to 3 questions |
 | B. Anomaly investigation | A metric drops sharply (demos −73%) | A message draft to the owner, waiting for approval |
 | C. Inbound processing | Founder chat, voice, document, or a teammate's reply | Proposed facts in the ledger |
 | D. Period report | End of the month | An update built from confirmed facts, checked by a separate verifier call |
@@ -137,7 +140,10 @@ into agreeing with it.
   to the simulated date. A real connector implements the same
   `SourceConnector.fetch(since, until)`: OAuth for GitHub, HubSpot, Stripe and LinkedIn,
   the Jamie API for meetings, and Computer Use for dashboards without an API.
-- **Scheduling.** The "Next week" button stands in for a cron job per founder. Anomaly
+- **SDK downloads (PyPI · npm)** are the one real data source: download counts for Reson8's
+  LiveKit plugins, pulled from pypistats.org and api.npmjs.org on 24 Oct 2026. They include
+  CI installs, so they track developer adoption, not users.
+- **Scheduling.** The week selector and check-in card stand in for a cron job per founder. Anomaly
   checks would run from webhooks.
 - **Teammate messages.** Drafts are approved in the app and shown as sent. Replies come
   from the "Simulate reply" button. Slack, WhatsApp and email are all channels of the same
@@ -172,8 +178,7 @@ flutter test
 ```
 
 `test/demo_flow_test.dart` runs the whole October scenario in scripted mode and checks the
-final report. It asserts the Shelfwise numbers, so update it if you swap in the Reson8 data
-(see [`demo/HANDOFF.md`](demo/HANDOFF.md)).
+final report against the Reson8 numbers (€413k ARR, 44 paying teams, 17 months runway).
 
 ## Presenting it
 
