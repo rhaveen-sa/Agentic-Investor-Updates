@@ -74,6 +74,8 @@ depend on the app:
 - **"Numbers are computed in code."** That holds: the KPI table, default alive, the
   charts and the ARR bridge are all computed from confirmed facts. Keep it that way.
 - **The backup slide** hides itself if `demo-backup.mp4` isn't next to `deck.html`.
+- **`deck.pdf`** has the same slides, without the backup slide. If you present from the PDF
+  and the live demo stalls, switch to the video file itself.
 
 ## 5. Two copies of the investor report
 

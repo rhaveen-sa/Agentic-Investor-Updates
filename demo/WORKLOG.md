@@ -21,6 +21,8 @@ didn't touch `demo/`, so this update brings it in line:
   - **Gap flagged:** the Report page has no demo-data note. Only its PDF does.
 - **READMEs, `pitch-review.md` and the sample report:** renamed to Ledger and updated.
 
+- **`deck.pdf` (new):** the deck as a 12-page 16:9 PDF, 8 talk slides plus 4 optional
+  ones. It's exported from `deck.html` with headless Chrome.
 - **`pitch-review.md`:** records the re-score of the synced pitch by two fresh judges, 81
   and 83 (average 82, against 76.5 before PR #3).
 

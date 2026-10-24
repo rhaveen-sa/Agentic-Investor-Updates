@@ -9,7 +9,8 @@ the backup video, and the Reson8 dataset the demo runs on.
 
 | File | Use it for |
 | --- | --- |
-| [`deck.html`](deck.html) | The slides. Open in Chrome, press `F` for fullscreen. Self-contained, so it needs no network, fonts or build step. |
+| [`deck.pdf`](deck.pdf) | The slides as a 16:9 PDF, the easiest way to present. Open it in Preview and press `Cmd + Shift + F` for full screen. Pages 1 to 8 are the talk, and 9 to 12 are the optional slides for Q&A. It has no speaker notes and no backup video. |
+| [`deck.html`](deck.html) | The same slides in a browser. Open in Chrome, press `F` for fullscreen. It adds speaker notes (`S`) and plays the backup video. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
 | [`HANDOFF.md`](HANDOFF.md) | How to run and check the demo on the current app, what the deck promises, and the two copies of the investor report. For whoever drives the app. |
