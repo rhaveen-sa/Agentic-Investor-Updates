@@ -165,7 +165,7 @@ Future<Report> scriptedReport(AppState s, ToolHost h, List<KpiRow> kpis) async {
 
   final sub = Report(
     period: 'October 2026',
-    subject: 'Reson8 – October 2026 update',
+    subject: 'Reson8 October 2026 update',
     kpis: kpis,
     sections: [
       ReportSection('TL;DR', [
@@ -176,8 +176,8 @@ Future<Report> scriptedReport(AppState s, ToolHost h, List<KpiRow> kpis) async {
         c('Net burn rose to €231k after two hires; runway is now 17 months.', [...metric('burn'), ...metric('runway'), ...hires]),
       ]),
       ReportSection('Highlights', [
-        c('Paid pilot with Noorderlicht Zorggroep: 9 clinics, +€41k ARR. They want to roll out to all 14 clinics in Q1.',
-            refs(['hs-deal-1160', 'jamie-mtg-1027'])),
+        c('Paid pilot with Noorderlicht Zorggroep, our first healthcare customer: 9 clinics, +€41k ARR.', refs(['hs-deal-1160'])),
+        c('Noorderlicht wants to roll out to all 14 clinics in Q1.', refs(['jamie-mtg-1027'])),
         c('Release 1.8: Frisian and Swedish are generally available, taking us to 10 European languages.', refs(['gh-rel-1.8'])),
         c('Developers downloaded our SDKs 30.7k times from 1 to 23 October, against 21.6k in all of September (PyPI and npm).',
             refs(['pkg-oct-23'])),

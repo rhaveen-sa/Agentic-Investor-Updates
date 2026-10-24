@@ -17,6 +17,7 @@ Fact rules:
 - Prefer calling independent tools in parallel in one turn.
 
 Write for a busy founder: short, concrete, no filler.
+Never use em dashes (—) or en dashes (–). Use a comma, a colon or a new sentence instead.
 ''';
 
 String checkInPrompt({
@@ -83,7 +84,7 @@ $kpiTable
 Investors asked for: ${askedFor.isEmpty ? 'nothing specific' : askedFor.join('; ')}.
 
 Write the update and submit it with submit_report:
-- subject: "Reson8 – October 2026 update"
+- subject: "Reson8 October 2026 update"
 - tldr: exactly 3 bullets, the three things an investor should remember (growth with the number, the biggest product news, and the most important risk).
 - highlights: wins, each with a number. lowlights: what went wrong, stated plainly, with what is being done about it; never skip them.
 - product: releases in one bullet. team: hires and open roles. asks: 2 specific requests investors can act on (intros, candidates), derived from the facts.

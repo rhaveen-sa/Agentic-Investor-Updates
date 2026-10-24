@@ -3,6 +3,9 @@ import '../data/connectors.dart';
 import '../models/fact.dart';
 import '../models/agent_run.dart';
 
+/// The app never shows em or en dashes; agent text is cleaned on the way in.
+String noDashes(String s) => s.replaceAll(RegExp(r'\s*[—–]\s*'), ', ');
+
 Map<String, dynamic> _tool(String name, String description, Map<String, dynamic> props, List<String> required) => {
       'name': name,
       'description': description,
@@ -199,13 +202,13 @@ class ToolHost {
         return [for (final t in teamDirectory) t.toJson()];
       case 'ask_founder':
         final qs = ((input['questions'] as List?) ?? const []).map((q) => '$q').toList();
-        run.questions.addAll(qs.take(3));
+        run.questions.addAll(qs.take(3).map(noDashes));
         return {'status': 'questions shown to founder'};
       case 'message_teammate':
         final m = s.draftMessage(
           input['person'] as String,
           input['channel'] as String? ?? 'Slack',
-          input['text'] as String,
+          noDashes(input['text'] as String),
           input['reason'] as String?,
         );
         run.messageIds.add(m.id);
@@ -221,7 +224,7 @@ class ToolHost {
   }
 
   Future<Map<String, dynamic>> _propose(Map<String, dynamic> input) async {
-    final text = input['text'] as String;
+    final text = noDashes(input['text'] as String);
     final ref = input['source_ref'] as String? ?? 'unknown';
     final metric = input['metric'] as String?;
     final period = input['period'] as String?;

@@ -83,7 +83,7 @@ class Agent {
     final since = w.since.add(const Duration(minutes: 1));
     final item = FeedItem(
       type: FeedType.checkIn,
-      title: isClose ? 'October close · numbers are in' : '${w.label} check-in · ${_short.format(since)}–${_short.format(w.until)}',
+      title: isClose ? 'October close · numbers are in' : '${w.label} check-in · ${_short.format(since)} to ${_short.format(w.until)}',
       date: s.today,
       run: run,
     )..offersReport = isClose;
@@ -111,7 +111,7 @@ class Agent {
       },
       (h) => scriptedCheckIn(s, h, w, since, isClose),
     );
-    item.body = run.summary;
+    item.body = run.summary == null ? null : noDashes(run.summary!);
     s.touch();
   }
 
@@ -152,7 +152,7 @@ class Agent {
     );
     final to = run.messageIds.isEmpty ? null : s.messageById(run.messageIds.first)?.to;
     item.title = 'Demo bookings dropped $pct%${to == null ? '' : ' · ask $to?'}';
-    item.body = run.summary;
+    item.body = run.summary == null ? null : noDashes(run.summary!);
     s.touch();
   }
 
@@ -203,7 +203,7 @@ class Agent {
         return scriptedInbound(s, h, text, sourceId: sourceId, from: from, ref: ref);
       },
     );
-    item.body = run.summary;
+    item.body = run.summary == null ? null : noDashes(run.summary!);
     s.touch();
   }
 
@@ -239,7 +239,7 @@ class Agent {
         },
         (h) => scriptedInbound(s, h, 'Document $name', sourceId: 'document', from: 'Thomas', ref: ref),
       );
-      item.body = run.summary;
+      item.body = run.summary == null ? null : noDashes(run.summary!);
       s.touch();
       return;
     }
@@ -262,7 +262,7 @@ class Agent {
       'Drafting the October update…',
       (h) async {
         final confirmed = s.facts.where((f) => f.status == FactStatus.confirmed).map((f) => f.toJson()).toList();
-        final kpiTable = kpis.map((k) => '${k.label}: ${k.prev ?? '–'} → ${k.curr ?? '–'} (${k.change ?? ''})').join('\n');
+        final kpiTable = kpis.map((k) => '${k.label}: ${k.prev ?? 'n/a'} → ${k.curr ?? 'n/a'} (${k.change ?? ''})').join('\n');
         final asked = s.facts
             .where((f) => f.status != FactStatus.dismissed && f.text.toLowerCase().contains('asked for'))
             .map((f) => f.text)
@@ -331,7 +331,7 @@ class Agent {
     List<Claim> claims(String key) => [
           for (final c in ((sub[key] as List?) ?? const []).cast<Map<String, dynamic>>())
             Claim(
-              text: '${c['text']}',
+              text: noDashes('${c['text']}'),
               factIds: [
                 for (final id in ((c['fact_ids'] as List?) ?? const []))
                   if (s.factById('$id') != null) '$id',
@@ -340,7 +340,7 @@ class Agent {
         ];
     return Report(
       period: 'October 2026',
-      subject: '${sub['subject'] ?? 'Reson8 – October 2026 update'}',
+      subject: noDashes('${sub['subject'] ?? 'Reson8 October 2026 update'}'),
       kpis: kpis,
       sections: [
         ReportSection('TL;DR', claims('tldr')),

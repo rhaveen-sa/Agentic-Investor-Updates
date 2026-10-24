@@ -130,7 +130,7 @@ class TopBar extends StatelessWidget {
               Text(s.busy!, style: tt.muted.copyWith(fontSize: 13)),
             ]),
           ),
-        const WeekStepper(),
+        if (s.tab == 0) const WeekStepper(),
       ]),
     );
     return kIsWeb ? bar : DragToMoveArea(child: bar);

@@ -19,17 +19,12 @@ class ToolTrace extends StatefulWidget {
 }
 
 class _ToolTraceState extends State<ToolTrace> {
-  late bool open = !widget.run.done;
-  bool _wasDone = false;
+  // Collapsed by default; the founder opens the step list with the arrow.
+  bool open = false;
 
   @override
   Widget build(BuildContext context) {
     final run = widget.run;
-    // Collapse automatically when the run finishes.
-    if (run.done && !_wasDone) {
-      _wasDone = true;
-      open = false;
-    }
     final cs = context.cs;
     final tt = context.tt;
     final steps = [for (final s in run.steps) ?describeStep(s)];
@@ -62,7 +57,8 @@ class _ToolTraceState extends State<ToolTrace> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 7),
                 child: Row(children: [
-                  const SizedBox(width: 26),
+                  SizedBox(width: 16, child: Icon(LucideIcons.brain, size: 14, color: cs.mutedForeground)),
+                  const SizedBox(width: 10),
                   ShimmerText('Thinking', style: tt.small.copyWith(fontWeight: FontWeight.w400, fontSize: 13.5)),
                 ]),
               ),

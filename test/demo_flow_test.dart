@@ -57,6 +57,14 @@ void main() {
     print('FLAGGED: ${flagged.map((c) => '${c.text} -> ${c.flagReason}').join('\n')}');
     expect(flagged.length, 1);
     expect(flagged.single.text, contains('14 clinics'));
+    // Flagged claims stay out of what gets sent, and the update has no dashes.
+    expect(text, isNot(contains('14 clinics')));
+    expect(text, contains('Noorderlicht Zorggroep'));
+    final md = reportAsMarkdown(r);
+    for (final out in [text, md]) {
+      expect(out, isNot(contains('—')));
+      expect(out, isNot(contains('–')));
+    }
 
     // Default alive at October's growth: break-even in 13 months with €1.83M left,
     // and the answer flips below about 8.6% a month.

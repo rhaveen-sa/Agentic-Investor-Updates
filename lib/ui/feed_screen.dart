@@ -53,7 +53,7 @@ Widget? nextStepCard(AppState s) {
     return _SuggestionCard(
       icon: LucideIcons.calendarCheck,
       title: 'Run the ${w.label.toLowerCase()} check-in',
-      detail: '${shortDate.format(since)} – ${shortDate.format(w.until)}',
+      detail: '${shortDate.format(since)} to ${shortDate.format(w.until)}',
       onTap: s.runCheckIn,
     );
   }
@@ -61,7 +61,7 @@ Widget? nextStepCard(AppState s) {
     return _SuggestionCard(
       icon: LucideIcons.fileText,
       title: 'Close October and draft the update',
-      detail: 'Oct 29 – Oct 31',
+      detail: 'Oct 29 to Oct 31',
       onTap: s.closeMonth,
     );
   }
@@ -81,7 +81,9 @@ class _EmptyAgent extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 80),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('Good morning, Thomas', style: tt.h2.copyWith(fontWeight: FontWeight.w600, letterSpacing: -0.5)),
+          const AppLogo(size: 64),
+          const SizedBox(height: 20),
+          Text('Good morning, Reson8', style: tt.h2.copyWith(fontWeight: FontWeight.w600, letterSpacing: -0.5)),
           const SizedBox(height: 28),
           const Composer(),
           if (card != null) ...[
@@ -267,7 +269,7 @@ class _AgentAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      const Padding(padding: EdgeInsets.only(top: 1), child: AppLogo(size: 30));
+      const Padding(padding: EdgeInsets.only(top: 3, left: 3, right: 3), child: AppLogo(size: 24));
 }
 
 class _UserBubble extends StatelessWidget {

@@ -81,7 +81,7 @@ class AppState extends ChangeNotifier {
   int _msgSeq = 0;
 
   // Settings
-  ThemeMode themeMode = ThemeMode.system;
+  ThemeMode themeMode = ThemeMode.light;
   String cadence = 'Week';
   String period = 'Monthly';
   final Set<String> kpis = {'arr', 'customers', 'demos', 'burn', 'cash', 'runway'};
@@ -417,7 +417,7 @@ class AppState extends ChangeNotifier {
   // Formatting
 
   static String formatValue(double? v, String? unit) {
-    if (v == null) return '–';
+    if (v == null) return 'n/a';
     switch (unit) {
       case 'EUR':
         final a = v.abs();

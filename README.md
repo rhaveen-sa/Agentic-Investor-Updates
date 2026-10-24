@@ -30,8 +30,8 @@ flutter run -d macos --dart-define-from-file=secrets.json
 You don't need any keys to try it. Without an `ANTHROPIC_API_KEY` the app runs in
 **scripted mode**, with the same tools and UI, and with decisions taken from the mock data
 instead of the model. If a live run fails, the app falls back to the scripted run
-automatically. Expand any agent message to see which happened: the model row reads
-`claude-sonnet-5-5` for a live run, and `scripted` or `fallback` otherwise.
+automatically, and the agent's step list shows an amber "Live run failed, finished with
+the backup run" row. Scripted mode can also be switched on under Settings > Agent.
 
 `SLACK_WEBHOOK_URL` is optional. If it is set, approved Slack messages are also posted
 there.
@@ -50,7 +50,7 @@ the card in the chat. After week 4, the card closes the month.
 | 2 | Release 1.8 (10 GA languages), Noorderlicht Zorggroep pilot (9 clinics, +€41k ARR), a record 41 demos. |
 | 3 | Demos drop to 11. The agent investigates, finds that Mirte owns LinkedIn, and drafts a Slack message. Thomas approves it, and Mirte's reply becomes a fact. |
 | 4 | Release 1.9. Noorderlicht says it wants all 14 clinics in Q1, but only in a meeting. |
-| Close | October numbers come in (€413k ARR, +17.3%). The agent drafts the update, and a separate verifier flags the "14 clinics" claim as unconfirmed. |
+| Close | October numbers come in (€413k ARR, +17.3%). The agent drafts the update, and a separate verifier removes the "14 clinics" claim, which was only said in a meeting. |
 
 Under the KPI table, the update answers Paul Graham's
 [default alive or default dead](https://paulgraham.com/aord.html) question. It is computed
@@ -87,6 +87,7 @@ flowchart LR
         HS[HubSpot]
         LI[LinkedIn]
         ST[Stripe]
+        PK["PyPI · npm downloads (real)"]
     end
     IN["Founder: chat, voice (Reson8),<br/>documents · teammate replies"]
     Sources -->|"SourceConnector.fetch(since, until)"| AG
@@ -97,7 +98,7 @@ flowchart LR
     LG -->|confirmed facts only| RP["Report"]
     RP --> VF{{"Verifier<br/>separate Claude call"}}
     LG --> VF
-    VF -->|unsupported claim| FL["Flagged: Unconfirmed"]
+    VF -->|unsupported claim| FL["Removed from the update"]
 ```
 
 It is one Flutter macOS app with a [shadcn_ui](https://pub.dev/packages/shadcn_ui)
@@ -163,11 +164,12 @@ into agreeing with it.
 lib/
   agent/     Claude client (manual tool-use loop), tools, prompts, the four runs, scripted fallback
   data/      source connectors and the team directory
-  models/    facts, feed items, messages, report, agent runs
-  ui/        shell, feed, facts, messages, report, sources, settings
+  models/    facts, feed items, outbound messages, report (incl. default alive), agent runs
+  ui/        shell and week selector, agent chat, facts, sources, report, settings, widgets
   voice/     Reson8 client
 assets/mock/ the October dataset, one JSON file per source
-test/        demo_flow_test.dart runs the whole October scenario in scripted mode
+assets/brand/ the Ledger logo in its light and dark versions
+test/        scripted end-to-end tests, plus a live smoke test against Claude
 demo/        pitch deck, script, shot list, Reson8 dataset, handoff notes
 ```
 
@@ -178,7 +180,16 @@ flutter test
 ```
 
 `test/demo_flow_test.dart` runs the whole October scenario in scripted mode and checks the
-final report against the Reson8 numbers (€413k ARR, 44 paying teams, 17 months runway).
+final report against the Reson8 numbers (€413k ARR, 44 paying teams, 17 months runway,
+default alive). It also checks that weeks can be run in any order, that flagged claims stay
+out of the exported update, and that the update contains no em or en dashes.
+
+`test/live_smoke_test.dart` runs the week 1 check-in against the real Claude API. It costs a
+few cents and is skipped without a key:
+
+```bash
+flutter test test/live_smoke_test.dart --dart-define-from-file=secrets.json
+```
 
 ## Presenting it
 
