@@ -21,6 +21,9 @@ didn't touch `demo/`, so this update brings it in line:
   - **Gap flagged:** the Report page has no demo-data note. Only its PDF does.
 - **READMEs, `pitch-review.md` and the sample report:** renamed to Ledger and updated.
 
+- **`pitch-review.md`:** records the re-score of the synced pitch by two fresh judges, 81
+  and 83 (average 82, against 76.5 before PR #3).
+
 The shot list was written from the code and hasn't been checked against a running app.
 
 ## 24 Oct 2026 · PR #3 · Pitch score and investor report

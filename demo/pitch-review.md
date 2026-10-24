@@ -22,6 +22,15 @@ These are still model judgments, not measurements. The rehearsal checks at the e
 | Round 1: evidence, placeholders, hook, jargon, humanizer pass | 81 | 85 | **83** | 7, 8 |
 | Round 2: title, timings, judges' ask, second humanizer pass | 82 | 84 | **83** | 7, 7 |
 | Round 3: headline with a verb, last flagged lines | 86 | 83 | **84.5** | 8, 7 |
+| Synced with the app at `0926e58` (Ledger name, "not counted", new demo flow) | 81 | 83 | **82** | 7, 7 |
+
+The last round is a different version, not a re-score of round 3. It was judged after the
+deck and script were matched to Sean's app changes. The two points it lost came from:
+- **Headline:** the judges read "Your update is already written" as contradicting "you
+  confirm each fact".
+- **Two calls to action:** the close now has two competing asks, the founders' "run it
+  tonight" and the judges' "pick any number".
+- **Evidence:** still the lowest score, at 3.4 and 3.9.
 
 ## Score by principle
 
@@ -48,7 +57,8 @@ Averages of the two judges, before and after round 3.
 ## What's left, and why no copy edit fixes it
 
 Every judge in every round put **evidence** first. The score stopped climbing at about
-84 because the remaining points need things only you can collect:
+84, and settled at 82 after the app sync, because the remaining points need things only you
+can collect:
 
 1. **Founder answers.** Ask three to five founders at the event when they last wrote an
    update and how long it took. Say the best answer on slide 2 in place of the Visible line.
@@ -58,7 +68,9 @@ Every judge in every round put **evidence** first. The score stopped climbing at
    how many facts the agent proposed against how many you kept.
 
 The judges also kept naming the partners slide and the dense architecture diagram as the
-weakest part of the middle. Cutting the partners section to one line per partner in the
+weakest part of the middle. After the app sync, two judges also asked for a single call to
+action at the close, and a headline that doesn't promise "already written" when the founder
+still confirms facts. Cutting the partners section to one line per partner in the
 Short cut would help with length and reader focus.
 
 ## The humanizer passes
