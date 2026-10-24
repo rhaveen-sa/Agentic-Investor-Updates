@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Investor Update Agent</title>
+<title>Ledger</title>
 <style>
 /* ============================================================
    Self-contained deck. No network, no fonts, no build step.
@@ -137,7 +137,7 @@ body.compact .optional{display:none !important}
 <!-- 1 TITLE -->
 <section class="slide" data-notes="Open with the hands-up line from the script, then read the title. Say your team name once. Name the Reson8 thing lightly: 'the company on screen is Reson8, because it was more fun than inventing one.' | 15s">
   <div class="title-wrap">
-    <div class="eyebrow">Investor Update Agent</div>
+    <div class="eyebrow">Ledger</div>
     <h1>Your update is already<br>written. Every number<br>shows its source.</h1>
     <p class="sub" style="font-size:28px;max-width:36ch;margin-top:24px">
       For founders who owe investors a monthly update. The agent collects your
@@ -251,12 +251,12 @@ body.compact .optional{display:none !important}
     <div class="eyebrow">Live</div>
     <h1 style="font-size:88px">Demo</h1>
     <ul class="demo-beats">
-      <li><span class="t">0:00</span><span>Week 1. <strong>“Morning Thomas. I did your homework: 4 things to confirm.”</strong></span></li>
+      <li><span class="t">0:00</span><span>Week 1. <strong>It has already read the sources and found facts to confirm.</strong></span></li>
       <li><span class="t">0:22</span><span>Jamie heard your lead investor ask for NRR (net revenue retention), so it joins the KPIs</span></li>
       <li><span class="t">0:32</span><span>Add a fact by voice, and it spells <strong>NRR</strong> correctly</span></li>
       <li><span class="t">0:54</span><span>Week 3. <strong>Demos fell from 41 to 11. The agent knows who to ask.</strong></span></li>
       <li><span class="t">1:26</span><span>The report. Click any number, get its source.</span></li>
-      <li><span class="t">2:00</span><span>The verifier marks the one claim nobody put in writing</span></li>
+      <li><span class="t">2:00</span><span>The verifier keeps out the one claim nobody put in writing</span></li>
       <li><span class="t">2:15</span><span>Back to the slides</span></li>
     </ul>
   </div>
@@ -375,7 +375,7 @@ body.compact .optional{display:none !important}
     </div>
     <div class="receipt">
       <div class="receipt-body">
-        <div class="receipt-head"><b>SOURCE FOR THIS CLAIM</b><span class="badge flagged">UNCONFIRMED</span></div>
+        <div class="receipt-head"><b>SOURCE FOR THIS CLAIM</b><span class="badge flagged">NOT COUNTED</span></div>
         <dl>
           <div class="r-row"><dt>claim</dt><dd class="r-val">All 14 clinics<br>in Q1</dd></div>
           <div class="r-row"><dt>source</dt><dd>jamie · pilot review</dd></div>
@@ -444,7 +444,7 @@ body.compact .optional{display:none !important}
         <span style="color:var(--muted)">Default alive means you reach profit on current growth before the cash runs out.</span>
       </div>
       <div class="flagged-claim" style="margin-top:11px">
-        <strong>“All 14 clinics in Q1”</strong> flagged Unconfirmed: said in a meeting only.
+        <strong>“All 14 clinics in Q1”</strong> not counted: said in a meeting only.
       </div>
     </div>
     <div>
@@ -486,7 +486,7 @@ body.compact .optional{display:none !important}
       <h3 style="color:var(--muted)">Mocked</h3>
       <p style="line-height:1.72">
         The six connectors read timestamped JSON instead of live APIs, and a simulated
-        clock moves a week per click, so a month of founder life fits into ninety seconds.
+        week selector steps through October, so a month of founder life fits into ninety seconds.
         The PyPI and npm download counts in that JSON are real.
         Teammate replies arrive from a button rather than Slack.
       </p>
@@ -513,7 +513,7 @@ body.compact .optional{display:none !important}
         <span class="chip off">Google Analytics</span><span class="chip off">Any dashboard · Computer Use</span>
       </div>
       <p class="sub" style="font-size:17.5px;color:var(--muted)">
-        Scheduling is the other swap. The "Next week" button stands in for a cron job per
+        Scheduling is the other swap. The week selector stands in for a cron job per
         founder, and anomaly checks would run from webhooks.
       </p>
     </div>

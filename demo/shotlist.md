@@ -40,22 +40,27 @@ than a perfect one. Small hesitations are fine. A wrong click that needs undoing
 
 ## The take
 
+Written from the app code on `main` at `0926e58` (week selector, chat cards, report page).
+It has not been checked against a running app. Rehearse it once and fix any label that
+differs before you record.
+
 | # | Time | Screen | Do this | What should land |
 | --- | --- | --- | --- | --- |
-| 1 | 0:00 to 0:12 | Agent | Start with the time bar on **Oct 7**. Let the check-in card sit for two seconds so the line is readable, then confirm two facts. | *"Morning Thomas. I did your homework: 4 things to confirm."* The agent opens with findings, not a prompt box. |
-| 2 | 0:12 to 0:22 | Agent | Expand one agent message to show the model and its tool calls, one row each. Scroll it slowly, then collapse. | It really called `fetch_source`, `ledger_search`, `ledger_propose`. Not a canned script. The model row should read `claude-sonnet-5-5`. |
-| 3 | 0:22 to 0:32 | Agent, Settings | Show the agent spotting the Jamie note about the lead investor wanting NRR. Open Settings just long enough to show **NRR now in the KPI set**, then close. | The agent changed its own reporting config because of something said out loud on a call. |
-| 4 | 0:32 to 0:46 | Composer | Tap the microphone and say: *"Two speech engineers started on the fifth, so net burn for October is about 231k."* Let the transcript appear and become a pending fact. Confirm it. | **Reson8.** Hold on the transcript for two seconds. The vocabulary is the point. |
-| 5 | 0:46 to 0:54 | Time bar | Click **Next week** twice. Let each check-in flash past without reading it. | A month compresses into seconds. The agent was working the whole time. |
-| 6 | 0:54 to 1:12 | Agent | Land on **week 3**. Let the anomaly card breathe for three seconds, then click **Approve** on the drafted Slack message. | Demos fell from 41 to 11, and the agent already knows who to ask. Give this room, it is the first moment that gets a reaction. |
-| 7 | 1:12 to 1:26 | Messages | Open Messages, show the sent message, click **Simulate reply**. Mirte's reply lands. Go back to Agent, where run C has turned it into a pending fact. Confirm it. | Gap, question, message, reply, fact. The loop closes on screen. |
-| 8 | 1:26 to 1:34 | Time bar | Click **Next week** to reach the end of October. The report generates. | The month is over and the update already exists. |
-| 9 | 1:34 to 1:50 | Report | Scroll steadily through TL;DR, the KPI table, **Default alive?**, highlights, **lowlights**, asks. Pause a beat on default alive and on the lowlights. | The update answers the investor's real question, and the churn and shorter runway are in it too. Neutrality is visible rather than claimed. |
-| 10 | 1:50 to 2:00 | Report | Click **€413k**. The dialog opens, titled "Source for €413k". Close it. | Every number is traceable. This is the product's signature. |
-| 11 | 2:00 to 2:12 | Report | Scroll to the claim about **all 14 clinics in Q1**, which carries the amber **Unconfirmed** tag. Click it. The source shows a Jamie meeting note and nothing else. Hover the tag so the tooltip shows. | The money shot. Hold three full seconds. The tooltip reads "Only said in a meeting or chat, not backed by a system of record." |
-| 12 | 2:12 to 2:16 | Report | Click **Approve**. End on the approved state. | The founder stays in control. Clean ending. |
+| 1 | 0:00 to 0:10 | Agent | Start on **Week 1** in the week selector, on the "Good morning, Reson8" screen. Click **Run the week 1 check-in**. | The agent starts from the sources, not from a blank prompt box. |
+| 2 | 0:10 to 0:22 | Agent | Let the step list run ("Looking up GitHub data for...", "Writing down a fact"), expand it for a second, then confirm two facts on the check-in card. | It really read the sources and wrote facts down. If an amber "Live run failed, finished with the backup run" row appears, stop and fix the key. |
+| 3 | 0:22 to 0:30 | Agent | The card **Add NRR to the KPIs?** appears. Click **Add**. | The agent changed what gets reported because of something said out loud on a call. |
+| 4 | 0:30 to 0:44 | Composer | Tap the microphone and say: *"Two speech engineers started on the fifth, so net burn for October is about 231k."* Let the transcript appear and become a pending fact. Confirm it. | **Reson8.** Hold on the transcript for two seconds. The vocabulary is the point. |
+| 5 | 0:44 to 0:52 | Week selector | Pick **Week 2** and click **Run the week 2 check-in**. Let it flash past and confirm all. | A month compresses into seconds. The agent was working the whole time. |
+| 6 | 0:52 to 1:10 | Agent | Pick **Week 3** and run it. Let the anomaly sit for three seconds, then click **Send** on the drafted message to Mirte. | Demos fell from 41 to 11, and the agent already knows who to ask. Give this room, it is the first moment that gets a reaction. |
+| 7 | 1:10 to 1:22 | Agent | Click **Simulate reply from Mirte**. Her reply lands and becomes a pending fact. Confirm it. | Gap, question, message, reply, fact. The loop closes on screen. |
+| 8 | 1:22 to 1:32 | Week selector | Pick **Week 4**, run it, then click **Close October and draft the update**. | The month is over and the update already exists. |
+| 9 | 1:32 to 1:50 | Report | Open **Report**. Scroll steadily through In short, Ask, Key numbers, **Default alive or default dead?** with its three charts, and Customers. Pause on the dead or alive map. | The update answers the investor's real question, and the churn and shorter runway are in it too. |
+| 10 | 1:50 to 1:58 | Report | Click **€413k**. The dialog opens, titled "Source for €413k". Close it. | Every number is traceable. This is the product's signature. |
+| 11 | 1:58 to 2:10 | Report | Point at the amber **1 claim not counted** badge in the header, scroll to **Pipeline we are not counting yet**, and click the 14 clinics claim. The dialog shows a Jamie meeting note with an amber **Unconfirmed** tag. Hover the tag. | The money shot. Hold three full seconds. The tooltip reads "Only said in a meeting or chat, not backed by a system of record". |
+| 12 | 2:10 to 2:16 | Report | Click **Approve & send**. End on "Sent to investors". | The founder stays in control. Clean ending. |
 
-If you are running long, shots 2 and 3 are the ones to shorten. They are the least visual.
+If you are running long, shorten shots 2 and 5. They are the least visual. **Download PDF**
+is worth showing live in Q&A, not in the take.
 
 ---
 
@@ -73,14 +78,14 @@ If you are running long, shots 2 and 3 are the ones to shorten. They are the lea
 
 ## Check before you call it done
 
-- [ ] The model row in shot 2 says `claude-sonnet-5-5`. If it says `scripted`, the app had no
-      key or scripted mode is on. If it says `fallback`, the live call failed and the step shows
-      the error. Either way the run never reached Claude: check `ANTHROPIC_API_KEY` in
-      `secrets.json` and start the app with `--dart-define-from-file=secrets.json`.
+- [ ] No amber "Live run failed, finished with the backup run" row in any step list, and
+      Settings > Agent has scripted mode off. Otherwise the run never reached Claude: check
+      `ANTHROPIC_API_KEY` in `secrets.json` and start the app with
+      `--dart-define-from-file=secrets.json`.
 - [ ] No "Shelfwise", "Lena", "Anna" or "FreshMart" visible anywhere on screen.
-- [ ] The report KPI table reads 413k, 44, 112%, 231k, 3.89M, 17 months.
-- [ ] The Default alive section says break-even in 13 months with €1.83M left.
-- [ ] The 14 clinics claim carries the amber Unconfirmed tag.
+- [ ] The report KPI table reads €413k, 44, 112%, €231k, €3.89M, 17 months.
+- [ ] Default alive says break-even in November 2027 with €1.83M left.
+- [ ] The header says 1 claim not counted, and it is the 14 clinics claim.
 
 ---
 
@@ -90,12 +95,12 @@ Capture stills with Shottr and click through them in place of the video. Minimum
 order:
 
 1. Agent view with the week 1 check-in card
-2. An expanded message showing the tool calls
-3. The week 3 anomaly card with the drafted Slack message
-4. Messages, with Mirte's reply
+2. An expanded step list
+3. The week 3 anomaly with the drafted message to Mirte
+4. Mirte's reply in the chat
 5. The report, scrolled to the KPI table
 6. A source dialog, open
-7. The flagged claim with its Unconfirmed tag
+7. Pipeline we are not counting yet, with the 14 clinics claim
 
 Seven stills still tell the whole story. If even that is out of reach, present optional
 slides 9 to 11 instead. They carry the ledger, the KPI table and the flagged claim as

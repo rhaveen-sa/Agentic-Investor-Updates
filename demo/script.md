@@ -14,9 +14,10 @@ The section timings below are for the Standard cut and assume about 135 words a 
 Read it against a stopwatch once. If you run over, cut from sections 2 and 3 and never
 from the demo.
 
-**75 second demo path (Short cut):** shot 1 (check-in card), shot 4 (voice), shots 5 and 6
-(Next week twice, approve the anomaly message), shot 8 (close the month), shot 10 (click
-€413k), shot 11 (the Unconfirmed flag). Shot numbers refer to `shotlist.md`.
+**75 second demo path (Short cut):** shot 1 (week 1 check-in), shot 4 (voice), shots 5 and 6
+(week 2, then week 3 and send the anomaly message), shot 8 (week 4 and close the month),
+shot 10 (click €413k), shot 11 (the claim that wasn't counted). Shot numbers refer to
+`shotlist.md`.
 
 The founder on screen is **Thomas**, CEO of Reson8. The teammate who owns LinkedIn is
 **Mirte**, who is invented. The two real co-founders, Thomas Kluiters and Jarno Verhagen,
@@ -34,8 +35,8 @@ Open on the room before you say what the product is:
 Wait for the hands to drop. Say your team name, then read the title:
 
 > Your update is already written, and every number shows its source. We built an agent for
-> founders who owe investors a monthly update. It collects your month while it happens, and you
-> confirm each fact before it reaches your investors.
+> founders who owe investors a monthly update, and called it Ledger. It collects your month
+> while it happens, and you confirm each fact before it reaches your investors.
 
 Name the Reson8 thing once, lightly, then move on:
 
@@ -115,12 +116,12 @@ Point at the card.
 Switch windows now. The full click-path is in `shotlist.md`. Narrate lightly and let the
 app's own copy do the work.
 
-**Week 1.** *"Morning Thomas. I did your homework: 4 things to confirm."*
+**Week 1.** Pick Week 1 in the week selector and click *Run the week 1 check-in*.
 
 > It has already read GitHub, Stripe, HubSpot, LinkedIn and the meeting notes. It tells me
 > what happened and asks me to sign off.
 
-Expand a card to show the tool calls.
+Expand the step list to show what it did.
 
 > Those are the steps it took: read the source, check the ledger, propose a fact.
 
@@ -129,8 +130,8 @@ Expand a card to show the tool calls.
 **The NRR beat.**
 
 > Jamie picked up our lead investor asking for net revenue retention, NRR, in the next
-> update. That was said out loud on a call and written down nowhere. The agent added NRR
-> to the KPI set on its own.
+> update. That was said out loud on a call and written down nowhere. The agent suggests
+> adding NRR to the KPIs, and I click Add.
 
 **The voice beat.** Tap the mic and dictate the burn note.
 
@@ -141,7 +142,7 @@ Expand a card to show the tool calls.
 **Week 3.** Let the anomaly card breathe.
 
 > Demos fell from 41 to 11. It found the gap, worked out who owns LinkedIn, and drafted the
-> message. I approve it, Mirte replies, and her answer becomes a fact in the ledger.
+> message. I send it, Mirte replies, and her answer becomes a fact in the ledger.
 
 **The report.**
 
@@ -154,8 +155,8 @@ Click ARR.
 **The flag.** Slow down here.
 
 > And this is the one I care about. Noorderlicht want all fourteen clinics in Q1. It's the
-> best line in the whole update, and the verifier marked it **Unconfirmed**, because it was
-> said in a meeting and nobody has put it in writing.
+> best line in the whole update, and the verifier took it out. It sits under **Pipeline we
+> are not counting yet**, because it was said in a meeting and nobody has put it in writing.
 >
 > It won't let me state it as a fact.
 
