@@ -1,0 +1,59 @@
+{
+  "source": "stripe",
+  "items": [
+    {
+      "id": "stripe-oct-close",
+      "ts": "2026-10-31T18:00:00",
+      "type": "month_close",
+      "title": "October finance close (Stripe + bank)",
+      "body": "ARR €668,000 (+9.5% MoM). NRR trailing 12 months: 108%. Net burn €171,000. Cash €2.74M. Runway at current burn: 16 months.",
+      "facts": [
+        {
+          "text": "ARR at end of October: €668k (+9.5% MoM)",
+          "kind": "kpi",
+          "metric": "arr",
+          "value": 668000,
+          "unit": "EUR",
+          "period": "2026-10",
+          "owner": "Lena"
+        },
+        {
+          "text": "NRR (trailing 12 months) in October: 108%",
+          "kind": "kpi",
+          "metric": "nrr",
+          "value": 108,
+          "unit": "%",
+          "period": "2026-10",
+          "owner": "Lena"
+        },
+        {
+          "text": "Net burn in October: €171k",
+          "kind": "kpi",
+          "metric": "burn",
+          "value": 171000,
+          "unit": "EUR",
+          "period": "2026-10",
+          "owner": "Lena"
+        },
+        {
+          "text": "Cash at end of October: €2.74M",
+          "kind": "kpi",
+          "metric": "cash",
+          "value": 2740000,
+          "unit": "EUR",
+          "period": "2026-10",
+          "owner": "Lena"
+        },
+        {
+          "text": "Runway at end of October: 16 months",
+          "kind": "kpi",
+          "metric": "runway",
+          "value": 16,
+          "unit": "months",
+          "period": "2026-10",
+          "owner": "Lena"
+        }
+      ]
+    }
+  ]
+}

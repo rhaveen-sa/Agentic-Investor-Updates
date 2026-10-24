@@ -1,0 +1,18 @@
+{
+  "source": "hubspot",
+  "items": [
+    {"id": "hs-deal-2291", "ts": "2026-10-02T14:00:00", "type": "deals_won", "title": "2 deals closed won: Bio Markt Lindner, Frischeck Sauer", "body": "Two independent stores signed annual plans. Combined new ARR €24,000.",
+     "facts": [{"text": "2 new stores signed (Bio Markt Lindner, Frischeck Sauer), +€24k ARR", "kind": "highlight", "metric": "new_arr", "value": 24000, "unit": "EUR", "owner": "Lena"}]},
+    {"id": "hs-deal-2310", "ts": "2026-10-12T17:30:00", "type": "deal_won", "title": "Closed won: FreshMart Nord paid pilot (12 stores)", "body": "First chain customer. Paid pilot across 12 FreshMart Nord stores, €36,000 ARR. Contract signed by Head of Procurement.",
+     "facts": [{"text": "Paid pilot with FreshMart Nord, our first chain: 12 stores, +€36k ARR", "kind": "highlight", "metric": "new_arr", "value": 36000, "unit": "EUR", "owner": "Lena"}]},
+    {"id": "hs-churn-0457", "ts": "2026-10-17T10:15:00", "type": "churn", "title": "Closed lost (churn): Kaufhaus Brandt", "body": "Store closed permanently (owner retired). Cancellation reason: business closed, unrelated to product. -€9,000 ARR.",
+     "facts": [{"text": "One store (Kaufhaus Brandt) closed for reasons unrelated to us, −€9k ARR", "kind": "lowlight", "metric": "churned_arr", "value": -9000, "unit": "EUR", "owner": "Lena"}]},
+    {"id": "hs-deal-2334", "ts": "2026-10-24T12:00:00", "type": "deal_won", "title": "Closed won: Markthalle Ochs", "body": "One new independent store. €7,000 ARR.",
+     "facts": [{"text": "1 new store signed (Markthalle Ochs), +€7k ARR", "kind": "context", "metric": "new_arr", "value": 7000, "unit": "EUR", "owner": "Lena"}]},
+    {"id": "hs-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October pipeline & customer summary", "body": "Paying customers: 51 (+3 net). Demos booked in October (all channels): 125.",
+     "facts": [
+       {"text": "Paying customers at end of October: 51", "kind": "kpi", "metric": "customers", "value": 51, "unit": "stores", "period": "2026-10", "owner": "Lena"},
+       {"text": "Demos booked in October: 125", "kind": "kpi", "metric": "demos", "value": 125, "unit": "demos", "period": "2026-10", "owner": "Anna"}
+     ]}
+  ]
+}

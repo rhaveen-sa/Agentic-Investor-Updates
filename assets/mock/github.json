@@ -1,0 +1,13 @@
+{
+  "source": "github",
+  "items": [
+    {"id": "gh-pr-412", "ts": "2026-10-03T16:20:00", "type": "release", "title": "Merged: Supplier order export (CSV + EDI)", "body": "PR #412 by tom-shelfwise. Stores can export forecast-based purchase orders directly to their suppliers. Deployed to production.",
+     "facts": [{"text": "Shipped supplier order export: stores send forecast-based purchase orders straight to suppliers", "kind": "product", "owner": "Tom"}]},
+    {"id": "gh-rel-2.0", "ts": "2026-10-09T11:05:00", "type": "release", "title": "Release v2.0.0: Fresh produce forecasting", "body": "Tag v2.0.0. Forecasting now covers fresh produce (fruit, vegetables, bakery) with daily spoilage-aware models. Rolled out to all customers. Closes #188, the most upvoted feature request.",
+     "facts": [{"text": "Release 2.0: fresh produce forecasting is live for all customers (most requested feature)", "kind": "highlight", "owner": "Tom"}]},
+    {"id": "gh-pr-447", "ts": "2026-10-16T09:40:00", "type": "merge", "title": "Merged: Batch inference + caching for forecast API", "body": "PR #447. p95 forecast latency 2.4s -> 0.95s (-60%) per Grafana dashboard.",
+     "facts": [{"text": "Forecast latency down 60% (p95 2.4s to 0.95s)", "kind": "product", "owner": "Tom"}]},
+    {"id": "gh-rel-2.1", "ts": "2026-10-23T15:10:00", "type": "release", "title": "Release v2.1.0", "body": "Tag v2.1.0. Promotions calendar input, multi-store dashboard, bug fixes.",
+     "facts": [{"text": "Release 2.1: promotions calendar input and multi-store dashboard", "kind": "product", "owner": "Tom"}]}
+  ]
+}
