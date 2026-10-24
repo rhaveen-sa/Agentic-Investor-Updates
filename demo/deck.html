@@ -135,17 +135,16 @@ body.compact .optional{display:none !important}
 <div id="stage">
 
 <!-- 1 TITLE -->
-<section class="slide" data-notes="Say the one-liner and stop. Do not explain the product yet, slide 2 earns it. Name the Reson8 thing once: 'the company on screen is Reson8, because it was more fun than inventing one.' | 15s">
+<section class="slide" data-notes="Open with the hands-up line from the script, then read the title. Say your team name once. Name the Reson8 thing lightly: 'the company on screen is Reson8, because it was more fun than inventing one.' | 15s">
   <div class="title-wrap">
     <div class="eyebrow">Investor Update Agent</div>
-    <h1>The update is<br>already written.</h1>
+    <h1>Your update is already<br>written. Every number<br>shows its source.</h1>
     <p class="sub" style="font-size:28px;max-width:36ch;margin-top:24px">
-      For founders who owe investors a monthly update. An agent collects your
-      month as it happens, so every number in the update <strong>opens its own source.</strong>
+      For founders who owe investors a monthly update. The agent collects your
+      month while it happens, and you confirm each fact <strong>before it reaches your investors.</strong>
     </p>
     <div class="title-meta">
-      <span class="ph">[TEAM NAME]</span> &nbsp;·&nbsp; <span class="ph">[PRESENTER]</span><br>
-      Claude, Jamie and Reson8
+      Built with Claude, Jamie and Reson8
     </div>
   </div>
   <div class="footnote">Demo runs on <strong>Reson8</strong>. Funding, languages, pricing and SDK downloads are public. Revenue, burn and customer names are invented for the demo.</div>
@@ -155,56 +154,64 @@ body.compact .optional{display:none !important}
 <section class="slide" data-notes="Slow down. This is the slide founders recognise. Land <b>'you remember the wins faster than the churn'</b> and pause. | 30s">
   <div class="eyebrow">The problem</div>
   <h2>It's the 31st. The update is due.</h2>
-  <ul class="beats">
-    <li>You open a blank doc at eleven at night.</li>
-    <li>You scroll Slack, Stripe, GitHub and your own calendar, rebuilding a month you already lived.</li>
-    <li class="hot">You remember the wins faster than the churn.</li>
-    <li>Investors get it three days late, and they cannot check a single number in it.</li>
-  </ul>
-  <div class="kicker">Writing the update takes an hour. <em>Remembering the month is the hard part.</em></div>
-  <div class="footnote"><span class="ph">[Ask founders at the event when they wrote their last update and how long it took. Put the real answer here, or delete this line.]</span></div>
+  <div class="split wide-left" style="margin-top:0;align-items:start">
+    <ul class="beats">
+      <li>You open a blank doc at eleven at night.</li>
+      <li>You scroll Slack, Stripe, GitHub and your own calendar, rebuilding a month you already lived.</li>
+      <li class="hot">You remember the wins faster than the churn.</li>
+      <li>Investors get it three days late, and they cannot check a single number in it.</li>
+    </ul>
+    <div class="card" style="margin-top:28px;background:var(--wash)">
+      <div style="font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1">60%</div>
+      <p style="font-size:18px;margin-top:8px">of investors don't hear from their companies regularly.</p>
+      <div style="font-size:64px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:22px">3x</div>
+      <p style="font-size:18px;margin-top:8px">as likely to raise follow-on funding when a startup sends regular updates.</p>
+      <p style="font-size:13.5px;margin-top:16px;color:var(--muted)">Source: Visible, which sells investor-update software. It hasn't published the data behind either figure.</p>
+    </div>
+  </div>
+  <div class="kicker">The hard part is <em>remembering the month.</em></div>
 </section>
 
 <!-- 3 INSIGHT -->
 <section class="slide" data-notes="The hinge of the pitch. Let the curve speak, then give it a beat before the kicker. | 25s">
   <div class="eyebrow">The insight</div>
-  <h2 class="wide">Detail decays. The update gets written at the worst possible moment.</h2>
+  <h2 class="wide">You write the update when you remember the least.</h2>
   <div class="split" style="margin-top:10px">
     <div>
       <p class="sub" style="margin-top:0">
-        What you can recall is perfect on the day and mostly gone four weeks later,
-        which is exactly when you sit down to write.
+        Ebbinghaus measured it in 1885. Most new detail fades within days, and after
+        a month about a fifth is left. That is when you sit down to write.
       </p>
       <p class="sub">
-        So the report is not reporting. It is <strong>reconstruction from memory</strong>,
-        and memory flatters.
+        By then you are rebuilding the month from memory, and <strong>memory keeps the good parts.</strong>
       </p>
     </div>
-    <svg viewBox="0 0 520 330" width="100%" aria-label="Recall decays across the month while the update is written at month end">
+    <svg viewBox="0 0 520 330" width="100%" style="overflow:visible" aria-label="Recall decays across the month while the update is written at month end">
       <defs><linearGradient id="lost" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#b91c1c" stop-opacity=".13"/>
         <stop offset="100%" stop-color="#b91c1c" stop-opacity=".02"/>
       </linearGradient></defs>
       <line x1="52" y1="30" x2="52" y2="262" stroke="#cbd5e1" stroke-width="2"/>
       <line x1="52" y1="262" x2="476" y2="262" stroke="#cbd5e1" stroke-width="2"/>
-      <path d="M52,52 C170,52 250,96 330,170 C380,216 420,240 460,248 L460,52 Z" fill="url(#lost)"/>
-      <path d="M52,52 C170,52 250,96 330,170 C380,216 420,240 460,248" fill="none" stroke="#0f1419" stroke-width="4" stroke-linecap="round"/>
+      <path d="M52,52 C80,165 140,206 240,222 C330,234 400,238 460,240 L460,52 Z" fill="url(#lost)"/>
+      <path d="M52,52 C80,165 140,206 240,222 C330,234 400,238 460,240" fill="none" stroke="#0f1419" stroke-width="4" stroke-linecap="round"/>
       <line x1="460" y1="30" x2="460" y2="262" stroke="#b91c1c" stroke-width="2.5" stroke-dasharray="6 5"/>
-      <circle cx="460" cy="248" r="7" fill="#b91c1c"/>
+      <circle cx="460" cy="240" r="7" fill="#b91c1c"/>
       <text x="60" y="44" font-family="-apple-system,sans-serif" font-size="15" font-weight="650" fill="#0f1419">what actually happened</text>
-      <text x="196" y="132" font-family="-apple-system,sans-serif" font-size="15" font-weight="650" fill="#b91c1c">detail you've lost</text>
-      <text x="336" y="296" font-family="-apple-system,sans-serif" font-size="15" font-weight="700" fill="#b91c1c">you write it here</text>
-      <text x="56" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">week 1</text>
-      <text x="408" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">week 4</text>
+      <text x="236" y="140" font-family="-apple-system,sans-serif" font-size="15" font-weight="650" fill="#b91c1c">detail you've lost</text>
+      <text x="322" y="218" font-family="-apple-system,sans-serif" font-size="15" font-weight="700" fill="#b91c1c">you write it here</text>
+      <text x="56" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">day 1</text>
+      <text x="402" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">day 31</text>
+      <text x="56" y="320" font-family="-apple-system,sans-serif" font-size="12.5" fill="#94a3b8">Shape after Ebbinghaus's forgetting curve (1885), measured on memorised syllables</text>
     </svg>
   </div>
-  <div class="kicker">The fix is not a better writer in week four. <em>It is capturing in week one.</em></div>
+  <div class="kicker">So capture it in week one, <em>while you still remember it.</em></div>
 </section>
 
 <!-- 4 PRODUCT -->
 <section class="slide" data-notes="Three rules, one sentence each. Resist expanding. Point at the source card on the right, it is the thing they remember. | 35s">
   <div class="eyebrow">The product</div>
-  <h2 class="wide">An agent that works all month, so month end is only an approval.</h2>
+  <h2 class="wide">An agent that works all month, so at month end you only approve.</h2>
   <div class="split wide-left" style="margin-top:18px">
     <div class="cols c3" style="margin-top:0;gap:15px">
       <div class="card">
@@ -235,45 +242,41 @@ body.compact .optional{display:none !important}
       </div>
     </div>
   </div>
-  <div class="kicker">The founder's job shrinks to <em>yes, no, or not quite.</em></div>
+  <div class="kicker">Your job each week: <em>say yes, or fix it.</em></div>
 </section>
 
 <!-- 5 DEMO -->
-<section class="slide" data-notes="LIVE DEMO. Switch windows now. If anything stalls for more than four seconds, say the fallback line and press the right arrow. | 90s">
+<section class="slide" data-notes="LIVE DEMO. Switch windows now. If anything stalls for more than four seconds, say the fallback line and press the right arrow. | 2:15 (75s in the Short cut)">
   <div class="big-demo">
     <div class="eyebrow">Live</div>
     <h1 style="font-size:88px">Demo</h1>
     <ul class="demo-beats">
       <li><span class="t">0:00</span><span>Week 1. <strong>“Morning Thomas. I did your homework: 4 things to confirm.”</strong></span></li>
-      <li><span class="t">0:22</span><span>Jamie heard your lead investor ask for NRR, so NRR joins the KPIs</span></li>
+      <li><span class="t">0:22</span><span>Jamie heard your lead investor ask for NRR (net revenue retention), so it joins the KPIs</span></li>
       <li><span class="t">0:32</span><span>Add a fact by voice, and it spells <strong>NRR</strong> correctly</span></li>
       <li><span class="t">0:54</span><span>Week 3. <strong>Demos fell from 41 to 11. The agent knows who to ask.</strong></span></li>
       <li><span class="t">1:26</span><span>The report. Click any number, get its source.</span></li>
       <li><span class="t">2:00</span><span>The verifier marks the one claim nobody put in writing</span></li>
+      <li><span class="t">2:15</span><span>Back to the slides</span></li>
     </ul>
   </div>
-  <div class="footnote">Backup recording is the next slide.</div>
+  <div class="footnote">If the demo stalls, the next slide is the backup recording.</div>
 </section>
 
 <!-- 5b BACKUP -->
-<section class="slide" data-notes="Backup only. Skip past it if the live demo worked. | 130s if played">
+<section class="slide" id="backup-slide" data-notes="Backup only. Skip past it if the live demo worked. | 130s if played">
   <div class="eyebrow">Backup recording</div>
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0">
     <video id="backup" controls preload="metadata" style="max-height:470px">
       <source src="demo-backup.mp4" type="video/mp4">
     </video>
-    <div class="novideo" id="novideo" style="display:none;max-width:560px">
-      <strong style="color:var(--ink-2);font-size:19px">demo-backup.mp4 not found</strong><br><br>
-      Record with <span style="font-family:var(--mono)">Cmd + Shift + 5</span> following
-      <span style="font-family:var(--mono)">shotlist.md</span>, then save it beside this file.
-    </div>
   </div>
 </section>
 
 <!-- 6 ARCHITECTURE -->
 <section class="slide" data-notes="For the technical judges. The line that matters: the verifier is a <b>separate Claude call that only sees the ledger</b>, so it cannot be talked into agreeing with the report. Also mention the KPI table is computed in code, never written by the model. | 30s">
   <div class="eyebrow">Under the hood</div>
-  <h2 class="wide">One agent loop, four runs, ten shared tools.</h2>
+  <h2 class="wide">Why it can't make up a number.</h2>
   <svg viewBox="0 0 1136 312" width="100%" style="margin-top:12px" aria-label="Six connectors feed a Claude agent loop that writes to a ledger, which produces the report and the verifier">
     <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
@@ -291,19 +294,19 @@ body.compact .optional{display:none !important}
     <rect class="bx" x="0" y="158" width="158" height="36"/><text class="lbl" x="15" y="181">LinkedIn</text>
     <rect class="bx" x="0" y="202" width="158" height="36"/><text class="lbl" x="15" y="225">Stripe</text>
     <rect class="bx" x="0" y="246" width="158" height="36"/><text class="lbl" x="15" y="269">PyPI · npm</text>
-    <text class="mono" x="0" y="304">one SourceConnector interface</text>
+    <text class="mono" x="0" y="304">every source plugs in the same way</text>
     <path class="ln" d="M166,154 L242,132"/>
     <rect x="250" y="26" width="286" height="212" rx="10" fill="#0f1419"/>
-    <text x="272" y="54" font-family="-apple-system,sans-serif" font-size="12.5" font-weight="700" fill="#7d8d9c" letter-spacing=".11em">CLAUDE AGENT LOOP</text>
+    <text x="272" y="54" font-family="-apple-system,sans-serif" font-size="12.5" font-weight="700" fill="#7d8d9c" letter-spacing=".11em">CLAUDE AGENT</text>
     <text x="272" y="86"  font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">A</tspan>  Weekly check-in</text>
-    <text x="272" y="114" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">B</tspan>  Anomaly investigation</text>
+    <text x="272" y="114" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">B</tspan>  Chasing odd numbers</text>
     <text x="272" y="142" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">C</tspan>  Inbound: chat, voice, docs</text>
-    <text x="272" y="170" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">D</tspan>  Period report</text>
+    <text x="272" y="170" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">D</tspan>  Monthly report</text>
     <line x1="272" y1="188" x2="514" y2="188" stroke="#3a4650" stroke-width="1" stroke-dasharray="4 4"/>
-    <text x="272" y="214" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#7d8d9c">10 tools · strict JSON · run locally</text>
+    <text x="272" y="214" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#7d8d9c">10 tools, all run on your machine</text>
     <path class="ln" d="M544,132 L620,132"/>
     <rect class="bx" x="628" y="72" width="174" height="120"/>
-    <text class="hd" x="648" y="98">FACTS LEDGER</text>
+    <text class="hd" x="648" y="98">FACT LIST</text>
     <text class="mono" x="648" y="126">pending</text>
     <text class="mono" x="648" y="146" fill="#047857">confirmed</text>
     <text class="mono" x="648" y="166">dismissed</text>
@@ -311,22 +314,22 @@ body.compact .optional{display:none !important}
     <path class="ln" d="M810,154 L886,178"/>
     <rect class="bx" x="894" y="48" width="226" height="60"/>
     <text class="lbl" x="914" y="74" font-weight="650">Report</text>
-    <text class="mono" x="914" y="95">+ default alive, in code</text>
+    <text class="mono" x="914" y="95">numbers computed in code</text>
     <rect x="894" y="148" width="226" height="60" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
     <text class="lbl" x="914" y="174" font-weight="650" fill="#b45309">Verifier</text>
-    <text class="mono" x="914" y="195" fill="#b45309">separate Claude call</text>
+    <text class="mono" x="914" y="195" fill="#b45309">second Claude check</text>
   </svg>
-  <div class="kicker">The verifier sees only the ledger, <em>so it cannot be talked into agreeing with the report.</em></div>
+  <div class="kicker">The model writes the sentences. <em>Every number comes from a fact you confirmed, and a second check reads only those facts.</em></div>
 </section>
 
 <!-- 7 PARTNERS -->
 <section class="slide" data-notes="Say plainly: <b>take Jamie out and the story stops working.</b> Two important facts were spoken out loud and never written down. That is the honest reason it is in the stack. | 30s">
   <div class="eyebrow">Built with</div>
-  <h2 class="wide">Each partner carries a piece we could not have built.</h2>
+  <h2 class="wide">Three parts we didn't build ourselves.</h2>
   <div class="cols c3" style="margin-top:22px">
     <div class="partner">
       <div class="who">Claude</div>
-      <div class="what">Sonnet 5.5, tool use</div>
+      <div class="what">Sonnet 5.5</div>
       <div class="role">Runs the loop, proposes facts, spots the anomaly and drafts the update. Then a second, separate call audits that draft against the ledger.</div>
       <div class="hook">It checks its own work.</div>
     </div>
@@ -334,7 +337,7 @@ body.compact .optional{display:none !important}
       <div class="who">Jamie</div>
       <div class="what">Bot-free meeting notes, EU</div>
       <div class="role">Two facts this month exist only because Jamie was in the room: the lead investor asking for NRR, and the clinic rollout nobody has signed.</div>
-      <div class="hook">Reaches what no API can.</div>
+      <div class="hook">It catches facts that were only said out loud.</div>
     </div>
     <div class="partner">
       <div class="who">Reson8</div>
@@ -356,19 +359,18 @@ body.compact .optional{display:none !important}
 </section>
 
 <!-- 8 CLOSE -->
-<section class="slide" data-notes="Land 'they can't check it'. Give the repo line, then the last line. The amber card is your last image. Stop talking after it. | 25s">
+<section class="slide" data-notes="Land 'they can't check it'. Read the ask with the repo, then the last line. The amber card is your last image. Stop talking after it. | 25s">
   <div class="eyebrow">Why it matters</div>
   <h2 class="wide">Today investors can believe your update or not. They can't check it.</h2>
   <div class="split" style="margin-top:16px">
     <div>
       <ul class="beats" style="margin-top:2px">
-        <li>Facts captured weekly, at the source</li>
-        <li>Nothing reaches the update without a source behind it</li>
-        <li class="hot">Lowlights sit beside the wins because the ledger has them, not because the founder felt brave</li>
+        <li>Every fact is captured weekly from its source, and nothing reaches the update without one</li>
+        <li class="hot">A confirmed lowlight goes in the same way a win does.</li>
       </ul>
       <p class="sub" style="font-size:21px">
-        We did not make the update quicker to write.<br>
-        We made it <strong>possible to check.</strong>
+        You confirm facts each week instead of losing an evening on the 31st,
+        and your investors get <strong>numbers they can check.</strong>
       </p>
     </div>
     <div class="receipt">
@@ -384,14 +386,14 @@ body.compact .optional{display:none !important}
       </div>
     </div>
   </div>
-  <div class="kicker">The best line in the update is the one we refused to state as fact. <em>That is the product.</em></div>
-  <div class="footnote" style="bottom:14px;font-size:16.5px;color:var(--ink-2)">Try it on your own month: <strong style="color:var(--accent)">github.com/seanjanke/Agentic-Investor-Updates</strong>. It runs without an API key.</div>
+  <div class="kicker">The best line in our update, <em>the fourteen clinics, is the one the agent wouldn't let us claim.</em></div>
+  <div class="footnote" style="bottom:14px;font-size:16.5px;color:var(--ink-2)">Owe investors an update this month? Run it on yours tonight: <strong style="color:var(--accent)">github.com/seanjanke/Agentic-Investor-Updates</strong>. No API key needed.</div>
 </section>
 
 <!-- 9 OPTIONAL: LEDGER -->
 <section class="slide optional" data-notes="Optional. Use when a judge asks how a fact becomes a number.">
   <div class="eyebrow">Optional · the ledger</div>
-  <h2 class="wide">A fact has to earn its way into the update.</h2>
+  <h2 class="wide">How a fact gets into the update.</h2>
   <div class="split" style="margin-top:14px">
     <ul class="beats" style="margin-top:0">
       <li><strong>Proposed.</strong> The agent reads a source and writes a candidate fact. It never invents a number.</li>
@@ -439,6 +441,7 @@ body.compact .optional{display:none !important}
       <div class="report-top" style="border-top:2px solid var(--rule)">Default alive?</div>
       <div style="padding:11px 17px 4px;font-size:15.5px;line-height:1.5;color:var(--ink-2)">
         <strong style="color:var(--good)">Yes</strong>, if ARR keeps growing 17.3% a month: break-even in 13 months with €1.83M left. Below 8.6% it flips to dead.
+        <span style="color:var(--muted)">Default alive means you reach profit on current growth before the cash runs out.</span>
       </div>
       <div class="flagged-claim" style="margin-top:11px">
         <strong>“All 14 clinics in Q1”</strong> flagged Unconfirmed: said in a meeting only.
@@ -525,12 +528,12 @@ body.compact .optional{display:none !important}
     <div class="card">
       <div class="n">PULL</div>
       <h3>The deadline is someone else's</h3>
-      <p>Investors ask for the update whether or not the founder feels like writing. The habit already exists, so we attach to it instead of creating one.</p>
+      <p>Investors ask for the update whether or not the founder feels like writing, so the monthly habit is already there.</p>
     </div>
     <div class="card">
       <div class="n">MOAT</div>
-      <h3>The ledger compounds</h3>
-      <p>Every confirmed fact makes the next month's draft better and cheaper to check. Month twelve beats month one, and none of it transfers to a competitor.</p>
+      <h3>History builds up</h3>
+      <p>Each confirmed fact makes next month's draft easier to check. After a year the ledger holds twelve months of confirmed history.</p>
     </div>
     <div class="card">
       <div class="n">WEDGE</div>
@@ -538,7 +541,7 @@ body.compact .optional{display:none !important}
       <p>The same verified ledger answers a data room request, a board pack and a diligence questionnaire. The monthly update is only the first document.</p>
     </div>
   </div>
-  <div class="kicker">Start at the monthly update. <em>End as the record of everything a founder has to prove.</em></div>
+  <div class="kicker">The monthly update comes first. <em>The same facts can fill a board pack or a diligence request later.</em></div>
 </section>
 
 </div>
@@ -557,6 +560,7 @@ body.compact .optional{display:none !important}
 
   function slides(){
     return [].slice.call(document.querySelectorAll('.slide')).filter(function(s){
+      if(s.classList.contains('missing')) return false;
       return !(document.body.classList.contains('compact') && s.classList.contains('optional'));
     });
   }
@@ -600,11 +604,13 @@ body.compact .optional{display:none !important}
     show(e.clientX > window.innerWidth/2 ? i+1 : i-1);
   });
 
-  // Show a hint instead of a dead player when the recording is not made yet.
+  // No recording yet (see shotlist.md): take the backup slide out of the deck.
   var vid = document.getElementById('backup');
   vid.addEventListener('error', function(){
-    vid.style.display = 'none';
-    document.getElementById('novideo').style.display = 'block';
+    var cur = slides()[i];
+    document.getElementById('backup-slide').classList.add('missing');
+    var idx = slides().indexOf(cur);
+    show(idx < 0 ? i : idx);
   }, true);
 
   // Torn bottom edge on every source card.
