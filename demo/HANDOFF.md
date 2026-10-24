@@ -108,6 +108,103 @@ the same either way. Expand any agent message and read the model row:
 - [ ] The report reads 413k, 44, 112%, 231k, 3.89M, 17 months, shows the default-alive
       section, and flags only the 14 clinics claim.
 
+## 5. Deck changes that affect the demo
+
+PR #3 changed the deck and script. Three changes matter to whoever drives the app:
+
+- **The judges get an invitation.** The close now says: "Judges, pick any number on the
+  report and we'll open its source for you right now." Have the report screen open after
+  the demo, and check that every KPI and every highlight opens its source card.
+- **The backup slide hides itself** when `demo-backup.mp4` isn't next to `deck.html`. If
+  you record it, slide 6 plays it as before. If not, the slides after it move up by one.
+- **The deck says the numbers are computed in code.** That holds once the patch is in,
+  because the KPI table and the default-alive section are both computed. Don't let the model
+  write either of them.
+
+## 6. The investor report
+
+`demo/investor-report/` has a full October investor update for Reson8, as a PDF to send and
+an HTML version. `build.py` generates it from `demo/reson8-mock/`, with no app and no API
+key. To rebuild it after changing the mock data:
+
+```bash
+python3 demo/investor-report/build.py
+```
+
+The README in that folder has the PDF command. Using it needs no change to the app.
+
+### Building the same report into the app (optional)
+
+This is new work, not part of the patch, and the demo doesn't need it. Treat `build.py` as
+the reference: every calculation in it is short and can be ported to Dart directly.
+
+| Report section | In the app today | After the patch | What to build |
+| --- | --- | --- | --- |
+| Key numbers table | Yes, `buildKpiRows()` | Reson8 numbers | Nothing |
+| Highlights, lowlights, product, team, asks | Yes, written by the model from `reportPrompt` | Reson8 facts | See prompt changes below |
+| Default alive verdict | No | Yes, `buildDefaultAlive()` | Nothing |
+| Revenue vs expenses and cash charts | No | No | Projection series plus two charts |
+| Dead or alive map | No | No | Edge curve plus one chart |
+| New customers table and ARR bridge | No | No | Computed rows plus one chart |
+| Pipeline not counted yet | Flagged inline only | Same | A separate block for flagged claims |
+| Source list | No | No | A table of the facts the report cites |
+| PDF export | No (copy as text only) | No | Print or PDF export |
+
+**1. Projection and map data.** Extend `DefaultAlive` in `lib/models/report.dart` and fill
+it in `buildDefaultAlive()`:
+
+- `projection`: for months 0 to 15, revenue, expenses and cash. Port `projection()` from
+  `build.py`. The simulation loop is already in `buildDefaultAlive()`, so record each step.
+- `edge`: the minimum growth rate for burn levels from €150k to €350k. That is the existing
+  bisection, run with a different burn each time. Port `min_growth(burn)`.
+- `maxBurn`: the highest burn that stays alive at the current growth. Port `max_burn()`.
+
+On the Reson8 data these must give break-even in November 2027, €1.83M left, an edge of
+8.6% and a max burn of about €356k. `build.py` prints the first three when it runs.
+
+**2. Charts.** `pubspec.yaml` has no chart package. Either add one (`fl_chart` covers line
+and bar charts) or draw the three charts with `CustomPainter`, which keeps the dependencies
+as they are. Copy the look from the HTML report:
+
+- revenue in blue `#2a78d6` against flat expenses in orange `#eb6834`, with the break-even
+  month marked
+- a cash line with its low point labelled
+- the map, with the dead region in red and the alive region in green, each labelled in
+  text, and October drawn as a dot
+
+**3. New customers and the ARR bridge.** Add `buildCustomerRows()` to `lib/app_state.dart`,
+next to `buildKpiRows()`. It reads **confirmed** facts that have `metric: new_arr` or
+`metric: churned_arr`. The HubSpot items in the mock data already carry both. Brugman's fact
+is `kind: context`, so filter on `metric`, not on `kind`. Check that September ARR plus new
+ARR plus churned ARR equals October ARR, as `build.py` does. On the demo data that is
+€352k + €68k − €7k = €413k.
+
+**4. Prompt changes.** In `reportPrompt` in `lib/agent/prompts.dart`:
+
+- Add a `tldr` section (three bullets: headline numbers, default alive, lowlights) and a
+  `next_month` section, so the order matches the PDF.
+- Change asks from "2 specific requests" to "1 or 2". The demo data supports one ask, the
+  speech scientist referrals. Asking for two pushes the model to invent the second.
+- For lowlights, ask for the cause and the fix when a teammate reply gives one. Mirte's
+  reply about the expired card is the example.
+
+Every new claim still needs `factIds`, so the verifier checks the new sections too.
+
+**5. Pipeline not counted.** Claims the verifier flags already exist as `ClaimFlag.weak`
+or `unsupported`. Also list them in their own block under the sections, the way the PDF
+shows the 14-clinic rollout, so a reader can't mistake them for counted numbers.
+
+**6. Source list and export.** Gather the `factIds` cited by all claims and KPI rows, then
+show each fact's source record and date at the end. For PDF, the `printing` and `pdf`
+packages work on macOS. Until then, `build.py` produces the PDF.
+
+**Tests.** Extend `test/demo_flow_test.dart`:
+
+- the projection gives break-even in month 13
+- the ARR bridge adds up to €413k
+- four new customers and one churned
+- exactly one claim in the "not counted" block
+
 ## A note on the data
 
 Public and checkable: the €5M pre-seed led by Balderton with NP-Hard, March 2026,

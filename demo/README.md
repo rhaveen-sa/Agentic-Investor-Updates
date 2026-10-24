@@ -12,7 +12,8 @@ the backup video, and the Reson8 dataset the demo runs on.
 | [`deck.html`](deck.html) | The slides. Open in Chrome, press `F` for fullscreen. Self-contained, so it needs no network, fonts or build step. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
-| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, and what to check before presenting. For whoever drives the app. |
+| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, what the latest deck changes mean for the demo, and how to build the investor report into the app. For whoever drives the app. |
+| [`WORKLOG.md`](WORKLOG.md) | Every change to the kit, PR by PR, with what is still open. Add an entry with every PR. |
 | [`reson8-switch.patch`](reson8-switch.patch) | The code and data changes behind `HANDOFF.md`, as one patch to review and `git apply`. |
 | [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
 | [`investor-report/`](investor-report/) | A full October investor update for Reson8, as PDF and HTML, with the default alive map, new customers and challenges. Generated from `reson8-mock/`. |
