@@ -2,8 +2,7 @@
 
 Deck: `deck.html`. Arrows navigate, `F` fullscreen, `S` speaker notes, `O` optional slides.
 
-The slot length isn't confirmed yet, so there are three cuts. Pick one as soon as the
-organisers say how long you get.
+Standard is the default. Switch to Short or Long only if the organisers give you a different slot.
 
 | Cut | Length | What you do |
 | --- | --- | --- |
@@ -27,22 +26,26 @@ only ever appear in a good light.
 
 ## 1. Title, 15 seconds
 
-> This is an investor update agent, for founders who owe their investors an update every
-> month. It collects your month while the month is happening, so when the 31st arrives the update is already written and every number in it opens its own
-> source.
+Open on the room before you say what the product is:
+
+> Hands up if you've written an investor update after 11pm. Keep it up if you could prove
+> every number in it.
+
+Wait for the hands to drop. Say your team name, then read the title:
+
+> Your update is already written, and every number shows its source. We built an agent for
+> founders who owe investors a monthly update. It collects your month while it happens, and you
+> confirm each fact before it reaches your investors.
 
 Name the Reson8 thing once, lightly, then move on:
 
 > We're running it on Reson8's own numbers, because that was more fun than inventing a company.
 > The funding and the product are real. The revenue figures are not.
 
-Then stop. Do not explain the product yet.
+Then stop. Slide 2 explains the product.
 
-**A/B for rehearsal.** Try this opener once instead, then keep whichever gets the faster nod
-from your test listener:
-
-> Hands up if you've written an investor update after 11pm. Keep it up if you could prove
-> every number in it.
+**A/B for rehearsal.** The other opener to test is a cold start on slide 1: *"It's the 31st.
+The update is due."* Keep whichever gets the faster nod from your test listener.
 
 ---
 
@@ -55,39 +58,41 @@ from your test listener:
 
 Beat.
 
-> And here's the part nobody puts in the update: **you remember the wins faster than the churn.**
+> And nobody writes this part down: **you remember the wins faster than the churn.**
 
 Pause. Let it sit. This is the line founders in the room recognise.
 
 > Investors get it three days late, and they cannot check a single number in it.
 
-If you collected real answers at the event, say one here. It is the only proof in the deck
-that the problem exists outside this room:
+Point at the footnote:
 
-> This morning I asked [N] founders here when they wrote their last update. [Answer.]
+> Visible, who sell investor-update software, say 60% of investors don't hear from their
+> companies regularly. They also say startups that do send updates are three times as likely
+> to raise follow-on money. They haven't published the data, so treat it as their figure.
 
-If you didn't collect any, delete the yellow line at the bottom of slide 2 and skip this.
+**Better, if you can get it:** ask three founders at the event when they wrote their last
+update and how long it took. If you have a good answer, say it here in place of the Visible line.
 
 ---
 
 ## 3. Insight, 25 seconds
 
-> So we stopped trying to make the writing faster, because writing was never the hard part.
+> The hard part is remembering, so that's the part we fixed.
 
 Gesture at the curve.
 
-> What you can recall is perfect on the day, and mostly gone four weeks later. Which is
-> exactly when you sit down to write.
+> Ebbinghaus measured this in 1885. Most new detail fades within days, and after a month
+> about a fifth is left. A month is exactly when you sit down to write.
 >
-> At that point you are not reporting. You are reconstructing, and memory flatters.
+> So you rebuild the month from memory, and memory keeps the good parts.
 >
-> The fix is not a better writer in week four. It's capturing in week one.
+> Capture it in week one, while you still remember it.
 
 ---
 
 ## 4. Product, 35 seconds
 
-> So the agent works all month, and month end becomes an approval instead of a task.
+> So the agent works all month, and at month end you only approve.
 > Three rules.
 >
 > **One, confirm rather than write.** Every week it shows you what it already found. You
@@ -112,18 +117,20 @@ app's own copy do the work.
 
 **Week 1.** *"Morning Thomas. I did your homework: 4 things to confirm."*
 
-> It has already read GitHub, Stripe, HubSpot, LinkedIn and the meeting notes. It isn't
-> asking me what happened. It's telling me, and asking me to sign off.
+> It has already read GitHub, Stripe, HubSpot, LinkedIn and the meeting notes. It tells me
+> what happened and asks me to sign off.
 
 Expand a card to show the tool calls.
 
-> That's the actual loop. `fetch_source`, `ledger_search`, `ledger_propose`. Ten tools,
-> strict JSON, and they run locally.
+> Those are the steps it took: read the source, check the ledger, propose a fact.
+
+**[Long]** add: *"Ten tools, strict JSON, and they all run on this laptop."*
 
 **The NRR beat.**
 
-> Jamie picked up our lead investor asking for NRR in the next update. That was said out
-> loud on a call and written down nowhere. The agent added NRR to the KPI set on its own.
+> Jamie picked up our lead investor asking for net revenue retention, NRR, in the next
+> update. That was said out loud on a call and written down nowhere. The agent added NRR
+> to the KPI set on its own.
 
 **The voice beat.** Tap the mic and dictate the burn note.
 
@@ -163,25 +170,23 @@ video with the same beats.
 
 ---
 
-## 6. Architecture, 30 seconds
+## 6. Under the hood, 30 seconds
 
-> Underneath it's one agent loop with four runs sharing ten tools. The weekly check-in, the
-> anomaly chase, inbound from chat or voice or documents, and the period report.
+> Here's why it can't make up a number.
 >
-> Six connectors behind one interface. Everything the agent learns becomes a fact in a
-> ledger with a status, and the report is drafted only from the confirmed ones.
->
-> Then a separate Claude call audits that draft.
+> Six sources feed one agent. Everything it learns goes on a list of facts, which we call the
+> ledger, and you confirm or dismiss each one. The report is drafted from the confirmed facts only, and the
+> numbers in it are computed in code, so the model only writes the sentences around them.
 
 Tap the verifier box.
 
-> Separate on purpose. The verifier sees the ledger and nothing else. It never sees the
-> reasoning that produced the report, so it can't be talked into agreeing with it.
+> Then a second Claude call checks the draft. It sees the ledger and nothing else, not the
+> reasoning behind the report, so it can't be talked into agreeing with it.
 
 **[Long]** add:
 
-> One more thing worth saying: the KPI table isn't written by the model. It's computed from
-> the ledger in code. The model writes prose, it doesn't get to choose the numbers.
+> The agent runs four jobs on the same ten tools: the weekly check-in, chasing anomalies,
+> taking input from chat, voice or documents, and writing the report.
 
 ---
 
@@ -192,8 +197,8 @@ Tap the verifier box.
 > **Claude** runs the loop and then checks its own work.
 >
 > **Jamie** is the one I'd point at. Two of the most important facts this month were spoken
-> out loud in a room and never typed anywhere. Our lead investor asking for NRR, and the
-> fourteen clinics. No API has those. Jamie does. Take Jamie out and the story stops working.
+> out loud in a room and never typed anywhere: our lead investor asking for NRR, and the
+> fourteen clinics. No API has those, but Jamie does. Take Jamie out and the story stops working.
 >
 > And **Reson8** is why the founder can just talk.
 
@@ -204,7 +209,7 @@ Point at the comparison.
 
 **[Long]** add:
 
-> All three are EU hosted, which matters more than it used to for anything touching a cap table.
+> All three are EU hosted. In the demo month, EU-only processing is what cleared Noorderlicht's privacy review.
 
 ---
 
@@ -213,19 +218,22 @@ Point at the comparison.
 > An investor update is the main thing your investors have to go on. Right now they either
 > believe it or they don't, because there's no way to check it.
 >
-> Facts captured weekly at the source. Nothing in the update without a source behind it.
-> And the lowlights sit next to the wins because the ledger has them, not because the
-> founder was feeling brave that day.
+> With this, every fact comes in weekly from its source, and nothing reaches the update
+> without one. A confirmed lowlight goes in the same way a win does.
 
 Beat.
 
-> We didn't make the update quicker to write. We made it possible to check.
+> You confirm facts each week instead of losing an evening on the 31st, and your investors
+> get numbers they can check.
 >
-> It's on GitHub and it runs without an API key, so you can try it on your own month tonight.
+> Judges, pick any number on the report and we'll open its source for you right now.
+>
+> If you owe investors an update this month, run it on yours tonight. It's on GitHub, it
+> needs no API key, and we'd love to hear which number it got wrong.
 
 Beat. Then the last line:
 
-> The best line in our demo is the one the agent refused to state as a fact. That's the product.
+> The best line in our update, the fourteen clinics, is the one the agent wouldn't let us claim.
 
 Stop. Don't add anything after that.
 
@@ -248,7 +256,7 @@ Stop. Don't add anything after that.
 
 > A summariser reads the month at the end. We capture facts weekly at the source and the
 > founder confirms each one, so the update is built from a ledger rather than from recall.
-> That's an audit trail, not a summary.
+> That gives you an audit trail.
 
 **What if the agent gets a fact wrong?**
 
@@ -275,7 +283,8 @@ Stop. Don't add anything after that.
 **Is Reson8 going to make it?**
 
 > The update answers that itself. It runs Paul Graham's default alive test on the confirmed
-> numbers: at October's growth, revenue covers costs in 13 months with €1.83M left. It also
+> numbers, which asks whether you reach profit on current growth before the cash runs out.
+> At October's growth, revenue covers costs in 13 months with €1.83M left. It also
 > says where that flips, at about 8.6% a month. The test is computed in code, so the model
 > can't make it sound better than it is.
 
@@ -309,4 +318,4 @@ so you can compare two versions of a slide or an opener.
 | Stopwatch on the chosen cut | Within 10 seconds of the target length |
 | "What does it do?", asked right after slide 4 | They say some version of "it writes the investor update from facts you confirmed" |
 | "What did you remember?", asked at the end | They mention the flagged claim or clicking a number to see its source |
-| Title line A vs B | A: "The update is already written." B: "Every number in your investor update, with its source." Keep the one that wins the check above. |
+| Title line A vs B | A, on the deck now: "Your update is already written. Every number shows its source." B: "Every number in your investor update, with its source." Swap only if B wins the check above. |

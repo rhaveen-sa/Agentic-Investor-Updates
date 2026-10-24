@@ -12,10 +12,12 @@ the backup video, and the Reson8 dataset the demo runs on.
 | [`deck.html`](deck.html) | The slides. Open in Chrome, press `F` for fullscreen. Self-contained, so it needs no network, fonts or build step. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
-| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, and what to check before presenting. For whoever drives the app. |
+| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, what the latest deck changes mean for the demo, and how to build the investor report into the app. For whoever drives the app. |
+| [`WORKLOG.md`](WORKLOG.md) | Every change to the kit, PR by PR, with what is still open. Add an entry with every PR. |
 | [`reson8-switch.patch`](reson8-switch.patch) | The code and data changes behind `HANDOFF.md`, as one patch to review and `git apply`. |
 | [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
-| [`pitch-review.md`](pitch-review.md) | The deck scored against 15 Ogilvy principles, before and after, plus a written version of the pitch for submission forms. |
+| [`investor-report/`](investor-report/) | A full October investor update for Reson8, as PDF and HTML, with the default alive map, new customers and challenges. Generated from `reson8-mock/`. |
+| [`pitch-review.md`](pitch-review.md) | The pitch scored by independent judges against 15 Ogilvy principles over three rounds of edits, plus a written version for submission forms. |
 | [`img/`](img/) | Slide renders used in the READMEs. |
 
 ## Deck keys
@@ -35,15 +37,18 @@ The deck opens with the optional slides hidden.
 Do these in order. The first four take five minutes. The rest depend on the app.
 
 - [ ] Find out the slot length and pick a cut in `script.md`.
-- [ ] Replace `[TEAM NAME]` and `[PRESENTER]` on slide 1.
+- [ ] Decide what to call the team. Say it on slide 1 (the script marks the spot), and
+      consider adding it to the title slide.
 - [ ] Ask a few founders at the event when they last wrote an investor update and how long
-      it took. Put the best answer in the yellow line on slide 2, or delete the line.
+      it took. Say the best answer on slide 2 in place of the Visible line. This is the
+      biggest score gain left (see `pitch-review.md`).
 - [ ] Run the rehearsal checks at the end of `script.md` on someone who hasn't seen it.
 - [ ] Apply `reson8-switch.patch` as described in `HANDOFF.md`, and tick its checklist.
 - [ ] Do a live run and confirm the model row reads `claude-sonnet-5-5`, not `scripted` or
       `fallback`.
 - [ ] Record `demo-backup.mp4` following `shotlist.md` and save it next to `deck.html`.
-      Slide 6 plays it.
+      Slide 6 plays it. Without the file, the deck drops that slide and the slides after it
+      move up by one.
 - [ ] Turn on Do Not Disturb on the presenting laptop.
 
 ## Run order on the day

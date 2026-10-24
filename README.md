@@ -168,9 +168,8 @@ lib/
   ui/        shell and week selector, agent chat, facts, sources, report, settings, widgets
   voice/     Reson8 client
 assets/mock/ the October dataset, one JSON file per source
-assets/brand/ the Ledger logo in its light and dark versions
-test/        scripted end-to-end tests, plus a live smoke test against Claude
-demo/        pitch deck, script, shot list, Reson8 dataset, handoff notes
+test/        demo_flow_test.dart runs the whole October scenario in scripted mode
+demo/        pitch deck, script, shot list, Reson8 dataset, investor report, handoff notes, work log
 ```
 
 ## Tests
@@ -193,8 +192,19 @@ flutter test test/live_smoke_test.dart --dart-define-from-file=secrets.json
 
 ## Presenting it
 
-Everything for the pitch is in [`demo/`](demo/): an HTML deck that runs offline in Chrome,
-a narration script in 3, 5½ and 8 minute cuts, a shot list for the backup recording, and a
-pitch review against Ogilvy's 15 principles. Start with [`demo/README.md`](demo/README.md).
+Everything for the pitch is in [`demo/`](demo/):
 
-<p align="center"><img src="demo/img/slide-architecture.png" width="760" alt="Architecture slide: five sources feed a Claude agent loop with four runs; facts go to a ledger; the report and a separate verifier read from it."></p>
+- **Deck:** HTML that runs offline in Chrome.
+- **Script:** narration in 3, 5½ and 8 minute cuts.
+- **Shot list:** for the backup recording.
+- **Pitch review:** independent judges scored the pitch against Ogilvy's 15 principles, 84.5/100 after three rounds of edits.
+- **Investor report:** a sample October investor update (PDF), with a default alive map,
+  new customers and challenges.
+
+Start with [`demo/README.md`](demo/README.md). [`demo/HANDOFF.md`](demo/HANDOFF.md) says
+what whoever drives the app needs to do, and [`demo/WORKLOG.md`](demo/WORKLOG.md) records every
+change to the kit, PR by PR.
+
+<p align="center"><img src="demo/img/report-default-alive.png" width="560" alt="Investor report: default alive verdict, revenue against expenses, cash curve and the dead or alive map"></p>
+
+<p align="center"><img src="demo/img/slide-architecture.png" width="760" alt="Architecture slide, 'Why it can't make up a number': six sources feed a Claude agent with four jobs; facts go to a fact list; the report computes its numbers in code and a second Claude check reads only the confirmed facts."></p>
