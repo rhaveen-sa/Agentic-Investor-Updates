@@ -64,9 +64,42 @@ Code: `lib/agent/` (Claude client with a manual tool-use loop, tools, prompts, r
 
 ## Partner tech
 
-- **Claude** (`claude-sonnet-5-5`): the agent loop for all four runs plus the separate verifier.
+- **Claude** (`claude-sonnet-5`): the agent loop for all four runs plus the separate verifier.
 - **Reson8**: voice input via the prerecorded speech-to-text API, biased with a custom model of startup vocabulary (ARR, NRR, churn, runway, burn, company and people names).
 - **Jamie**: meeting notes as a source (mocked).
+
+## Pitch materials
+
+Everything needed to present this lives in [`pitch/`](pitch/).
+
+| File | What it is |
+| --- | --- |
+| `deck.html` | The slide deck. Open it in a browser, press `F` for fullscreen. Arrows navigate, `S` shows speaker notes, `O` toggles four optional slides so the same deck runs as a 3-minute or an 8-minute talk. Self-contained: no network, no build step, no fonts to install. |
+| `script.md` | Word-for-word narration with timings, the demo click-path interleaved, a paragraph to read if the live demo stalls, and prepared Q&A answers. |
+| `shotlist.md` | Shot-by-shot plan for the backup demo recording, written as one continuous take because the recording setup has no video editor. |
+| `HANDOFF.md` | Every code change needed to run the demo on Reson8 instead of Shelfwise. |
+| `reson8-mock/` | A second, drop-in mock dataset. See below. |
+
+### Running the demo on Reson8
+
+`pitch/reson8-mock/` holds the same seven files as `assets/mock/`, with the same schema,
+telling the same October story for [Reson8](https://www.reson8.dev/), an Amsterdam
+speech-recognition company. Swapping datasets is a copy:
+
+```bash
+cp pitch/reson8-mock/*.json assets/mock/
+```
+
+The code changes that go with it (team directory, sidebar, prompts, scripted fallback) are
+listed in `pitch/HANDOFF.md`.
+
+The weekly demo-booking numbers are 29, 41, 11 and 34, so the week 3 drop is 73%, the same
+as the Shelfwise data produced. Nothing keyed to the anomaly threshold needs retuning.
+
+Reson8's funding, founders, supported languages, API surface, certifications and pricing
+are public. Every revenue, burn, cash, runway and customer figure in the dataset is
+invented for the demo, along with all customer names and the Head of Growth. The deck says
+so on screen.
 
 ## Tests
 

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../models/agent_run.dart';
 
 const anthropicApiKey = String.fromEnvironment('ANTHROPIC_API_KEY');
-const claudeModel = 'claude-sonnet-5-5';
+const claudeModel = 'claude-sonnet-5';
 
 class ClaudeException implements Exception {
   ClaudeException(this.message);
