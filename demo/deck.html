@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investor Update Agent</title>
+<style>
+/* ============================================================
+   Self-contained deck. No network, no fonts, no build step.
+   Keys:  arrows navigate   F fullscreen   S notes   O optional slides
+   ============================================================ */
+
+:root{
+  --ink:#0f1419;
+  --ink-2:#2b3640;
+  --muted:#64748b;
+  --faint:#94a3b8;
+  --rule:#e2e8f0;
+  --bg:#ffffff;
+  --wash:#f6f8fa;
+  --accent:#1a56db;
+  --flag:#b45309;
+  --flag-bg:#fef3c7;
+  --good:#047857;
+  --bad:#b91c1c;
+  --panel:#0f1419;
+  --panel-ink:#e8edf2;
+  --panel-muted:#7d8d9c;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#1b1f24;font-family:var(--sans);color:var(--ink);overflow:hidden;display:grid;place-items:center}
+
+/* fixed canvas scaled to fit: identical layout on every projector */
+#stage{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--bg);padding:58px 72px 54px;display:none;flex-direction:column}
+.slide.active{display:flex}
+
+.eyebrow{font-size:15px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+h1{font-size:66px;line-height:1.02;letter-spacing:-.025em;font-weight:680}
+h2{font-size:43px;line-height:1.1;letter-spacing:-.02em;font-weight:670;max-width:21ch}
+h2.wide{max-width:31ch}
+.sub{font-size:24px;line-height:1.4;color:var(--ink-2);margin-top:16px;max-width:44ch;font-weight:420}
+.kicker{margin-top:auto;padding-top:20px;border-top:2px solid var(--rule);font-size:24px;font-weight:600;line-height:1.3}
+.kicker em{font-style:normal;color:var(--accent)}
+strong{font-weight:660}
+
+.title-wrap{height:100%;display:flex;flex-direction:column;justify-content:center}
+.ph{background:#fff3c4;border-bottom:2px solid #e0b000;padding:0 7px;border-radius:3px;font-weight:650}
+.title-meta{margin-top:36px;font-size:20px;color:var(--muted);line-height:1.7}
+.footnote{position:absolute;left:72px;right:72px;bottom:26px;font-size:14.5px;color:var(--faint)}
+
+.cols{display:grid;gap:26px;margin-top:30px}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;flex:1;margin-top:22px}
+.split.wide-left{grid-template-columns:1.08fr .92fr}
+
+.card{border:2px solid var(--rule);border-radius:12px;padding:22px 22px 24px;background:var(--bg)}
+.card .n{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:10px}
+.card h3{font-size:21px;line-height:1.2;font-weight:660;margin-bottom:9px;letter-spacing:-.01em}
+.card p{font-size:16px;line-height:1.5;color:var(--ink-2)}
+
+.beats{list-style:none;margin-top:28px;display:flex;flex-direction:column;gap:17px;max-width:41ch}
+.beats li{font-size:22px;line-height:1.35;padding-left:32px;position:relative;color:var(--ink-2)}
+.beats li::before{content:"";position:absolute;left:0;top:12px;width:18px;height:2px;background:var(--faint)}
+.beats li.hot{color:var(--ink);font-weight:600}
+.beats li.hot::before{background:var(--bad);height:3px}
+
+/* source card: content and labels mirror the app's "Source for ..." dialog */
+.receipt{position:relative;filter:drop-shadow(0 10px 24px rgba(15,20,25,.22))}
+.receipt-body{background:var(--panel);color:var(--panel-ink);font-family:var(--mono);font-size:15px;line-height:1.7;padding:18px 20px 15px;border-radius:7px 7px 0 0}
+.receipt .tear{display:block;width:100%;height:13px;margin-top:-1px}
+.receipt-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px dashed #3a4650;padding-bottom:9px;margin-bottom:10px;font-size:12.5px;letter-spacing:.09em;color:var(--panel-muted);text-transform:uppercase}
+.receipt-head b{color:var(--panel-ink);font-weight:700;letter-spacing:.05em}
+.badge{font-size:11px;letter-spacing:.09em;padding:3px 8px;border-radius:4px;background:#06372a;color:#4ade80;font-weight:700}
+.badge.flagged{background:#422006;color:#fbbf24}
+.r-row{display:grid;grid-template-columns:78px 1fr;gap:9px}
+.r-row dt{color:var(--panel-muted)}
+.r-val{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.r-note{margin-top:11px;padding-top:9px;border-top:1px dashed #3a4650;color:#fbbf24;font-size:13px;line-height:1.5}
+
+.report{border:2px solid var(--rule);border-radius:12px;overflow:hidden}
+.report-top{background:var(--wash);border-bottom:2px solid var(--rule);padding:10px 17px;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:660}
+.kpi{display:grid;grid-template-columns:1fr auto auto;gap:3px 15px;padding:13px 17px;font-size:16.5px}
+.kpi dt{color:var(--ink-2)}
+.kpi .v{font-family:var(--mono);font-weight:700;text-align:right}
+.kpi .d{font-family:var(--mono);font-size:14px;text-align:right;color:var(--good)}
+.kpi .d.neg{color:var(--bad)}
+.clickable{color:var(--accent);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}
+.flagged-claim{background:var(--flag-bg);border-left:3px solid var(--flag);padding:9px 13px;font-size:15.5px;line-height:1.45;margin:4px 17px 15px}
+
+.partner{border:2px solid var(--rule);border-radius:12px;padding:20px;display:flex;flex-direction:column}
+.partner .who{font-size:20px;font-weight:680;margin-bottom:3px}
+.partner .what{font-size:13px;color:var(--muted);margin-bottom:12px}
+.partner .role{font-size:15.5px;line-height:1.47;color:var(--ink-2);flex:1}
+.partner .hook{margin-top:12px;padding-top:11px;border-top:2px solid var(--rule);font-size:14.5px;line-height:1.4;font-weight:620;color:var(--accent)}
+
+.asr{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.asr-box{border:2px solid var(--rule);border-radius:10px;overflow:hidden}
+.asr-box.win{border-color:var(--good)}
+.asr-top{padding:8px 14px;font-size:12.5px;font-weight:680;letter-spacing:.07em;text-transform:uppercase;background:var(--wash);color:var(--muted);border-bottom:2px solid var(--rule)}
+.asr-box.win .asr-top{background:#ecfdf5;color:var(--good);border-bottom-color:var(--good)}
+.asr-txt{padding:14px;font-family:var(--mono);font-size:15px;line-height:1.6}
+.wrong{color:var(--bad);text-decoration:wavy underline;text-underline-offset:3px}
+.right{color:var(--good);font-weight:700}
+
+.strip{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.chip{font-family:var(--mono);font-size:13px;padding:6px 11px;border-radius:999px;border:2px solid var(--rule);color:var(--ink-2)}
+.chip.on{border-color:var(--good);color:var(--good);background:#ecfdf5;font-weight:650}
+.chip.off{border-style:dashed;color:var(--faint)}
+.big-demo{display:flex;flex-direction:column;justify-content:center;height:100%}
+.demo-beats{list-style:none;margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.demo-beats li{font-size:19px;color:var(--ink-2);display:flex;gap:14px;align-items:baseline}
+.demo-beats .t{font-family:var(--mono);font-size:13.5px;color:var(--faint);min-width:50px}
+video{width:100%;border-radius:10px;border:2px solid var(--rule);background:#000}
+.novideo{border:2px dashed var(--rule);border-radius:10px;padding:26px;text-align:center;color:var(--faint);font-size:16px;line-height:1.5}
+
+#bar{position:fixed;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.14);z-index:40}
+#bar i{display:block;height:100%;background:var(--accent);transition:width .22s ease}
+#num{position:fixed;right:14px;bottom:12px;color:rgba(255,255,255,.5);font-family:var(--mono);font-size:12px;z-index:40}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:38vh;overflow:auto;background:#11161c;color:#cbd5e1;border-top:2px solid var(--accent);padding:16px 22px 22px;font-size:14.5px;line-height:1.55;z-index:50;display:none}
+#notes.show{display:block}
+#notes h4{color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+#notes b{color:#fff}
+#help{position:fixed;left:14px;bottom:12px;color:rgba(255,255,255,.42);font-family:var(--mono);font-size:12px;z-index:40}
+body.compact .optional{display:none !important}
+</style>
+</head>
+<body class="compact">
+
+<div id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide" data-notes="Say the one-liner and stop. Do not explain the product yet, slide 2 earns it. Name the Reson8 thing once: 'the company on screen is Reson8, because it was more fun than inventing one.' | 15s">
+  <div class="title-wrap">
+    <div class="eyebrow">Investor Update Agent</div>
+    <h1>The update is<br>already written.</h1>
+    <p class="sub" style="font-size:28px;max-width:36ch;margin-top:24px">
+      For founders who owe investors a monthly update. An agent collects your
+      month as it happens, so every number in the update <strong>opens its own source.</strong>
+    </p>
+    <div class="title-meta">
+      <span class="ph">[TEAM NAME]</span> &nbsp;·&nbsp; <span class="ph">[PRESENTER]</span><br>
+      Claude, Jamie and Reson8
+    </div>
+  </div>
+  <div class="footnote">Demo runs on <strong>Reson8</strong>. Funding, languages and pricing are public. Revenue, burn and customer names are invented for the demo.</div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide" data-notes="Slow down. This is the slide founders recognise. Land <b>'you remember the wins faster than the churn'</b> and pause. | 30s">
+  <div class="eyebrow">The problem</div>
+  <h2>It's the 31st. The update is due.</h2>
+  <ul class="beats">
+    <li>You open a blank doc at eleven at night.</li>
+    <li>You scroll Slack, Stripe, GitHub and your own calendar, rebuilding a month you already lived.</li>
+    <li class="hot">You remember the wins faster than the churn.</li>
+    <li>Investors get it three days late, and they cannot check a single number in it.</li>
+  </ul>
+  <div class="kicker">Writing the update takes an hour. <em>Remembering the month is the hard part.</em></div>
+  <div class="footnote"><span class="ph">[Ask founders at the event when they wrote their last update and how long it took. Put the real answer here, or delete this line.]</span></div>
+</section>
+
+<!-- 3 INSIGHT -->
+<section class="slide" data-notes="The hinge of the pitch. Let the curve speak, then give it a beat before the kicker. | 25s">
+  <div class="eyebrow">The insight</div>
+  <h2 class="wide">Detail decays. The update gets written at the worst possible moment.</h2>
+  <div class="split" style="margin-top:10px">
+    <div>
+      <p class="sub" style="margin-top:0">
+        What you can recall is perfect on the day and mostly gone four weeks later,
+        which is exactly when you sit down to write.
+      </p>
+      <p class="sub">
+        So the report is not reporting. It is <strong>reconstruction from memory</strong>,
+        and memory flatters.
+      </p>
+    </div>
+    <svg viewBox="0 0 520 330" width="100%" aria-label="Recall decays across the month while the update is written at month end">
+      <defs><linearGradient id="lost" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#b91c1c" stop-opacity=".13"/>
+        <stop offset="100%" stop-color="#b91c1c" stop-opacity=".02"/>
+      </linearGradient></defs>
+      <line x1="52" y1="30" x2="52" y2="262" stroke="#cbd5e1" stroke-width="2"/>
+      <line x1="52" y1="262" x2="476" y2="262" stroke="#cbd5e1" stroke-width="2"/>
+      <path d="M52,52 C170,52 250,96 330,170 C380,216 420,240 460,248 L460,52 Z" fill="url(#lost)"/>
+      <path d="M52,52 C170,52 250,96 330,170 C380,216 420,240 460,248" fill="none" stroke="#0f1419" stroke-width="4" stroke-linecap="round"/>
+      <line x1="460" y1="30" x2="460" y2="262" stroke="#b91c1c" stroke-width="2.5" stroke-dasharray="6 5"/>
+      <circle cx="460" cy="248" r="7" fill="#b91c1c"/>
+      <text x="60" y="44" font-family="-apple-system,sans-serif" font-size="15" font-weight="650" fill="#0f1419">what actually happened</text>
+      <text x="196" y="132" font-family="-apple-system,sans-serif" font-size="15" font-weight="650" fill="#b91c1c">detail you've lost</text>
+      <text x="336" y="296" font-family="-apple-system,sans-serif" font-size="15" font-weight="700" fill="#b91c1c">you write it here</text>
+      <text x="56" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">week 1</text>
+      <text x="408" y="284" font-family="-apple-system,sans-serif" font-size="14" fill="#64748b">week 4</text>
+    </svg>
+  </div>
+  <div class="kicker">The fix is not a better writer in week four. <em>It is capturing in week one.</em></div>
+</section>
+
+<!-- 4 PRODUCT -->
+<section class="slide" data-notes="Three rules, one sentence each. Resist expanding. Point at the source card on the right, it is the thing they remember. | 35s">
+  <div class="eyebrow">The product</div>
+  <h2 class="wide">An agent that works all month, so month end is only an approval.</h2>
+  <div class="split wide-left" style="margin-top:18px">
+    <div class="cols c3" style="margin-top:0;gap:15px">
+      <div class="card">
+        <div class="n">01</div>
+        <h3>Confirm,<br>don't write</h3>
+        <p>Every week it shows what it already found. You confirm, edit or dismiss. There is no blank page.</p>
+      </div>
+      <div class="card">
+        <div class="n">02</div>
+        <h3>It chases<br>the gaps</h3>
+        <p>When a number looks wrong it works out who owns it and drafts them a Slack message. Nothing sends without your approval.</p>
+      </div>
+      <div class="card">
+        <div class="n">03</div>
+        <h3>Numbers<br>open sources</h3>
+        <p>The update is built only from facts you confirmed. Click any figure to see where it came from.</p>
+      </div>
+    </div>
+    <div class="receipt">
+      <div class="receipt-body">
+        <div class="receipt-head"><b>SOURCE FOR €413k</b><span class="badge">CONFIRMED</span></div>
+        <dl>
+          <div class="r-row"><dt>fact</dt><dd class="r-val">ARR €413,000</dd></div>
+          <div class="r-row"><dt>source</dt><dd>stripe · month close</dd></div>
+          <div class="r-row"><dt>date</dt><dd>2026-10-31</dd></div>
+          <div class="r-row"><dt>owner</dt><dd>Thomas (CEO)</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="kicker">The founder's job shrinks to <em>yes, no, or not quite.</em></div>
+</section>
+
+<!-- 5 DEMO -->
+<section class="slide" data-notes="LIVE DEMO. Switch windows now. If anything stalls for more than four seconds, say the fallback line and press the right arrow. | 90s">
+  <div class="big-demo">
+    <div class="eyebrow">Live</div>
+    <h1 style="font-size:88px">Demo</h1>
+    <ul class="demo-beats">
+      <li><span class="t">0:00</span><span>Week 1. <strong>“Morning Thomas. I did your homework: 4 things to confirm.”</strong></span></li>
+      <li><span class="t">0:22</span><span>Jamie heard your lead investor ask for NRR, so NRR joins the KPIs</span></li>
+      <li><span class="t">0:32</span><span>Add a fact by voice, and it spells <strong>NRR</strong> correctly</span></li>
+      <li><span class="t">0:54</span><span>Week 3. <strong>Demos fell from 41 to 11. The agent knows who to ask.</strong></span></li>
+      <li><span class="t">1:26</span><span>The report. Click any number, get its source.</span></li>
+      <li><span class="t">2:00</span><span>The verifier marks the one claim nobody put in writing</span></li>
+    </ul>
+  </div>
+  <div class="footnote">Backup recording is the next slide.</div>
+</section>
+
+<!-- 5b BACKUP -->
+<section class="slide" data-notes="Backup only. Skip past it if the live demo worked. | 130s if played">
+  <div class="eyebrow">Backup recording</div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0">
+    <video id="backup" controls preload="metadata" style="max-height:470px">
+      <source src="demo-backup.mp4" type="video/mp4">
+    </video>
+    <div class="novideo" id="novideo" style="display:none;max-width:560px">
+      <strong style="color:var(--ink-2);font-size:19px">demo-backup.mp4 not found</strong><br><br>
+      Record with <span style="font-family:var(--mono)">Cmd + Shift + 5</span> following
+      <span style="font-family:var(--mono)">shotlist.md</span>, then save it beside this file.
+    </div>
+  </div>
+</section>
+
+<!-- 6 ARCHITECTURE -->
+<section class="slide" data-notes="For the technical judges. The line that matters: the verifier is a <b>separate Claude call that only sees the ledger</b>, so it cannot be talked into agreeing with the report. Also mention the KPI table is computed in code, never written by the model. | 30s">
+  <div class="eyebrow">Under the hood</div>
+  <h2 class="wide">One agent loop, four runs, ten shared tools.</h2>
+  <svg viewBox="0 0 1136 300" width="100%" style="margin-top:18px" aria-label="Five connectors feed a Claude agent loop that writes to a ledger, which produces the report and the verifier">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker></defs>
+    <style>
+      .bx{fill:#fff;stroke:#e2e8f0;stroke-width:2.5;rx:9}
+      .lbl{font-family:-apple-system,sans-serif;font-size:15px;fill:#2b3640}
+      .hd{font-family:-apple-system,sans-serif;font-size:12.5px;font-weight:700;fill:#64748b;letter-spacing:.11em}
+      .mono{font-family:ui-monospace,Menlo,monospace;font-size:13px;fill:#7d8d9c}
+      .ln{stroke:#94a3b8;stroke-width:2;fill:none;marker-end:url(#ar)}
+    </style>
+    <text class="hd" x="0" y="14">SOURCES</text>
+    <rect class="bx" x="0" y="26" width="158" height="36"/><text class="lbl" x="15" y="49">GitHub</text>
+    <rect class="bx" x="0" y="70" width="158" height="36"/><text class="lbl" x="15" y="93">Jamie · meetings</text>
+    <rect class="bx" x="0" y="114" width="158" height="36"/><text class="lbl" x="15" y="137">HubSpot</text>
+    <rect class="bx" x="0" y="158" width="158" height="36"/><text class="lbl" x="15" y="181">LinkedIn</text>
+    <rect class="bx" x="0" y="202" width="158" height="36"/><text class="lbl" x="15" y="225">Stripe</text>
+    <text class="mono" x="0" y="262">one SourceConnector interface</text>
+    <path class="ln" d="M166,132 L242,132"/>
+    <rect x="250" y="26" width="286" height="212" rx="10" fill="#0f1419"/>
+    <text x="272" y="54" font-family="-apple-system,sans-serif" font-size="12.5" font-weight="700" fill="#7d8d9c" letter-spacing=".11em">CLAUDE AGENT LOOP</text>
+    <text x="272" y="86"  font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">A</tspan>  Weekly check-in</text>
+    <text x="272" y="114" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">B</tspan>  Anomaly investigation</text>
+    <text x="272" y="142" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">C</tspan>  Inbound: chat, voice, docs</text>
+    <text x="272" y="170" font-family="-apple-system,sans-serif" font-size="15.5" fill="#e8edf2"><tspan font-weight="700">D</tspan>  Period report</text>
+    <line x1="272" y1="188" x2="514" y2="188" stroke="#3a4650" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="272" y="214" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#7d8d9c">10 tools · strict JSON · run locally</text>
+    <path class="ln" d="M544,132 L620,132"/>
+    <rect class="bx" x="628" y="72" width="174" height="120"/>
+    <text class="hd" x="648" y="98">FACTS LEDGER</text>
+    <text class="mono" x="648" y="126">pending</text>
+    <text class="mono" x="648" y="146" fill="#047857">confirmed</text>
+    <text class="mono" x="648" y="166">dismissed</text>
+    <path class="ln" d="M810,112 L886,88"/>
+    <path class="ln" d="M810,154 L886,178"/>
+    <rect class="bx" x="894" y="48" width="226" height="60"/>
+    <text class="lbl" x="914" y="74" font-weight="650">Report</text>
+    <text class="mono" x="914" y="95">confirmed facts only</text>
+    <rect x="894" y="148" width="226" height="60" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
+    <text class="lbl" x="914" y="174" font-weight="650" fill="#b45309">Verifier</text>
+    <text class="mono" x="914" y="195" fill="#b45309">separate Claude call</text>
+  </svg>
+  <div class="kicker">The verifier sees only the ledger, <em>so it cannot be talked into agreeing with the report.</em></div>
+</section>
+
+<!-- 7 PARTNERS -->
+<section class="slide" data-notes="Say plainly: <b>take Jamie out and the story stops working.</b> Two important facts were spoken out loud and never written down. That is the honest reason it is in the stack. | 30s">
+  <div class="eyebrow">Built with</div>
+  <h2 class="wide">Each partner carries a piece we could not have built.</h2>
+  <div class="cols c3" style="margin-top:22px">
+    <div class="partner">
+      <div class="who">Claude</div>
+      <div class="what">Sonnet 5.5, tool use</div>
+      <div class="role">Runs the loop, proposes facts, spots the anomaly and drafts the update. Then a second, separate call audits that draft against the ledger.</div>
+      <div class="hook">It checks its own work.</div>
+    </div>
+    <div class="partner">
+      <div class="who">Jamie</div>
+      <div class="what">Bot-free meeting notes, EU</div>
+      <div class="role">Two facts this month exist only because Jamie was in the room: the lead investor asking for NRR, and the clinic rollout nobody has signed.</div>
+      <div class="hook">Reaches what no API can.</div>
+    </div>
+    <div class="partner">
+      <div class="who">Reson8</div>
+      <div class="what">Speech-to-text tuned to your words, EU</div>
+      <div class="role">We hand it the vocabulary a founder actually uses: ARR, NRR, churn, runway, customer names. Then the founder can just talk.</div>
+      <div class="hook">Generic speech-to-text can't spell NRR.</div>
+    </div>
+  </div>
+  <div class="asr">
+    <div class="asr-box">
+      <div class="asr-top">Generic speech-to-text</div>
+      <div class="asr-txt">“<span class="wrong">an are are</span> is up to 112 percent and <span class="wrong">noorder licht</span> wants all fourteen clinics in <span class="wrong">cue one</span>”</div>
+    </div>
+    <div class="asr-box win">
+      <div class="asr-top">Reson8 with our vocabulary</div>
+      <div class="asr-txt">“<span class="right">NRR</span> is up to 112% and <span class="right">Noorderlicht</span> wants all 14 clinics in <span class="right">Q1</span>”</div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 CLOSE -->
+<section class="slide" data-notes="Land 'they can't check it'. Give the repo line, then the last line. The amber card is your last image. Stop talking after it. | 25s">
+  <div class="eyebrow">Why it matters</div>
+  <h2 class="wide">Today investors can believe your update or not. They can't check it.</h2>
+  <div class="split" style="margin-top:16px">
+    <div>
+      <ul class="beats" style="margin-top:2px">
+        <li>Facts captured weekly, at the source</li>
+        <li>Nothing reaches the update without a source behind it</li>
+        <li class="hot">Lowlights sit beside the wins because the ledger has them, not because the founder felt brave</li>
+      </ul>
+      <p class="sub" style="font-size:21px">
+        We did not make the update quicker to write.<br>
+        We made it <strong>possible to check.</strong>
+      </p>
+    </div>
+    <div class="receipt">
+      <div class="receipt-body">
+        <div class="receipt-head"><b>SOURCE FOR THIS CLAIM</b><span class="badge flagged">UNCONFIRMED</span></div>
+        <dl>
+          <div class="r-row"><dt>claim</dt><dd class="r-val">All 14 clinics<br>in Q1</dd></div>
+          <div class="r-row"><dt>source</dt><dd>jamie · pilot review</dd></div>
+          <div class="r-row"><dt>date</dt><dd>2026-10-27</dd></div>
+          <div class="r-row"><dt>owner</dt><dd>Thomas (CEO)</dd></div>
+        </dl>
+        <div class="r-note">Only said in a meeting. Not backed by a system of record.</div>
+      </div>
+    </div>
+  </div>
+  <div class="kicker">The best line in the update is the one we refused to state as fact. <em>That is the product.</em></div>
+  <div class="footnote" style="bottom:14px;font-size:16.5px;color:var(--ink-2)">Try it on your own month: <strong style="color:var(--accent)">github.com/seanjanke/Agentic-Investor-Updates</strong>. It runs without an API key.</div>
+</section>
+
+<!-- 9 OPTIONAL: LEDGER -->
+<section class="slide optional" data-notes="Optional. Use when a judge asks how a fact becomes a number.">
+  <div class="eyebrow">Optional · the ledger</div>
+  <h2 class="wide">A fact has to earn its way into the update.</h2>
+  <div class="split" style="margin-top:14px">
+    <ul class="beats" style="margin-top:0">
+      <li><strong>Proposed.</strong> The agent reads a source and writes a candidate fact. It never invents a number.</li>
+      <li><strong>Pending.</strong> It waits in the feed for the founder.</li>
+      <li class="hot"><strong>Confirmed.</strong> Only these are visible to the report writer.</li>
+      <li><strong>Dismissed.</strong> Kept on record, and never reaches the report.</li>
+    </ul>
+    <div class="report">
+      <div class="report-top">Fact</div>
+      <div style="padding:15px 17px;font-family:var(--mono);font-size:14px;line-height:1.95;color:var(--ink-2)">
+        id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--ink)">a3f1</span><br>
+        text &nbsp;&nbsp;&nbsp;<span style="color:var(--ink)">"ARR at end of October: €413k"</span><br>
+        value &nbsp;&nbsp;<span style="color:var(--ink)">413000</span><br>
+        unit &nbsp;&nbsp;&nbsp;<span style="color:var(--ink)">EUR</span><br>
+        source &nbsp;<span style="color:var(--ink)">stripe</span><br>
+        owner &nbsp;&nbsp;<span style="color:var(--ink)">thomas</span><br>
+        status &nbsp;<span style="color:var(--good);font-weight:700">confirmed</span><br>
+        kpiKey <span style="color:var(--ink)">arr</span>
+      </div>
+    </div>
+  </div>
+  <div class="kicker">The report writer <em>cannot see</em> a fact you have not confirmed.</div>
+</section>
+
+<!-- 10 OPTIONAL: THE MONTH -->
+<section class="slide optional" data-notes="Optional. Use for 'what does the output actually look like'. The KPI table is computed in code from the ledger, not written by the model.">
+  <div class="eyebrow">Optional · October at Reson8</div>
+  <h2 class="wide">The month the agent assembled.</h2>
+  <div class="split" style="margin-top:14px">
+    <div class="report">
+      <div class="report-top">KPIs · October 2026</div>
+      <dl class="kpi">
+        <dt>ARR</dt><dd class="v clickable">€413k</dd><dd class="d">+17.3%</dd>
+        <dt>Paying teams</dt><dd class="v clickable">44</dd><dd class="d">+3</dd>
+        <dt>NRR</dt><dd class="v clickable">112%</dd><dd class="d">+8pp</dd>
+        <dt>Net burn</dt><dd class="v clickable">€231k</dd><dd class="d neg">+33k</dd>
+        <dt>Cash</dt><dd class="v clickable">€3.89M</dd><dd class="d neg">−231k</dd>
+        <dt>Runway</dt><dd class="v clickable">17 months</dd><dd class="d neg">−4</dd>
+      </dl>
+      <div class="report-top" style="border-top:2px solid var(--rule)">Lowlights, never skipped</div>
+      <div style="padding:11px 17px 4px;font-size:15.5px;line-height:1.5;color:var(--ink-2)">
+        One team churned after an acquisition, −€7k ARR. Burn up €33k on two speech engineers.
+        Runway down four months.
+      </div>
+      <div class="flagged-claim" style="margin-top:11px">
+        <strong>“All 14 clinics in Q1”</strong> flagged Unconfirmed: said in a meeting only.
+      </div>
+    </div>
+    <div>
+      <p class="sub" style="margin-top:0">
+        Every figure is clickable and every click opens the fact behind it.
+      </p>
+      <p class="sub">
+        The churn and the shorter runway are in the update for the same reason the ARR is.
+        A confirmed fact exists, so it goes in.
+      </p>
+      <div class="strip">
+        <span class="chip on">ARR</span><span class="chip on">Teams</span>
+        <span class="chip on">NRR</span><span class="chip on">Burn</span>
+        <span class="chip on">Cash</span><span class="chip on">Runway</span>
+      </div>
+      <p class="sub" style="font-size:17.5px;color:var(--muted)">
+        NRR was not in the KPI set on 1 October. The agent added it after Jamie caught the
+        lead investor asking for it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 OPTIONAL: REAL VS MOCK -->
+<section class="slide optional" data-notes="Optional. The 'is any of it real' question. Answering it straight buys credibility.">
+  <div class="eyebrow">Optional · what is real</div>
+  <h2 class="wide">What runs, and what is a fixture.</h2>
+  <div class="cols c2" style="margin-top:22px">
+    <div class="card">
+      <h3 style="color:var(--good)">Real</h3>
+      <p style="line-height:1.72">
+        The Claude agent loop and all ten tools, strict JSON schemas, the facts ledger,
+        the report writer, the verifier pass, the approval gate on outbound messages,
+        and the whole interface. Tools execute locally and deterministically. The KPI
+        table is computed from the ledger in code, never written by the model.
+      </p>
+    </div>
+    <div class="card" style="border-style:dashed">
+      <h3 style="color:var(--muted)">Mocked</h3>
+      <p style="line-height:1.72">
+        The five connectors read timestamped JSON instead of live APIs, and a simulated
+        clock moves a week per click, so a month of founder life fits into ninety seconds.
+        Teammate replies arrive from a button rather than Slack.
+      </p>
+    </div>
+  </div>
+  <div class="split" style="margin-top:4px;align-items:start">
+    <div>
+      <p class="sub" style="margin-top:12px">Every connector already implements one interface, so a real one drops in:</p>
+      <div class="report" style="margin-top:12px">
+        <div style="padding:13px 15px;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--ink-2)">
+          <span style="color:var(--accent)">abstract class</span> SourceConnector {<br>
+          &nbsp;&nbsp;String <span style="color:var(--accent)">get</span> id;<br>
+          &nbsp;&nbsp;Future&lt;List&lt;SourceItem&gt;&gt; fetch(<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;DateTime since, DateTime until);<br>
+          }
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="sub" style="margin-top:12px">Next to connect:</p>
+      <div class="strip">
+        <span class="chip off">Granola</span><span class="chip off">Salesforce</span>
+        <span class="chip off">Linear</span><span class="chip off">Notion</span>
+        <span class="chip off">Google Analytics</span><span class="chip off">Any dashboard · Computer Use</span>
+      </div>
+      <p class="sub" style="font-size:17.5px;color:var(--muted)">
+        Scheduling is the other swap. The "Next week" button stands in for a cron job per
+        founder, and anomaly checks would run from webhooks.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 OPTIONAL: BUSINESS -->
+<section class="slide optional" data-notes="Optional closer for a longer slot or a business-minded judge.">
+  <div class="eyebrow">Optional · the business</div>
+  <h2 class="wide">Why it gets used every month instead of once.</h2>
+  <div class="cols c3" style="margin-top:26px">
+    <div class="card">
+      <div class="n">PULL</div>
+      <h3>The deadline is someone else's</h3>
+      <p>Investors ask for the update whether or not the founder feels like writing. The habit already exists, so we attach to it instead of creating one.</p>
+    </div>
+    <div class="card">
+      <div class="n">MOAT</div>
+      <h3>The ledger compounds</h3>
+      <p>Every confirmed fact makes the next month's draft better and cheaper to check. Month twelve beats month one, and none of it transfers to a competitor.</p>
+    </div>
+    <div class="card">
+      <div class="n">WEDGE</div>
+      <h3>Sources travel</h3>
+      <p>The same verified ledger answers a data room request, a board pack and a diligence questionnaire. The monthly update is only the first document.</p>
+    </div>
+  </div>
+  <div class="kicker">Start at the monthly update. <em>End as the record of everything a founder has to prove.</em></div>
+</section>
+
+</div>
+
+<div id="bar"><i></i></div>
+<div id="num"></div>
+<div id="help">arrows &nbsp; F fullscreen &nbsp; S notes &nbsp; O optional</div>
+<div id="notes"><h4>Speaker notes</h4><div id="notes-body"></div></div>
+
+<script>
+(function(){
+  var stage = document.getElementById('stage');
+  var notes = document.getElementById('notes');
+  var notesBody = document.getElementById('notes-body');
+  var i = 0;
+
+  function slides(){
+    return [].slice.call(document.querySelectorAll('.slide')).filter(function(s){
+      return !(document.body.classList.contains('compact') && s.classList.contains('optional'));
+    });
+  }
+
+  // Scale the fixed canvas so every slide is pixel-identical on any projector.
+  function fit(){
+    stage.style.transform = 'scale(' + Math.min(window.innerWidth/1280, window.innerHeight/720) + ')';
+  }
+
+  function show(n){
+    var list = slides();
+    i = Math.max(0, Math.min(n, list.length - 1));
+    document.querySelectorAll('.slide').forEach(function(s){ s.classList.remove('active'); });
+    list[i].classList.add('active');
+    document.querySelector('#bar i').style.width = ((i+1)/list.length*100) + '%';
+    document.getElementById('num').textContent = (i+1) + ' / ' + list.length;
+    notesBody.innerHTML = list[i].dataset.notes || '';
+    var v = list[i].querySelector('video');
+    document.querySelectorAll('video').forEach(function(x){ if(x !== v) x.pause(); });
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); show(i+1); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); show(i-1); }
+    else if(e.key === 'Home'){ show(0); }
+    else if(e.key === 'End'){ show(slides().length-1); }
+    else if(e.key === 'f' || e.key === 'F'){
+      if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen();
+    }
+    else if(e.key === 's' || e.key === 'S'){ notes.classList.toggle('show'); }
+    else if(e.key === 'o' || e.key === 'O'){
+      var cur = slides()[i];
+      document.body.classList.toggle('compact');
+      var list = slides(), idx = list.indexOf(cur);
+      show(idx < 0 ? i : idx);
+    }
+  });
+
+  document.addEventListener('click', function(e){
+    if(e.target.closest('video') || e.target.closest('#notes')) return;
+    show(e.clientX > window.innerWidth/2 ? i+1 : i-1);
+  });
+
+  // Show a hint instead of a dead player when the recording is not made yet.
+  var vid = document.getElementById('backup');
+  vid.addEventListener('error', function(){
+    vid.style.display = 'none';
+    document.getElementById('novideo').style.display = 'block';
+  }, true);
+
+  // Torn bottom edge on every source card.
+  document.querySelectorAll('.receipt').forEach(function(r){
+    var teeth = 26, w = 400, step = w/teeth, d = 'M0,0';
+    for(var t = 0; t < teeth; t++){ d += ' L' + ((t+0.5)*step) + ',11 L' + ((t+1)*step) + ',0'; }
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('class','tear');
+    svg.setAttribute('viewBox','0 0 ' + w + ' 12');
+    svg.setAttribute('preserveAspectRatio','none');
+    var p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', d + ' Z');
+    p.setAttribute('fill', '#0f1419');
+    svg.appendChild(p);
+    r.appendChild(svg);
+  });
+
+  // #3 in the URL opens slide 3, useful for jumping to one slide in Q&A.
+  function fromHash(){ return Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1); }
+  window.addEventListener('hashchange', function(){ show(fromHash()); });
+  window.addEventListener('resize', fit);
+  fit();
+  show(fromHash());
+})();
+</script>
+</body>
+</html>

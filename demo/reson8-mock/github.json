@@ -1,0 +1,13 @@
+{
+  "source": "github",
+  "items": [
+    {"id": "gh-pr-318", "ts": "2026-10-02T16:20:00", "type": "release", "title": "Merged: Barge-in tuning for the Turns API", "body": "PR #318 by jarno-reson8. Turn detection now cuts off the agent mid-sentence when a caller interrupts, median cut-off 180ms. Deployed to production.",
+     "facts": [{"text": "Shipped barge-in tuning for the Turns API: agents stop within 180ms when a caller interrupts", "kind": "product", "owner": "Jarno"}]},
+    {"id": "gh-rel-1.8", "ts": "2026-10-09T11:05:00", "type": "release", "title": "Release v1.8.0: Frisian and Swedish are GA", "body": "Tag v1.8.0. Frisian and Swedish leave beta, bringing the API to 10 supported European languages. Mid-conversation language switching covers all 10. Closes #204.",
+     "facts": [{"text": "Release 1.8: Frisian and Swedish are generally available, taking the API to 10 European languages", "kind": "highlight", "owner": "Jarno"}]},
+    {"id": "gh-pr-349", "ts": "2026-10-15T09:40:00", "type": "merge", "title": "Merged: Streaming decoder rewrite", "body": "PR #349. Realtime p95 latency 410ms -> 254ms (-38%) on the EU cluster, measured over a week of production traffic.",
+     "facts": [{"text": "Realtime p95 latency down 38% (410ms to 254ms)", "kind": "product", "owner": "Jarno"}]},
+    {"id": "gh-rel-1.9", "ts": "2026-10-23T15:10:00", "type": "release", "title": "Release v1.9.0: Diarization v2", "body": "Tag v1.9.0. Speaker diarization v2: speaker count no longer has to be declared up front, and overlap handling improved. Billed at 0.2 credits per minute as before.",
+     "facts": [{"text": "Release 1.9: diarization v2 detects speaker count automatically and handles overlapping speech", "kind": "product", "owner": "Jarno"}]}
+  ]
+}
