@@ -230,7 +230,7 @@ class ToolHost {
     for (final f in s.activeFacts) {
       final sameRecord = f.sourceRef == ref;
       final sameMetric = metric != null && f.metric == metric && f.period == period && period != null;
-      if ((sameRecord && (f.metric == metric || f.text == text)) || sameMetric) {
+      if ((sameRecord && ((metric != null && f.metric == metric) || f.text == text)) || sameMetric) {
         return {'id': f.id, 'status': 'duplicate of existing fact', 'existing': f.toJson()};
       }
     }

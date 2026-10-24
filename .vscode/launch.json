@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Investor agent (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "macos",
+      "args": ["--dart-define-from-file=secrets.json"]
+    }
+  ]
+}

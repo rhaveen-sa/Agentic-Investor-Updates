@@ -138,8 +138,8 @@ class AppState extends ChangeNotifier {
       type: FeedType.welcome,
       title: 'Agent is set up for Shelfwise',
       date: today,
-      body: 'Connected GitHub, Jamie, HubSpot, LinkedIn and Stripe. I will check in every week and have the '
-          'October investor update ready on Oct 31. September numbers are in the ledger as the baseline.',
+      body: 'Hi Lena. I\'m connected to GitHub, Jamie, HubSpot, LinkedIn and Stripe. I\'ll check in every week '
+          'and have the October update ready on Oct 31.',
     ));
     notifyListeners();
   }

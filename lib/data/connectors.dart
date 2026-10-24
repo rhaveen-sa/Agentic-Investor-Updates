@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 
 /// Display metadata for every place a fact can come from.
 class SourceInfo {
-  const SourceInfo(this.id, this.name, this.category, this.icon, this.color);
+  const SourceInfo(this.id, this.name, this.category, this.icon, this.color, {this.logo});
 
   final String id;
+  final String? logo;
   final String name;
   final String category;
   final IconData icon;
@@ -15,15 +16,15 @@ class SourceInfo {
 }
 
 const sourceInfos = <String, SourceInfo>{
-  'github': SourceInfo('github', 'GitHub', 'Product', Icons.code, Color(0xFF24292F)),
-  'jamie': SourceInfo('jamie', 'Jamie', 'Meetings', Icons.mic_none, Color(0xFF7C4DFF)),
-  'hubspot': SourceInfo('hubspot', 'HubSpot', 'CRM', Icons.handshake_outlined, Color(0xFFFF7A59)),
-  'linkedin': SourceInfo('linkedin', 'LinkedIn', 'Growth', Icons.campaign_outlined, Color(0xFF0A66C2)),
-  'stripe': SourceInfo('stripe', 'Stripe + Bank', 'Finance', Icons.account_balance_outlined, Color(0xFF635BFF)),
-  'founder': SourceInfo('founder', 'Lena (chat)', 'Founder input', Icons.person_outline, Color(0xFF2E7D32)),
-  'voice': SourceInfo('voice', 'Lena (voice)', 'Founder input', Icons.graphic_eq, Color(0xFF2E7D32)),
+  'github': SourceInfo('github', 'GitHub', 'Product', Icons.code, Color(0xFF24292F), logo: 'assets/logos/github.png'),
+  'jamie': SourceInfo('jamie', 'Jamie', 'Meetings', Icons.mic_none, Color(0xFF7C4DFF), logo: 'assets/logos/jamie.png'),
+  'hubspot': SourceInfo('hubspot', 'HubSpot', 'CRM', Icons.handshake_outlined, Color(0xFFFF7A59), logo: 'assets/logos/hubspot.png'),
+  'linkedin': SourceInfo('linkedin', 'LinkedIn', 'Growth', Icons.campaign_outlined, Color(0xFF0A66C2), logo: 'assets/logos/linkedin.png'),
+  'stripe': SourceInfo('stripe', 'Stripe', 'Finance', Icons.account_balance_outlined, Color(0xFF635BFF), logo: 'assets/logos/stripe.png'),
+  'founder': SourceInfo('founder', 'Chat', 'Founder input', Icons.person_outline, Color(0xFF2E7D32)),
+  'voice': SourceInfo('voice', 'Voice', 'Founder input', Icons.graphic_eq, Color(0xFF2E7D32)),
   'document': SourceInfo('document', 'Document', 'Founder input', Icons.description_outlined, Color(0xFF5D4037)),
-  'slack': SourceInfo('slack', 'Slack', 'Team reply', Icons.forum_outlined, Color(0xFF4A154B)),
+  'slack': SourceInfo('slack', 'Slack', 'Team reply', Icons.forum_outlined, Color(0xFF4A154B), logo: 'assets/logos/slack.png'),
 };
 
 SourceInfo sourceInfo(String id) =>

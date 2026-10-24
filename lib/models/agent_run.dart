@@ -36,7 +36,7 @@ class AgentRun {
   AgentRun(this.kind, {this.scripted = false});
 
   final RunKind kind;
-  final bool scripted;
+  bool scripted;
   final List<RunStep> steps = [];
   final List<String> proposedFactIds = [];
   final List<String> questions = [];

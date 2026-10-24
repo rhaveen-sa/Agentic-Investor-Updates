@@ -1,13 +1,66 @@
 {
   "source": "jamie",
   "items": [
-    {"id": "jamie-mtg-1003", "ts": "2026-10-03T11:00:00", "type": "meeting_notes", "title": "Monthly call with Northstar Ventures (lead investor)", "body": "Attendees: Lena, Mara Keller (Northstar). Summary: Mara is happy with the September update. Action item: 'Please include net revenue retention (NRR) in the next update, our partners look at it for the Series A.'",
-     "facts": [{"text": "Lead investor (Mara, Northstar Ventures) asked for NRR in the next update", "kind": "context", "owner": "Lena", "statement_only": true, "suggest_kpi": "nrr"}]},
-    {"id": "jamie-mtg-1010", "ts": "2026-10-10T14:00:00", "type": "meeting_notes", "title": "Procurement call with FreshMart Nord", "body": "Attendees: Lena, Head of Procurement FreshMart Nord. Summary: pilot contract terms agreed, 12 stores, kick-off Oct 13.",
-     "facts": [{"text": "Procurement call with FreshMart Nord: pilot terms agreed, kick-off Oct 13", "kind": "context", "owner": "Lena", "statement_only": true}]},
-    {"id": "jamie-mtg-1016", "ts": "2026-10-16T16:00:00", "type": "meeting_notes", "title": "Interview: Senior ML Engineer (candidate 1)", "body": "Attendees: Tom, Lena, candidate. Summary: strong forecasting background, second round next week. Pipeline for the role is thin, more referrals needed.",
-     "facts": [{"text": "Interviewing for a senior ML engineer; candidate pipeline is thin", "kind": "team", "owner": "Tom", "statement_only": true}]},
-    {"id": "jamie-mtg-1027", "ts": "2026-10-27T10:00:00", "type": "meeting_notes", "title": "FreshMart Nord pilot review", "body": "Attendees: Lena, FreshMart Nord Head of Operations. Summary: Store managers report 18% less fresh produce waste in week 2. 'If this holds we want to roll out to 40 stores in Q1.' No commitment or contract yet.",
-     "facts": [{"text": "FreshMart Nord wants to roll out to 40 stores in Q1", "kind": "highlight", "owner": "Lena", "statement_only": true}]}
+    {
+      "id": "jamie-mtg-1003",
+      "ts": "2026-10-03T11:00:00",
+      "type": "meeting_notes",
+      "title": "Monthly call with Northstar Ventures (lead investor)",
+      "body": "Attendees: Lena, Mara Keller (Northstar). Summary: Mara is happy with the September update. Action item: 'Please include net revenue retention (NRR) in the next update, our partners look at it for the Series A.'",
+      "facts": [
+        {
+          "text": "Lead investor (Mara, Northstar Ventures) asked for NRR in the next update",
+          "kind": "context",
+          "owner": "Lena",
+          "statement_only": true,
+          "suggest_kpi": "nrr"
+        }
+      ]
+    },
+    {
+      "id": "jamie-mtg-1010",
+      "ts": "2026-10-10T14:00:00",
+      "type": "meeting_notes",
+      "title": "Procurement call with FreshMart Nord",
+      "body": "Attendees: Lena, Head of Procurement FreshMart Nord. Summary: pilot contract terms agreed, 12 stores, kick-off Oct 13.",
+      "facts": [
+        {
+          "text": "Procurement call with FreshMart Nord: pilot terms agreed, kick-off Oct 13",
+          "kind": "context",
+          "owner": "Lena",
+          "statement_only": true
+        }
+      ]
+    },
+    {
+      "id": "jamie-mtg-1016",
+      "ts": "2026-10-16T16:00:00",
+      "type": "meeting_notes",
+      "title": "Interview: Senior ML Engineer (candidate 1)",
+      "body": "Attendees: Tom, Lena, candidate. Summary: strong forecasting background, second round next week. Pipeline for the role is thin, more referrals needed.",
+      "facts": [
+        {
+          "text": "Interviewing for a senior ML engineer; candidate pipeline is thin",
+          "kind": "team",
+          "owner": "Tom",
+          "statement_only": false
+        }
+      ]
+    },
+    {
+      "id": "jamie-mtg-1027",
+      "ts": "2026-10-27T10:00:00",
+      "type": "meeting_notes",
+      "title": "FreshMart Nord pilot review",
+      "body": "Attendees: Lena, FreshMart Nord Head of Operations. Summary: Store managers report 18% less fresh produce waste in week 2. 'If this holds we want to roll out to 40 stores in Q1.' No commitment or contract yet.",
+      "facts": [
+        {
+          "text": "FreshMart Nord wants to roll out to 40 stores in Q1",
+          "kind": "highlight",
+          "owner": "Lena",
+          "statement_only": true
+        }
+      ]
+    }
   ]
 }

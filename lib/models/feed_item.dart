@@ -10,16 +10,20 @@ class FeedItem {
     this.body,
     this.run,
     this.userText,
+    this.author,
   });
 
   final FeedType type;
-  final String title;
+  String title;
   final DateTime date;
   String? body;
   final AgentRun? run;
 
   /// What the founder sent (for inbound items).
   final String? userText;
+
+  /// Set when [userText] came from a teammate instead of the founder.
+  final String? author;
 
   /// For month-close check-ins: show the "Draft report" action.
   bool offersReport = false;
