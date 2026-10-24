@@ -12,8 +12,9 @@ the backup video, and the Reson8 dataset the demo runs on.
 | [`deck.html`](deck.html) | The slides. Open in Chrome, press `F` for fullscreen. Self-contained, so it needs no network, fonts or build step. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
-| [`HANDOFF.md`](HANDOFF.md) | Every code change needed to run the app on the Reson8 data. For whoever drives the app. |
-| [`reson8-mock/`](reson8-mock/) | Drop-in replacement for `assets/mock/`, telling the October story for Reson8. |
+| [`HANDOFF.md`](HANDOFF.md) | How to switch the app to Reson8, and what to check before presenting. For whoever drives the app. |
+| [`reson8-switch.patch`](reson8-switch.patch) | The code and data changes behind `HANDOFF.md`, as one patch to review and `git apply`. |
+| [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
 | [`pitch-review.md`](pitch-review.md) | The deck scored against 15 Ogilvy principles, before and after, plus a written version of the pitch for submission forms. |
 | [`img/`](img/) | Slide renders used in the READMEs. |
 
@@ -38,7 +39,7 @@ Do these in order. The first four take five minutes. The rest depend on the app.
 - [ ] Ask a few founders at the event when they last wrote an investor update and how long
       it took. Put the best answer in the yellow line on slide 2, or delete the line.
 - [ ] Run the rehearsal checks at the end of `script.md` on someone who hasn't seen it.
-- [ ] Apply `HANDOFF.md` so the app runs on Reson8, and tick its checklist.
+- [ ] Apply `reson8-switch.patch` as described in `HANDOFF.md`, and tick its checklist.
 - [ ] Do a live run and confirm the model row reads `claude-sonnet-5-5`, not `scripted` or
       `fallback`.
 - [ ] Record `demo-backup.mp4` following `shotlist.md` and save it next to `deck.html`.
@@ -64,15 +65,14 @@ keep narrating the same beats over the video. Don't debug on stage.
 
 The app ships with Shelfwise, a fictional grocery SaaS. For the pitch we run the same
 October story on [Reson8](https://www.reson8.dev/), the speech-to-text partner, because
-their own numbers make a better demo than an invented company.
+their own numbers make a better demo than an invented company. `HANDOFF.md` and
+`reson8-switch.patch` make the switch. The patch also adds two things to the report:
+SDK downloads as a sixth source, and a default-alive check under the KPI table.
 
-```bash
-cp demo/reson8-mock/*.json assets/mock/   # from the repo root, then apply HANDOFF.md
-```
-
-Reson8's funding, founders, languages, API surface, certifications and pricing are public.
-Every revenue, burn, cash, runway and customer figure is invented for the demo, along with
-all customer names and the Head of Growth, Mirte. The title slide says so.
+Reson8's funding, founders, languages, API surface, certifications and pricing are public,
+and so are the PyPI and npm download counts. Every revenue, burn, cash, runway and
+customer figure is invented for the demo, along with all customer names and the Head of
+Growth, Mirte. The title slide says so.
 
 | | September | October |
 | --- | --- | --- |
@@ -81,9 +81,13 @@ all customer names and the Head of Growth, Mirte. The title slide says so.
 | NRR | 104% | 112% |
 | Net burn | €198k | €231k |
 | Runway | 21 months | 17 months |
+| SDK downloads (PyPI + npm, real) | 21,568 | 30,735 (1 to 23 Oct) |
 
 Weekly demo bookings run 29, 41, 11, 34. The week 3 drop is 73%, the same as the Shelfwise
 data, so the anomaly detector fires without retuning.
+
+Default alive at October's growth (17.3% a month): break-even in 13 months with €1.83M
+left. Below about 8.6% monthly growth the answer flips to default dead.
 
 ## Slides
 

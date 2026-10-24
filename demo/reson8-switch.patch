@@ -1,0 +1,1310 @@
+diff --git a/README.md b/README.md
+index 4ce44ae..5ed6396 100644
+--- a/README.md
++++ b/README.md
+@@ -38,18 +38,22 @@ there.
+ 
+ ## The demo
+ 
+-The app follows **Shelfwise**, a fictional seed-stage B2B SaaS (AI demand forecasting for
+-independent grocery stores), through October 2026. Click **Next week** to move the
++The demo runs on [Reson8](https://www.reson8.dev/), the Amsterdam speech-to-text company
++and one of the hackathon partners, through October 2026. Click **Next week** to move the
+ simulated date forward. Each click runs the weekly check-in, and the last one closes the
+ month.
+ 
+ | Week | What happens |
+ | --- | --- |
+-| 1 | Check-in: 2 new stores, supplier export shipped, 31 demos. The agent sees in a Jamie meeting note that the lead investor asked for NRR, and suggests adding it to the KPIs. The founder adds by voice that two engineers started. |
+-| 2 | Release 2.0, FreshMart Nord pilot (12 stores, +€36k ARR), a record 44 demos. |
+-| 3 | Demos drop to 12. The agent investigates, finds that Anna owns LinkedIn, and drafts a Slack message. The founder approves it, and Anna's reply becomes a fact. |
+-| 4 | Release 2.1. FreshMart says it wants 40 stores in Q1, but only in a meeting. |
+-| Close | October numbers come in. The agent drafts the update, and a separate verifier flags the "40 stores" claim as unconfirmed. |
++| 1 | Check-in: 2 new teams (+€19k ARR), barge-in tuning shipped, 29 demos. The agent sees in a Jamie meeting note that Balderton asked for NRR, and suggests adding it to the KPIs. Thomas adds by voice that two speech engineers started. |
++| 2 | Release 1.8 (10 languages), a paid pilot with Noorderlicht Zorggroep (9 clinics, +€41k ARR), a record 41 demos. |
++| 3 | Demos drop to 11. The agent investigates, finds that Mirte owns LinkedIn, and drafts a Slack message. Thomas approves it, and Mirte's reply becomes a fact. |
++| 4 | Release 1.9. SDK downloads pass September's total. Noorderlicht says it wants all 14 clinics in Q1, but only in a meeting. |
++| Close | October numbers come in. The agent drafts the update, a separate verifier flags the "14 clinics" claim as unconfirmed, and the report answers whether Reson8 is default alive. |
++
++Reson8's funding, founders, languages and pricing are public, and so are the SDK download
++counts (PyPI and npm, pulled on 24 October). Revenue, burn, cash, runway, customer names
++and Mirte are invented for the demo.
+ 
+ The week 3 chase, step by step:
+ 
+@@ -57,22 +61,33 @@ The week 3 chase, step by step:
+ sequenceDiagram
+     participant S as Sources
+     participant A as Agent
+-    participant F as Founder
+-    participant T as Anna, Head of Growth
+-    S->>A: LinkedIn: demos 44 → 12
++    participant F as Thomas, CEO
++    participant T as Mirte, Head of Growth
++    S->>A: LinkedIn: demos 41 → 11
+     A->>A: Anomaly. Look for the cause in other sources
+-    A->>A: team_directory: LinkedIn belongs to Anna
++    A->>A: team_directory: LinkedIn belongs to Mirte
+     A->>F: Draft Slack message, waiting for approval
+     F->>A: Approve
+     A->>T: Message sent
+-    T->>A: "Our LinkedIn ad account got suspended on Oct 14 because the company card expired."
++    T->>A: "Our LinkedIn ad account was suspended on Oct 14 because the company card expired."
+     A->>F: New pending fact from the reply
+     F->>A: Confirm
+ ```
+ 
+-For the hackathon pitch the same story runs on the speech-to-text partner
+-[Reson8](https://www.reson8.dev/), using the dataset and code changes in
+-[`demo/`](demo/).
++## What the update contains
++
++The update has fixed sections: TL;DR, a KPI table, a default-alive check, highlights,
++lowlights, product, team and asks. The model writes the prose. Two parts are computed in
++code from confirmed facts, so the model never writes their numbers:
++
++- **KPI table.** ARR, paying teams, NRR, demos, net burn, cash and runway, with September,
++  October and the change.
++- **Default alive?** Paul Graham's
++  [default alive or default dead](https://paulgraham.com/aord.html) test. If costs stay
++  flat and ARR keeps growing at this month's rate, does revenue cover costs before the
++  cash runs out? It also gives the growth rate where the answer flips. On the demo data:
++  default alive, break-even in 13 months with €1.83M left, and default dead below about
++  8.6% monthly growth.
+ 
+ ## How it works
+ 
+@@ -84,6 +99,7 @@ flowchart LR
+         HS[HubSpot]
+         LI[LinkedIn]
+         ST[Stripe]
++        PK[PyPI · npm downloads]
+     end
+     IN["Founder: chat, voice (Reson8),<br/>documents · teammate replies"]
+     Sources -->|"SourceConnector.fetch(since, until)"| AG
+@@ -92,6 +108,8 @@ flowchart LR
+     AG -->|message_teammate| OUT["Message drafts"]
+     OUT -->|founder approves| SENT["Sent"]
+     LG -->|confirmed facts only| RP["Report"]
++    LG -->|ARR, burn, cash| DA["KPI table and<br/>default alive, in code"]
++    DA --> RP
+     RP --> VF{{"Verifier<br/>separate Claude call"}}
+     LG --> VF
+     VF -->|unsupported claim| FL["Flagged: Unconfirmed"]
+@@ -112,8 +130,8 @@ interface. Everything runs locally except the Claude and Reson8 API calls.
+ Tools: `list_sources`, `fetch_source`, `ledger_search`, `ledger_propose`, `suggest_kpi`,
+ `team_directory`, `ask_founder`, `message_teammate` (needs approval), `submit_report`,
+ `verify_claims`. The tools run locally and deterministically. The model chooses which to
+-call and writes the text. The KPI table is computed from the ledger in code, and the model
+-never writes it.
++call and writes the text. The KPI table and the default-alive check are computed from the
++ledger in code, and the model never writes them.
+ 
+ ### How a fact gets into the update
+ 
+@@ -133,8 +151,9 @@ into agreeing with it.
+ 
+ ## What is mocked, and how real connectors plug in
+ 
+-- **Sources** are timestamped JSON in `assets/mock/`. Each connector only returns data up
+-  to the simulated date. A real connector implements the same
++- **Sources** are timestamped JSON in `assets/mock/`, one file per source. Each connector
++  only returns data up to the simulated date. The PyPI and npm counts in `packages.json`
++  are real; the other figures are invented. A real connector implements the same
+   `SourceConnector.fetch(since, until)`: OAuth for GitHub, HubSpot, Stripe and LinkedIn,
+   the Jamie API for meetings, and Computer Use for dashboards without an API.
+ - **Scheduling.** The "Next week" button stands in for a cron job per founder. Anomaly
+@@ -150,6 +169,7 @@ into agreeing with it.
+ | **Claude** (`claude-sonnet-5-5`) | The agent loop for all four runs, plus the separate verifier. |
+ | **Reson8** | Voice input through the prerecorded speech-to-text API, biased with a custom model of startup vocabulary (ARR, NRR, churn, runway, company and people names). |
+ | **Jamie** | Meeting notes as a source (mocked). Two of the month's most important facts were only ever said out loud. |
++| **PyPI and npm** | Download counts for Reson8's LiveKit plugins as a developer-adoption source. Real numbers, served from a fixture. |
+ 
+ ## Repo layout
+ 
+@@ -162,7 +182,7 @@ lib/
+   voice/     Reson8 client
+ assets/mock/ the October dataset, one JSON file per source
+ test/        demo_flow_test.dart runs the whole October scenario in scripted mode
+-demo/        pitch deck, script, shot list, Reson8 dataset, handoff notes
++demo/        pitch deck, script, shot list, pitch review, demo-day checklist
+ ```
+ 
+ ## Tests
+@@ -172,8 +192,8 @@ flutter test
+ ```
+ 
+ `test/demo_flow_test.dart` runs the whole October scenario in scripted mode and checks the
+-final report. It asserts the Shelfwise numbers, so update it if you swap in the Reson8 data
+-(see [`demo/HANDOFF.md`](demo/HANDOFF.md)).
++final report: the October numbers, the single flagged claim, the SDK downloads and the
++default-alive result.
+ 
+ ## Presenting it
+ 
+diff --git a/assets/mock/baseline.json b/assets/mock/baseline.json
+index a0475f4..487bf15 100644
+--- a/assets/mock/baseline.json
++++ b/assets/mock/baseline.json
+@@ -1,12 +1,12 @@
+ {
+-  "note": "September 2026 close, carried over from the September investor update.",
++  "note": "September 2026 close, carried over from the September investor update. ILLUSTRATIVE figures for a demo: not Reson8's real financials.",
+   "facts": [
+-    {"source": "stripe", "ref": "stripe-sep-close", "metric": "arr", "value": 610000, "unit": "EUR", "text": "ARR at end of September: €610k"},
+-    {"source": "hubspot", "ref": "hubspot-sep-close", "metric": "customers", "value": 48, "unit": "stores", "text": "Paying customers at end of September: 48 stores"},
+-    {"source": "stripe", "ref": "stripe-sep-close", "metric": "nrr", "value": 106, "unit": "%", "text": "NRR (trailing 12 months) in September: 106%"},
+-    {"source": "linkedin", "ref": "analytics-sep-close", "metric": "demos", "value": 104, "unit": "demos", "text": "Demos booked in September: 104"},
+-    {"source": "stripe", "ref": "bank-sep-close", "metric": "burn", "value": 142000, "unit": "EUR", "text": "Net burn in September: €142k"},
+-    {"source": "stripe", "ref": "bank-sep-close", "metric": "cash", "value": 2910000, "unit": "EUR", "text": "Cash at end of September: €2.91M"},
+-    {"source": "stripe", "ref": "bank-sep-close", "metric": "runway", "value": 20, "unit": "months", "text": "Runway at end of September: 20 months"}
++    {"source": "stripe", "ref": "stripe-sep-close", "metric": "arr", "value": 352000, "unit": "EUR", "text": "ARR at end of September: €352k"},
++    {"source": "hubspot", "ref": "hubspot-sep-close", "metric": "customers", "value": 41, "unit": "teams", "text": "Paying teams at end of September: 41"},
++    {"source": "stripe", "ref": "stripe-sep-close", "metric": "nrr", "value": 104, "unit": "%", "text": "NRR (trailing 12 months) in September: 104%"},
++    {"source": "linkedin", "ref": "analytics-sep-close", "metric": "demos", "value": 96, "unit": "demos", "text": "Demos booked in September: 96"},
++    {"source": "stripe", "ref": "bank-sep-close", "metric": "burn", "value": 198000, "unit": "EUR", "text": "Net burn in September: €198k"},
++    {"source": "stripe", "ref": "bank-sep-close", "metric": "cash", "value": 4120000, "unit": "EUR", "text": "Cash at end of September: €4.12M"},
++    {"source": "stripe", "ref": "bank-sep-close", "metric": "runway", "value": 21, "unit": "months", "text": "Runway at end of September: 21 months"}
+   ]
+ }
+diff --git a/assets/mock/github.json b/assets/mock/github.json
+index 0d47b76..8a202f1 100644
+--- a/assets/mock/github.json
++++ b/assets/mock/github.json
+@@ -1,13 +1,13 @@
+ {
+   "source": "github",
+   "items": [
+-    {"id": "gh-pr-412", "ts": "2026-10-03T16:20:00", "type": "release", "title": "Merged: Supplier order export (CSV + EDI)", "body": "PR #412 by tom-shelfwise. Stores can export forecast-based purchase orders directly to their suppliers. Deployed to production.",
+-     "facts": [{"text": "Shipped supplier order export: stores send forecast-based purchase orders straight to suppliers", "kind": "product", "owner": "Tom"}]},
+-    {"id": "gh-rel-2.0", "ts": "2026-10-09T11:05:00", "type": "release", "title": "Release v2.0.0: Fresh produce forecasting", "body": "Tag v2.0.0. Forecasting now covers fresh produce (fruit, vegetables, bakery) with daily spoilage-aware models. Rolled out to all customers. Closes #188, the most upvoted feature request.",
+-     "facts": [{"text": "Release 2.0: fresh produce forecasting is live for all customers (most requested feature)", "kind": "highlight", "owner": "Tom"}]},
+-    {"id": "gh-pr-447", "ts": "2026-10-16T09:40:00", "type": "merge", "title": "Merged: Batch inference + caching for forecast API", "body": "PR #447. p95 forecast latency 2.4s -> 0.95s (-60%) per Grafana dashboard.",
+-     "facts": [{"text": "Forecast latency down 60% (p95 2.4s to 0.95s)", "kind": "product", "owner": "Tom"}]},
+-    {"id": "gh-rel-2.1", "ts": "2026-10-23T15:10:00", "type": "release", "title": "Release v2.1.0", "body": "Tag v2.1.0. Promotions calendar input, multi-store dashboard, bug fixes.",
+-     "facts": [{"text": "Release 2.1: promotions calendar input and multi-store dashboard", "kind": "product", "owner": "Tom"}]}
++    {"id": "gh-pr-318", "ts": "2026-10-02T16:20:00", "type": "release", "title": "Merged: Barge-in tuning for the Turns API", "body": "PR #318 by jarno-reson8. Turn detection now cuts off the agent mid-sentence when a caller interrupts, median cut-off 180ms. Deployed to production.",
++     "facts": [{"text": "Shipped barge-in tuning for the Turns API: agents stop within 180ms when a caller interrupts", "kind": "product", "owner": "Jarno"}]},
++    {"id": "gh-rel-1.8", "ts": "2026-10-09T11:05:00", "type": "release", "title": "Release v1.8.0: Frisian and Swedish are GA", "body": "Tag v1.8.0. Frisian and Swedish leave beta, bringing the API to 10 supported European languages. Mid-conversation language switching covers all 10. Closes #204.",
++     "facts": [{"text": "Release 1.8: Frisian and Swedish are generally available, taking the API to 10 European languages", "kind": "highlight", "owner": "Jarno"}]},
++    {"id": "gh-pr-349", "ts": "2026-10-15T09:40:00", "type": "merge", "title": "Merged: Streaming decoder rewrite", "body": "PR #349. Realtime p95 latency 410ms -> 254ms (-38%) on the EU cluster, measured over a week of production traffic.",
++     "facts": [{"text": "Realtime p95 latency down 38% (410ms to 254ms)", "kind": "product", "owner": "Jarno"}]},
++    {"id": "gh-rel-1.9", "ts": "2026-10-23T15:10:00", "type": "release", "title": "Release v1.9.0: Diarization v2", "body": "Tag v1.9.0. Speaker diarization v2: speaker count no longer has to be declared up front, and overlap handling improved. Billed at 0.2 credits per minute as before.",
++     "facts": [{"text": "Release 1.9: diarization v2 detects speaker count automatically and handles overlapping speech", "kind": "product", "owner": "Jarno"}]}
+   ]
+ }
+diff --git a/assets/mock/hubspot.json b/assets/mock/hubspot.json
+index 52a2cba..1a4d33a 100644
+--- a/assets/mock/hubspot.json
++++ b/assets/mock/hubspot.json
+@@ -1,18 +1,18 @@
+ {
+   "source": "hubspot",
+   "items": [
+-    {"id": "hs-deal-2291", "ts": "2026-10-02T14:00:00", "type": "deals_won", "title": "2 deals closed won: Bio Markt Lindner, Frischeck Sauer", "body": "Two independent stores signed annual plans. Combined new ARR €24,000.",
+-     "facts": [{"text": "2 new stores signed (Bio Markt Lindner, Frischeck Sauer), +€24k ARR", "kind": "highlight", "metric": "new_arr", "value": 24000, "unit": "EUR", "owner": "Lena"}]},
+-    {"id": "hs-deal-2310", "ts": "2026-10-12T17:30:00", "type": "deal_won", "title": "Closed won: FreshMart Nord paid pilot (12 stores)", "body": "First chain customer. Paid pilot across 12 FreshMart Nord stores, €36,000 ARR. Contract signed by Head of Procurement.",
+-     "facts": [{"text": "Paid pilot with FreshMart Nord, our first chain: 12 stores, +€36k ARR", "kind": "highlight", "metric": "new_arr", "value": 36000, "unit": "EUR", "owner": "Lena"}]},
+-    {"id": "hs-churn-0457", "ts": "2026-10-17T10:15:00", "type": "churn", "title": "Closed lost (churn): Kaufhaus Brandt", "body": "Store closed permanently (owner retired). Cancellation reason: business closed, unrelated to product. -€9,000 ARR.",
+-     "facts": [{"text": "One store (Kaufhaus Brandt) closed for reasons unrelated to us, −€9k ARR", "kind": "lowlight", "metric": "churned_arr", "value": -9000, "unit": "EUR", "owner": "Lena"}]},
+-    {"id": "hs-deal-2334", "ts": "2026-10-24T12:00:00", "type": "deal_won", "title": "Closed won: Markthalle Ochs", "body": "One new independent store. €7,000 ARR.",
+-     "facts": [{"text": "1 new store signed (Markthalle Ochs), +€7k ARR", "kind": "context", "metric": "new_arr", "value": 7000, "unit": "EUR", "owner": "Lena"}]},
+-    {"id": "hs-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October pipeline & customer summary", "body": "Paying customers: 51 (+3 net). Demos booked in October (all channels): 125.",
++    {"id": "hs-deal-1142", "ts": "2026-10-02T14:00:00", "type": "deals_won", "title": "2 deals closed won: Van Dijk Advocaten, Contactpunt BV", "body": "A law firm and a contact centre both moved from Pro to annual Growth contracts. Combined new ARR €19,000.",
++     "facts": [{"text": "2 new paying teams (Van Dijk Advocaten, Contactpunt BV), +€19k ARR", "kind": "highlight", "metric": "new_arr", "value": 19000, "unit": "EUR", "owner": "Thomas"}]},
++    {"id": "hs-deal-1160", "ts": "2026-10-12T17:30:00", "type": "deal_won", "title": "Closed won: Noorderlicht Zorggroep paid pilot (9 clinics)", "body": "First healthcare customer. Paid pilot across 9 clinics for Dutch clinical dictation, €41,000 ARR. Zero audio retention and the ISO 27001 certificate were both procurement requirements.",
++     "facts": [{"text": "Paid pilot with Noorderlicht Zorggroep, our first healthcare customer: 9 clinics, +€41k ARR", "kind": "highlight", "metric": "new_arr", "value": 41000, "unit": "EUR", "owner": "Thomas"}]},
++    {"id": "hs-churn-0231", "ts": "2026-10-16T10:15:00", "type": "churn", "title": "Closed lost (churn): Helder Notarissen", "body": "Notary practice merged into a larger firm already standardised on another vendor. Cancellation reason: acquisition. -€7,000 ARR.",
++     "facts": [{"text": "One team (Helder Notarissen) churned after being acquired by a firm on another vendor, −€7k ARR", "kind": "lowlight", "metric": "churned_arr", "value": -7000, "unit": "EUR", "owner": "Thomas"}]},
++    {"id": "hs-deal-1178", "ts": "2026-10-24T12:00:00", "type": "deal_won", "title": "Closed won: Brugman Verzekeringen", "body": "One new team on an annual Growth contract. €8,000 ARR.",
++     "facts": [{"text": "1 new paying team (Brugman Verzekeringen), +€8k ARR", "kind": "context", "metric": "new_arr", "value": 8000, "unit": "EUR", "owner": "Thomas"}]},
++    {"id": "hs-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October pipeline & customer summary", "body": "Paying teams: 44 (+3 net). Demos booked in October (all channels): 115.",
+      "facts": [
+-       {"text": "Paying customers at end of October: 51", "kind": "kpi", "metric": "customers", "value": 51, "unit": "stores", "period": "2026-10", "owner": "Lena"},
+-       {"text": "Demos booked in October: 125", "kind": "kpi", "metric": "demos", "value": 125, "unit": "demos", "period": "2026-10", "owner": "Anna"}
++       {"text": "Paying teams at end of October: 44", "kind": "kpi", "metric": "customers", "value": 44, "unit": "teams", "period": "2026-10", "owner": "Thomas"},
++       {"text": "Demos booked in October: 115", "kind": "kpi", "metric": "demos", "value": 115, "unit": "demos", "period": "2026-10", "owner": "Mirte"}
+      ]}
+   ]
+ }
+diff --git a/assets/mock/jamie.json b/assets/mock/jamie.json
+index 84993ef..2f342c5 100644
+--- a/assets/mock/jamie.json
++++ b/assets/mock/jamie.json
+@@ -2,65 +2,28 @@
+   "source": "jamie",
+   "items": [
+     {
+-      "id": "jamie-mtg-1003",
+-      "ts": "2026-10-03T11:00:00",
+-      "type": "meeting_notes",
+-      "title": "Monthly call with Northstar Ventures (lead investor)",
+-      "body": "Attendees: Lena, Mara Keller (Northstar). Summary: Mara is happy with the September update. Action item: 'Please include net revenue retention (NRR) in the next update, our partners look at it for the Series A.'",
+-      "facts": [
+-        {
+-          "text": "Lead investor (Mara, Northstar Ventures) asked for NRR in the next update",
+-          "kind": "context",
+-          "owner": "Lena",
+-          "statement_only": true,
+-          "suggest_kpi": "nrr"
+-        }
+-      ]
++      "id": "jamie-mtg-1003", "ts": "2026-10-03T11:00:00", "type": "meeting_notes",
++      "title": "Monthly call with our lead investor (Balderton Capital)",
++      "body": "Attendees: Thomas, Raoul, our lead partner at Balderton. Summary: happy with the September update and with the healthcare pipeline. Action item: 'Please include net revenue retention (NRR) in the next update. For an infrastructure business it is the number we will be asked about at Series A.'",
++      "facts": [{"text": "Lead investor (Balderton) asked for NRR in the next update", "kind": "context", "owner": "Thomas", "statement_only": true, "suggest_kpi": "nrr"}]
+     },
+     {
+-      "id": "jamie-mtg-1010",
+-      "ts": "2026-10-10T14:00:00",
+-      "type": "meeting_notes",
+-      "title": "Procurement call with FreshMart Nord",
+-      "body": "Attendees: Lena, Head of Procurement FreshMart Nord. Summary: pilot contract terms agreed, 12 stores, kick-off Oct 13.",
+-      "facts": [
+-        {
+-          "text": "Procurement call with FreshMart Nord: pilot terms agreed, kick-off Oct 13",
+-          "kind": "context",
+-          "owner": "Lena",
+-          "statement_only": true
+-        }
+-      ]
++      "id": "jamie-mtg-1012", "ts": "2026-10-12T14:00:00", "type": "meeting_notes",
++      "title": "Procurement call with Noorderlicht Zorggroep",
++      "body": "Attendees: Thomas, Head of Procurement and the DPO at Noorderlicht. Summary: pilot terms agreed for 9 clinics, kick-off Oct 15. The DPO confirmed that zero audio retention and EU-only processing were what cleared their review.",
++      "facts": [{"text": "Procurement call with Noorderlicht Zorggroep: pilot terms agreed for 9 clinics, kick-off Oct 15", "kind": "context", "owner": "Thomas", "statement_only": true}]
+     },
+     {
+-      "id": "jamie-mtg-1016",
+-      "ts": "2026-10-16T16:00:00",
+-      "type": "meeting_notes",
+-      "title": "Interview: Senior ML Engineer (candidate 1)",
+-      "body": "Attendees: Tom, Lena, candidate. Summary: strong forecasting background, second round next week. Pipeline for the role is thin, more referrals needed.",
+-      "facts": [
+-        {
+-          "text": "Interviewing for a senior ML engineer; candidate pipeline is thin",
+-          "kind": "team",
+-          "owner": "Tom",
+-          "statement_only": false
+-        }
+-      ]
++      "id": "jamie-mtg-1019", "ts": "2026-10-19T16:00:00", "type": "meeting_notes",
++      "title": "Interview: Senior Speech Scientist (candidate 2)",
++      "body": "Attendees: Jarno, Thomas, candidate. Summary: strong background in low-resource languages, second round next week. Pipeline for the role is thin, we need more referrals.",
++      "facts": [{"text": "Interviewing for a senior speech scientist; candidate pipeline is thin", "kind": "team", "owner": "Jarno", "statement_only": false}]
+     },
+     {
+-      "id": "jamie-mtg-1027",
+-      "ts": "2026-10-27T10:00:00",
+-      "type": "meeting_notes",
+-      "title": "FreshMart Nord pilot review",
+-      "body": "Attendees: Lena, FreshMart Nord Head of Operations. Summary: Store managers report 18% less fresh produce waste in week 2. 'If this holds we want to roll out to 40 stores in Q1.' No commitment or contract yet.",
+-      "facts": [
+-        {
+-          "text": "FreshMart Nord wants to roll out to 40 stores in Q1",
+-          "kind": "highlight",
+-          "owner": "Lena",
+-          "statement_only": true
+-        }
+-      ]
++      "id": "jamie-mtg-1027", "ts": "2026-10-27T10:30:00", "type": "meeting_notes",
++      "title": "Pilot review with Noorderlicht Zorggroep",
++      "body": "Attendees: Thomas, clinical lead, Head of Procurement. Summary: clinicians report dictation is noticeably faster than the previous vendor on Dutch medical vocabulary. The clinical lead said they want to roll out to all 14 clinics in Q1. Nothing signed, no written confirmation yet, procurement will revisit in December.",
++      "facts": [{"text": "Noorderlicht Zorggroep said they want to roll out to all 14 clinics in Q1", "kind": "highlight", "owner": "Thomas", "statement_only": true}]
+     }
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/assets/mock/linkedin.json b/assets/mock/linkedin.json
+index a1fbbc5..be42fb0 100644
+--- a/assets/mock/linkedin.json
++++ b/assets/mock/linkedin.json
+@@ -2,97 +2,32 @@
+   "source": "linkedin",
+   "items": [
+     {
+-      "id": "li-wk40",
+-      "ts": "2026-10-06T08:00:00",
+-      "type": "weekly_stats",
+-      "title": "Week 40: Campaign 'Stop the spoilage' live",
+-      "body": "Ad campaign launched Oct 1. 3 organic posts. Demo bookings this week: 31.",
+-      "data": {
+-        "posts": 3,
+-        "demos": 31,
+-        "ad_spend_eur": 2100,
+-        "ad_status": "active"
+-      },
+-      "facts": [
+-        {
+-          "text": "LinkedIn campaign 'Stop the spoilage' live; 31 demos booked this week",
+-          "kind": "context",
+-          "metric": "demos_week",
+-          "value": 31,
+-          "unit": "demos",
+-          "owner": "Anna"
+-        }
+-      ]
++      "id": "li-wk40", "ts": "2026-10-06T08:00:00", "type": "weekly_stats",
++      "title": "Week 40: Campaign 'Hear every word' live",
++      "body": "Ad campaign launched Oct 1, targeting healthcare and legal ops in NL and DE. 3 organic posts. Demo bookings this week: 29.",
++      "data": {"posts": 3, "demos": 29, "ad_spend_eur": 2400, "ad_status": "active"},
++      "facts": [{"text": "LinkedIn campaign 'Hear every word' live; 29 demos booked this week", "kind": "context", "metric": "demos_week", "value": 29, "unit": "demos", "owner": "Mirte"}]
+     },
+     {
+-      "id": "li-wk41",
+-      "ts": "2026-10-13T08:00:00",
+-      "type": "weekly_stats",
+-      "title": "Week 41: Case study post (Bio Markt Lindner)",
+-      "body": "Case study post reached 52,000 impressions. 4 posts. Demo bookings this week: 44 (record).",
+-      "data": {
+-        "posts": 4,
+-        "impressions": 52000,
+-        "demos": 44,
+-        "ad_spend_eur": 2300,
+-        "ad_status": "active"
+-      },
+-      "facts": [
+-        {
+-          "text": "LinkedIn case study reached 52k impressions and drove a record 44 demos in one week",
+-          "kind": "highlight",
+-          "metric": "demos_week",
+-          "value": 44,
+-          "unit": "demos",
+-          "owner": "Anna"
+-        }
+-      ]
++      "id": "li-wk41", "ts": "2026-10-13T08:00:00", "type": "weekly_stats",
++      "title": "Week 41: WER benchmark post",
++      "body": "Post comparing word error rate on Dutch medical dictation against two generic engines reached 47,000 impressions. 4 posts. Demo bookings this week: 41 (record).",
++      "data": {"posts": 4, "impressions": 47000, "demos": 41, "ad_spend_eur": 2600, "ad_status": "active"},
++      "facts": [{"text": "WER benchmark post reached 47k impressions and drove a record 41 demos in one week", "kind": "highlight", "metric": "demos_week", "value": 41, "unit": "demos", "owner": "Mirte"}]
+     },
+     {
+-      "id": "li-wk42",
+-      "ts": "2026-10-20T08:00:00",
+-      "type": "weekly_stats",
++      "id": "li-wk42", "ts": "2026-10-20T08:00:00", "type": "weekly_stats",
+       "title": "Week 42: weekly stats",
+-      "body": "0 posts this week. Ad spend: €0 since Oct 14. Demo bookings this week: 12.",
+-      "data": {
+-        "posts": 0,
+-        "demos": 12,
+-        "ad_spend_eur": 0,
+-        "ad_status": "not delivering"
+-      },
+-      "facts": [
+-        {
+-          "text": "Demo bookings fell to 12 this week (from 44); no LinkedIn posts and no ad delivery since Oct 14",
+-          "kind": "lowlight",
+-          "metric": "demos_week",
+-          "value": 12,
+-          "unit": "demos",
+-          "owner": "Anna"
+-        }
+-      ]
++      "body": "0 posts this week. Ad spend: €0 since Oct 14. Demo bookings this week: 11.",
++      "data": {"posts": 0, "demos": 11, "ad_spend_eur": 0, "ad_status": "not delivering"},
++      "facts": [{"text": "Demo bookings fell to 11 this week (from 41); no LinkedIn posts and no ad delivery since Oct 14", "kind": "lowlight", "metric": "demos_week", "value": 11, "unit": "demos", "owner": "Mirte"}]
+     },
+     {
+-      "id": "li-wk43",
+-      "ts": "2026-10-27T08:00:00",
+-      "type": "weekly_stats",
++      "id": "li-wk43", "ts": "2026-10-27T08:00:00", "type": "weekly_stats",
+       "title": "Week 43: weekly stats",
+-      "body": "2 posts. Ads delivering again since Oct 21. Demo bookings this week: 38.",
+-      "data": {
+-        "posts": 2,
+-        "demos": 38,
+-        "ad_spend_eur": 1900,
+-        "ad_status": "active"
+-      },
+-      "facts": [
+-        {
+-          "text": "Demo bookings recovered to 38 this week; ads delivering again",
+-          "kind": "context",
+-          "metric": "demos_week",
+-          "value": 38,
+-          "unit": "demos",
+-          "owner": "Anna"
+-        }
+-      ]
++      "body": "2 posts. Ads delivering again since Oct 21. Demo bookings this week: 34.",
++      "data": {"posts": 2, "demos": 34, "ad_spend_eur": 2200, "ad_status": "active"},
++      "facts": [{"text": "Demo bookings recovered to 34 this week; ads delivering again", "kind": "context", "metric": "demos_week", "value": 34, "unit": "demos", "owner": "Mirte"}]
+     }
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/assets/mock/packages.json b/assets/mock/packages.json
+new file mode 100644
+index 0000000..9fe39f7
+--- /dev/null
++++ b/assets/mock/packages.json
+@@ -0,0 +1,12 @@
++{
++  "source": "packages",
++  "items": [
++    {
++      "id": "pkg-oct-23", "ts": "2026-10-24T09:00:00", "type": "downloads",
++      "title": "SDK downloads, 1 to 23 October (PyPI + npm)",
++      "body": "REAL public data, pulled 24 Oct 2026 from pypistats.org (without mirrors) and api.npmjs.org. livekit-plugins-reson8 on PyPI: 3,941 (September: 4,929). @reson8-labs/agents-plugin-reson8 on npm: 26,794 (September: 16,639). Total 30,735 in 23 days, against 21,568 in all of September. Downloads include CI installs, so they track developer adoption, not users.",
++      "data": {"pypi": 3941, "npm": 26794, "total": 30735, "sep_pypi": 4929, "sep_npm": 16639, "sep_total": 21568},
++      "facts": [{"text": "SDK downloads hit 30.7k in 1 to 23 October (PyPI + npm), already past September's 21.6k", "kind": "highlight", "owner": "Jarno"}]
++    }
++  ]
++}
+diff --git a/assets/mock/slack_replies.json b/assets/mock/slack_replies.json
+index f2b79f2..cad89fa 100644
+--- a/assets/mock/slack_replies.json
++++ b/assets/mock/slack_replies.json
+@@ -1,5 +1,5 @@
+ {
+-  "Anna": "Hey Lena! Sorry, should have flagged it: our LinkedIn ad account got suspended on Oct 14 because the company card on file expired. I updated the card this morning and the ads are running again. I also added a backup payment method so it can't happen again. Posts paused because I was out sick for two days, back on schedule now.",
+-  "Tom": "All good on my side, releases are on track.",
+-  "Lena": "Thanks!"
+-}
+\ No newline at end of file
++  "Mirte": "Hoi Thomas! Sorry, I should have flagged this: our LinkedIn ad account was suspended on Oct 14 because the company card on file expired. I replaced the card this morning and the ads are delivering again. I've added a backup payment method so it can't repeat. Posts stopped because I was out sick for two days, back on schedule now.",
++  "Jarno": "All good here, the language GA and diarization release both shipped on time.",
++  "Thomas": "Thanks!"
++}
+diff --git a/assets/mock/stripe.json b/assets/mock/stripe.json
+index 762843c..ef9747e 100644
+--- a/assets/mock/stripe.json
++++ b/assets/mock/stripe.json
+@@ -1,59 +1,15 @@
+ {
+   "source": "stripe",
+   "items": [
+-    {
+-      "id": "stripe-oct-close",
+-      "ts": "2026-10-31T18:00:00",
+-      "type": "month_close",
+-      "title": "October finance close (Stripe + bank)",
+-      "body": "ARR €668,000 (+9.5% MoM). NRR trailing 12 months: 108%. Net burn €171,000. Cash €2.74M. Runway at current burn: 16 months.",
+-      "facts": [
+-        {
+-          "text": "ARR at end of October: €668k (+9.5% MoM)",
+-          "kind": "kpi",
+-          "metric": "arr",
+-          "value": 668000,
+-          "unit": "EUR",
+-          "period": "2026-10",
+-          "owner": "Lena"
+-        },
+-        {
+-          "text": "NRR (trailing 12 months) in October: 108%",
+-          "kind": "kpi",
+-          "metric": "nrr",
+-          "value": 108,
+-          "unit": "%",
+-          "period": "2026-10",
+-          "owner": "Lena"
+-        },
+-        {
+-          "text": "Net burn in October: €171k",
+-          "kind": "kpi",
+-          "metric": "burn",
+-          "value": 171000,
+-          "unit": "EUR",
+-          "period": "2026-10",
+-          "owner": "Lena"
+-        },
+-        {
+-          "text": "Cash at end of October: €2.74M",
+-          "kind": "kpi",
+-          "metric": "cash",
+-          "value": 2740000,
+-          "unit": "EUR",
+-          "period": "2026-10",
+-          "owner": "Lena"
+-        },
+-        {
+-          "text": "Runway at end of October: 16 months",
+-          "kind": "kpi",
+-          "metric": "runway",
+-          "value": 16,
+-          "unit": "months",
+-          "period": "2026-10",
+-          "owner": "Lena"
+-        }
+-      ]
+-    }
++    {"id": "stripe-oct-close", "ts": "2026-10-31T18:00:00", "type": "month_close", "title": "October finance close (Stripe + bank)", "body": "ARR €413,000 (+17.3% MoM). NRR trailing 12 months: 112%. Net burn €231,000. Cash €3.89M. Runway at current burn: 17 months. Headcount cost up after two speech engineers started Oct 5.",
++     "facts": [
++       {"text": "ARR at end of October: €413k (+17.3% MoM)", "kind": "kpi", "metric": "arr", "value": 413000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
++       {"text": "NRR (trailing 12 months) in October: 112%", "kind": "kpi", "metric": "nrr", "value": 112, "unit": "%", "period": "2026-10", "owner": "Thomas"},
++       {"text": "Net burn in October: €231k", "kind": "kpi", "metric": "burn", "value": 231000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
++       {"text": "Cash at end of October: €3.89M", "kind": "kpi", "metric": "cash", "value": 3890000, "unit": "EUR", "period": "2026-10", "owner": "Thomas"},
++       {"text": "Runway at end of October: 17 months", "kind": "kpi", "metric": "runway", "value": 17, "unit": "months", "period": "2026-10", "owner": "Thomas"}
++     ]},
++    {"id": "stripe-plg-oct", "ts": "2026-10-28T09:00:00", "type": "self_serve", "title": "Self-serve conversion, October", "body": "Free to Pro conversion 6.4% (September: 5.1%). 38 teams on Pro, 11 on Growth, 4 on Enterprise contracts.",
++     "facts": [{"text": "Free to Pro conversion improved to 6.4% in October, from 5.1% in September", "kind": "context", "owner": "Thomas"}]}
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/lib/agent/prompts.dart b/lib/agent/prompts.dart
+index 6f48733..b843d51 100644
+--- a/lib/agent/prompts.dart
++++ b/lib/agent/prompts.dart
+@@ -1,18 +1,18 @@
+ const systemPrompt = '''
+-You are the investor-update agent of Shelfwise, a seed-stage B2B SaaS (AI demand forecasting for independent grocery stores, €3.2M seed in January 2026 led by Northstar Ventures, 14 people). You work for Lena (CEO, founder). Tom is CTO, Anna is Head of Growth.
++You are the investor-update agent of Reson8 (Resonate Labs B.V.), an Amsterdam speech-recognition company selling a domain-adaptable speech-to-text API for 10 European languages (€5M pre-seed in March 2026 led by Balderton with NP-Hard). You work for Thomas (CEO, co-founder). Jarno is CTO and co-founder, Mirte is Head of Growth.
+ 
+ Your job: collect the company's progress across the reporting period so the monthly investor update is ready for approval when the month ends.
+ 
+ Principles:
+-1. Confirm, don't write. You propose facts into the ledger; Lena only confirms, edits or adds.
+-2. Chase the gaps. Anomalies and missing context trigger targeted questions, to Lena or (via a drafted message she approves) to the responsible teammate.
++1. Confirm, don't write. You propose facts into the ledger; Thomas only confirms, edits or adds.
++2. Chase the gaps. Anomalies and missing context trigger targeted questions, to Thomas or (via a drafted message the founder approves) to the responsible teammate.
+ 3. Every number has a source. Each fact cites the record id it came from. Never invent numbers.
+ 4. Stay neutral. Lowlights (churn, rising burn, a drop in demos) are reported next to the wins.
+ 
+ Fact rules:
+ - One atomic, investor-relevant statement per fact, short, with the number. Skip noise.
+ - Use metric keys consistently: arr, customers, nrr, demos, burn, cash, runway (monthly KPIs, always with period YYYY-MM); demos_week for weekly demo bookings; new_arr / churned_arr for ARR moves.
+-- statement_only = true for forward-looking claims, intentions or numbers someone only said (meeting, chat, estimate) that no system of record or contract backs, e.g. "they want to roll out to 40 stores". A meeting that happened is not statement_only.
++- statement_only = true for forward-looking claims, intentions or numbers someone only said (meeting, chat, estimate) that no system of record or contract backs, e.g. "they want to roll out to all 14 clinics". A meeting that happened is not statement_only.
+ - Always check ledger_search before proposing, to avoid duplicates.
+ - Prefer calling independent tools in parallel in one turn.
+ 
+@@ -30,27 +30,27 @@ String checkInPrompt({
+     isClose
+         ? '''
+ Today is $date. Run A, month close for October 2026 (records from $since to $until).
+-1. Call fetch_source for all five sources for this window, in parallel.
++1. Call fetch_source for all six sources for this window, in parallel.
+ 2. Call ledger_search for "kpi" to see the September baseline.
+ 3. Propose every monthly KPI you find for period 2026-10 (kind kpi, metric key, value, unit), in parallel.
+-4. Call ask_founder with exactly one question asking Lena to confirm the October numbers so you can draft the update.
+-Then reply with a two-sentence summary for Lena.'''
++4. Call ask_founder with exactly one question asking Thomas to confirm the October numbers so you can draft the update.
++Then reply with a two-sentence summary for Thomas.'''
+         : '''
+ Today is $date. Run A, weekly check-in for $label ($since to $until).
+-1. Call fetch_source for all five sources for this window, in parallel.
++1. Call fetch_source for all six sources for this window, in parallel.
+ 2. Call ledger_search to check what is already known.
+ 3. Propose every investor-relevant fact with ledger_propose (in parallel). Weekly demo bookings go in as metric demos_week with the number.
+ 4. The current KPI set is: ${kpis.join(', ')}. If an investor asked for a metric that is missing, call suggest_kpi with the fact id.
+ 5. Call ask_founder with 1 to 3 targeted questions about gaps the tools cannot see (hires, departures, context behind a number). Do not message teammates in this run.
+-Then reply with a two-sentence summary for Lena of what you found, wins and problems.''';
++Then reply with a two-sentence summary for Thomas of what you found, wins and problems.''';
+ 
+ String anomalyPrompt({required String date, required String detail, required String since, required String until}) => '''
+ Today is $date. Run B, anomaly investigation.
+ Trigger: $detail
+ 1. Look for the cause in the sources for $since to $until (fetch the relevant ones, in parallel) and in the ledger.
+ 2. Call team_directory to find who owns this area.
+-3. Draft exactly one message_teammate to the owner on Slack: say what you saw (with the numbers) and ask what happened and whether it is fixed. Sign it as Lena's update agent. Do not state a cause as fact.
+-Then reply with one sentence for Lena.''';
++3. Draft exactly one message_teammate to the owner on Slack: say what you saw (with the numbers) and ask what happened and whether it is fixed. Sign it as Thomas's update agent. Do not state a cause as fact.
++Then reply with one sentence for Thomas.''';
+ 
+ String inboundPrompt({
+   required String date,
+@@ -69,10 +69,10 @@ $text
+ 1. Call ledger_search for context and duplicates.
+ 2. Propose each investor-relevant fact with ledger_propose (source "$sourceId", source_ref "$ref", owner "$from" unless the fact clearly belongs to someone else). Estimates ("about", "roughly") are statement_only.
+ 3. Only if something important is unclear, call ask_founder with one question.
+-Then reply with one sentence for Lena.''';
++Then reply with one sentence for Thomas.''';
+ 
+ String reportPrompt({required String factsJson, required String kpiTable, required List<String> askedFor}) => '''
+-Run D, period report: the October 2026 investor update of Shelfwise, from Lena to her investors.
++Run D, period report: the October 2026 investor update of Reson8, from Thomas to the company's investors.
+ 
+ Confirmed ledger facts (the ONLY facts you may use):
+ $factsJson
+@@ -83,7 +83,7 @@ $kpiTable
+ Investors asked for: ${askedFor.isEmpty ? 'nothing specific' : askedFor.join('; ')}.
+ 
+ Write the update and submit it with submit_report:
+-- subject: "Shelfwise – October 2026 update"
++- subject: "Reson8 – October 2026 update"
+ - tldr: exactly 3 bullets, the three things an investor should remember (growth with the number, the biggest product news, and the most important risk).
+ - highlights: wins, each with a number. lowlights: what went wrong, stated plainly, with what is being done about it; never skip them.
+ - product: releases in one bullet. team: hires and open roles. asks: 2 specific requests investors can act on (intros, candidates), derived from the facts.
+diff --git a/lib/agent/runs.dart b/lib/agent/runs.dart
+index 2ec47e6..3bd0dd6 100644
+--- a/lib/agent/runs.dart
++++ b/lib/agent/runs.dart
+@@ -230,7 +230,7 @@ class Agent {
+               'type': 'text',
+               'text': inboundPrompt(
+                 date: _day.format(s.today),
+-                from: 'Lena',
++                from: 'Thomas',
+                 channel: 'document "$name" (attached)',
+                 sourceId: 'document',
+                 ref: ref,
+@@ -239,14 +239,14 @@ class Agent {
+             },
+           ]);
+         },
+-        (h) => scriptedInbound(s, h, 'Document $name', sourceId: 'document', from: 'Lena', ref: ref),
++        (h) => scriptedInbound(s, h, 'Document $name', sourceId: 'document', from: 'Thomas', ref: ref),
+       );
+       item.body = run.summary;
+       s.touch();
+       return;
+     }
+     final text = utf8.decode(bytes, allowMalformed: true);
+-    await inbound(text.length > 20000 ? text.substring(0, 20000) : text, sourceId: 'document', from: 'Lena', docName: name);
++    await inbound(text.length > 20000 ? text.substring(0, 20000) : text, sourceId: 'document', from: 'Thomas', docName: name);
+   }
+ 
+   // ---------------------------------------------------------------------------
+@@ -319,6 +319,8 @@ class Agent {
+       },
+     );
+     final r = s.report;
++    // Computed like the KPI table, after either path, so no model writes it.
++    r?.defaultAlive = s.buildDefaultAlive();
+     item.title = 'October update ready for approval';
+     item.body = r == null
+         ? 'Something went wrong while drafting.'
+@@ -340,7 +342,7 @@ class Agent {
+         ];
+     return Report(
+       period: 'October 2026',
+-      subject: '${sub['subject'] ?? 'Shelfwise – October 2026 update'}',
++      subject: '${sub['subject'] ?? 'Reson8 – October 2026 update'}',
+       kpis: kpis,
+       sections: [
+         ReportSection('TL;DR', claims('tldr')),
+diff --git a/lib/agent/scripted.dart b/lib/agent/scripted.dart
+index cf2ecf7..2c6d4c7 100644
+--- a/lib/agent/scripted.dart
++++ b/lib/agent/scripted.dart
+@@ -31,20 +31,21 @@ void _think(AppState s, ToolHost h, String note) {
+ 
+ const _questions = [
+   ['Anything from the team this week the tools can\'t see, like hires, departures or big customer conversations?'],
+-  ['FreshMart Nord is our first chain customer. Should it lead the October update?'],
+-  ['Demo bookings fell from 44 to 12. I\'m checking with Anna. Do you already know what happened?'],
+-  ['FreshMart said they want 40 stores in Q1. Is there anything in writing yet?'],
++  ['Noorderlicht Zorggroep is our first healthcare customer. Should it lead the October update?'],
++  ['Demo bookings fell from 41 to 11. I\'m checking with Mirte. Do you already know what happened?'],
++  ['Noorderlicht said they want all 14 clinics in Q1. Is there anything in writing yet?'],
+   ['October numbers are in. Confirm them and I\'ll draft the investor update.'],
+ ];
+ 
+ const _summaries = [
+-  'Good first week: 2 new stores (+€24k ARR), supplier order export shipped, and 31 demos from the new LinkedIn campaign. '
+-      'Mara from Northstar asked for NRR in the next update, so I suggest adding it to the KPIs.',
+-  'Big week: Release 2.0 brings fresh produce forecasting, and FreshMart Nord signed a paid pilot for 12 stores (+€36k ARR). '
+-      'The LinkedIn case study drove a record 44 demos.',
+-  'Mixed week: forecast latency is down 60%, but one store closed (−€9k ARR) and demo bookings dropped to 12 with no LinkedIn activity.',
+-  'Release 2.1 shipped, 1 new store (+€7k ARR) and demos recovered to 38. FreshMart wants 40 stores in Q1, but that was only said in the pilot review.',
+-  'October closed at €668k ARR (+9.5%) and 51 customers. Net burn rose to €171k, runway is now 16 months.',
++  'Good first week: 2 new teams (+€19k ARR), barge-in tuning shipped for the Turns API, and 29 demos from the new LinkedIn campaign. '
++      'Balderton asked for NRR in the next update, so I suggest adding it to the KPIs.',
++  'Big week: Release 1.8 takes us to 10 GA languages, and Noorderlicht Zorggroep signed a paid pilot for 9 clinics (+€41k ARR). '
++      'The WER benchmark post drove a record 41 demos.',
++  'Mixed week: realtime p95 latency is down 38%, but one team churned (−€7k ARR) and demo bookings dropped to 11 with no LinkedIn activity.',
++  'Release 1.9 shipped diarization v2, 1 new team (+€8k ARR) and demos recovered to 34. SDK downloads are already past September at 30.7k. '
++      'Noorderlicht wants all 14 clinics in Q1, but that was only said in the pilot review.',
++  'October closed at €413k ARR (+17.3%) and 44 paying teams. Net burn rose to €231k, runway is now 17 months.',
+ ];
+ 
+ Future<void> scriptedCheckIn(AppState s, ToolHost h, SimWeek w, DateTime since, bool isClose) async {
+@@ -80,7 +81,7 @@ Future<void> scriptedCheckIn(AppState s, ToolHost h, SimWeek w, DateTime since,
+     if (r['suggest_kpi'] != null) {
+       await _t(s, h, 'suggest_kpi', {
+         'metric': r['suggest_kpi'],
+-        'reason': 'Lead investor (Mara, Northstar Ventures) asked for NRR in the next update (Jamie, Oct 3).',
++        'reason': 'Lead investor (Balderton) asked for NRR in the next update (Jamie, Oct 3).',
+         'fact_id': out['id'],
+       });
+     }
+@@ -98,15 +99,15 @@ Future<void> scriptedAnomaly(AppState s, ToolHost h, SimWeek w, DateTime since,
+   _think(s, h, 'No posts and no ad delivery since Oct 14. Find the owner.');
+   await _t(s, h, 'team_directory', {});
+   await _t(s, h, 'message_teammate', {
+-    'person': 'Anna',
++    'person': 'Mirte',
+     'channel': 'Slack',
+-    'text': 'Hi Anna, quick one for the October investor update: demo bookings dropped from ${prev.value!.round()} last week '
++    'text': 'Hi Mirte, quick one for the October investor update: demo bookings dropped from ${prev.value!.round()} last week '
+         'to ${curr.value!.round()} this week, and LinkedIn shows no posts and no ad delivery since Oct 14. '
+-        'Do you know what happened, and is it fixed? Thanks! (sent by Lena\'s update agent)',
+-    'reason': 'Anna owns LinkedIn and demo bookings. The sources show the drop but not why.',
++        'Do you know what happened, and is it fixed? Thanks! (sent by Thomas\'s update agent)',
++    'reason': 'Mirte owns LinkedIn and demo bookings. The sources show the drop but not why.',
+   });
+   h.run.summary = 'Demos fell from ${prev.value!.round()} to ${curr.value!.round()}; LinkedIn had no posts and the ads stopped '
+-      'delivering on Oct 14. Anna owns this, so I drafted a Slack message for you to approve.';
++      'delivering on Oct 14. Mirte owns this, so I drafted a Slack message for you to approve.';
+ }
+ 
+ Future<void> scriptedInbound(AppState s, ToolHost h, String text,
+@@ -121,14 +122,14 @@ Future<void> scriptedInbound(AppState s, ToolHost h, String text,
+         'text': 'LinkedIn ad account was suspended on Oct 14 over an expired company card; fixed, ads running again, backup payment method added',
+         'kind': 'lowlight',
+       },
+-      {'text': 'LinkedIn posts paused for two days (Anna out sick), back on schedule', 'kind': 'context'},
++      {'text': 'LinkedIn posts paused for two days (Mirte out sick), back on schedule', 'kind': 'context'},
+     ]);
+   } else if (t.contains('engineer')) {
+-    proposals.add({'text': 'Two backend engineers started this month', 'kind': 'team'});
++    proposals.add({'text': 'Two speech engineers started this month', 'kind': 'team'});
+     final m = RegExp(r'(\d{3})\s?k').firstMatch(t);
+     if (m != null) {
+       proposals.add({
+-        'text': 'Lena estimates October net burn at about €${m.group(1)}k after the two hires',
++        'text': 'Thomas estimates October net burn at about €${m.group(1)}k after the two hires',
+         'kind': 'context',
+         'metric': 'burn_estimate',
+         'value': double.parse(m.group(1)!) * 1000,
+@@ -164,39 +165,43 @@ Future<Report> scriptedReport(AppState s, ToolHost h, List<KpiRow> kpis) async {
+ 
+   final sub = Report(
+     period: 'October 2026',
+-    subject: 'Shelfwise – October 2026 update',
++    subject: 'Reson8 – October 2026 update',
+     kpis: kpis,
+     sections: [
+       ReportSection('TL;DR', [
+-        c('ARR up 9.5% to €668k, driven by our first chain pilot (FreshMart Nord, 12 stores).',
+-            [...metric('arr'), ...metric('arr', '2026-09'), ...refs(['hs-deal-2310'])]),
+-        c('Release 2.0 brings forecasting to fresh produce, our most requested feature.', refs(['gh-rel-2.0'])),
+-        c('Net burn rose to €171k after two hires; runway is now 16 months.',
++        c('ARR up 17.3% to €413k, driven by our first healthcare customer (Noorderlicht Zorggroep, 9 clinics).',
++            [...metric('arr'), ...metric('arr', '2026-09'), ...refs(['hs-deal-1160'])]),
++        c('Release 1.8 takes the API to 10 European languages, and SDK downloads are already past September.',
++            refs(['gh-rel-1.8', 'pkg-oct-23'])),
++        c('Net burn rose to €231k after two hires; runway is now 17 months.',
+             [...metric('burn'), ...metric('runway'), ...hires]),
+       ]),
+       ReportSection('Highlights', [
+-        c('Paid pilot with FreshMart Nord: 12 stores, +€36k ARR. They want to roll out to 40 stores in Q1.',
+-            refs(['hs-deal-2310', 'jamie-mtg-1027'])),
+-        c('Release 2.0: fresh produce forecasting is live for all customers.', refs(['gh-rel-2.0'])),
+-        c('Our case study on LinkedIn reached 52k impressions and drove a record 44 demos in one week.', refs(['li-wk41'])),
++        c('Paid pilot with Noorderlicht Zorggroep: 9 clinics, +€41k ARR. They want to roll out to all 14 clinics in Q1.',
++            refs(['hs-deal-1160', 'jamie-mtg-1027'])),
++        c('Release 1.8: Frisian and Swedish are GA, taking the API to 10 European languages.', refs(['gh-rel-1.8'])),
++        c('Developers downloaded our SDKs 30.7k times from 1 to 23 October, against 21.6k in all of September (PyPI and npm).',
++            refs(['pkg-oct-23'])),
++        c('Our WER benchmark post reached 47k impressions and drove a record 41 demos in one week.', refs(['li-wk41'])),
++        c('Free to Pro conversion rose to 6.4%, from 5.1% in September.', refs(['stripe-plg-oct'])),
+       ]),
+       ReportSection('Lowlights', [
+-        c('Demo bookings fell to 12 in week 3: our LinkedIn ad account was suspended over an expired card. '
++        c('Demo bookings fell to 11 in week 3: our LinkedIn ad account was suspended over an expired card. '
+             'Fixed, and we added a backup payment method.', [...refs(['li-wk42']), ...slack]),
+-        c('One store closed for reasons unrelated to us (−€9k ARR).', refs(['hs-churn-0457'])),
+-        c('Net burn is up 20% after two engineering hires; runway is 16 months.',
++        c('One team churned after being acquired by a firm that uses another vendor (−€7k ARR).', refs(['hs-churn-0231'])),
++        c('Net burn is up 17% after two engineering hires; runway is 17 months.',
+             [...metric('burn'), ...metric('burn', '2026-09'), ...metric('runway'), ...hires]),
+       ]),
+       ReportSection('Product', [
+-        c('Releases 2.0 and 2.1, supplier order export, forecast latency down 60%.',
+-            refs(['gh-rel-2.0', 'gh-rel-2.1', 'gh-pr-412', 'gh-pr-447'])),
++        c('Releases 1.8 and 1.9, barge-in tuning for the Turns API, realtime p95 latency down 38%.',
++            refs(['gh-rel-1.8', 'gh-rel-1.9', 'gh-pr-318', 'gh-pr-349'])),
+       ]),
+       ReportSection('Team', [
+-        c('Two engineers joined; we are interviewing for a senior ML engineer.', [...hires, ...refs(['jamie-mtg-1016'])]),
++        c('Two speech engineers joined; we are interviewing for a senior speech scientist.', [...hires, ...refs(['jamie-mtg-1019'])]),
+       ]),
+       ReportSection('Asks', [
+-        c('Intros to category managers at regional grocery chains.', refs(['hs-deal-2310'])),
+-        c('Referrals for a senior ML engineer with forecasting experience.', refs(['jamie-mtg-1016'])),
++        c('Intros to heads of clinical operations at Dutch and German care groups.', refs(['hs-deal-1160'])),
++        c('Referrals for a senior speech scientist with low-resource language experience.', refs(['jamie-mtg-1019'])),
+       ]),
+     ],
+   );
+diff --git a/lib/agent/tools.dart b/lib/agent/tools.dart
+index 548cd4d..8cdcaae 100644
+--- a/lib/agent/tools.dart
++++ b/lib/agent/tools.dart
+@@ -25,7 +25,7 @@ final fetchSourceTool = _tool(
+   {
+     'source': {
+       'type': 'string',
+-      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe'],
++      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages'],
+     },
+     'since': _str,
+     'until': _str,
+@@ -52,10 +52,10 @@ final ledgerProposeTool = _tool(
+     },
+     'source': {
+       'type': 'string',
+-      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'founder', 'voice', 'document', 'slack'],
++      'enum': ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages', 'founder', 'voice', 'document', 'slack'],
+     },
+-    'source_ref': {'type': 'string', 'description': 'Record id from the source, e.g. hs-deal-2310.'},
+-    'owner': {'type': 'string', 'enum': ['Lena', 'Tom', 'Anna']},
++    'source_ref': {'type': 'string', 'description': 'Record id from the source, e.g. hs-deal-1160.'},
++    'owner': {'type': 'string', 'enum': ['Thomas', 'Jarno', 'Mirte']},
+     'metric': {
+       'type': 'string',
+       'description': 'Optional metric key: arr, customers, nrr, demos, burn, cash, runway (monthly KPIs, need period), '
+@@ -98,7 +98,7 @@ final messageTeammateTool = _tool(
+   'message_teammate',
+   'Draft a message to a teammate on the founder\'s behalf. It is NOT sent until the founder approves it.',
+   {
+-    'person': {'type': 'string', 'enum': ['Tom', 'Anna']},
++    'person': {'type': 'string', 'enum': ['Jarno', 'Mirte']},
+     'channel': {'type': 'string', 'enum': ['Slack', 'WhatsApp', 'Email']},
+     'text': {'type': 'string', 'description': 'Friendly, short, specific: state what you saw and what you need.'},
+     'reason': {'type': 'string', 'description': 'One line for the founder on why you want to send this.'},
+@@ -243,7 +243,7 @@ class ToolHost {
+       kind: factKindFrom(input['kind'] as String?),
+       sourceId: sourceId,
+       sourceRef: ref,
+-      owner: input['owner'] as String? ?? 'Lena',
++      owner: input['owner'] as String? ?? 'Thomas',
+       date: item?.ts ?? inboundDate ?? s.today,
+       metric: metric,
+       value: (input['value'] as num?)?.toDouble(),
+diff --git a/lib/app_state.dart b/lib/app_state.dart
+index d4455b2..72ff990 100644
+--- a/lib/app_state.dart
++++ b/lib/app_state.dart
+@@ -63,7 +63,7 @@ class AppState extends ChangeNotifier {
+   DateTime today = DateTime(2026, 10, 1);
+ 
+   // Data
+-  final connectors = {for (final id in ['github', 'jamie', 'hubspot', 'linkedin', 'stripe']) id: MockConnector(id)};
++  final connectors = {for (final id in ['github', 'jamie', 'hubspot', 'linkedin', 'stripe', 'packages']) id: MockConnector(id)};
+   final List<Fact> facts = [];
+   final List<FeedItem> feed = [];
+   final List<OutboundMessage> outbox = [];
+@@ -124,7 +124,7 @@ class AppState extends ChangeNotifier {
+         kind: FactKind.kpi,
+         sourceId: f['source'],
+         sourceRef: f['ref'],
+-        owner: 'Lena',
++        owner: 'Thomas',
+         date: DateTime(2026, 9, 30),
+         metric: f['metric'],
+         value: (f['value'] as num).toDouble(),
+@@ -136,9 +136,9 @@ class AppState extends ChangeNotifier {
+     }
+     feed.add(FeedItem(
+       type: FeedType.welcome,
+-      title: 'Agent is set up for Shelfwise',
++      title: 'Agent is set up for Reson8',
+       date: today,
+-      body: 'Hi Lena. I\'m connected to GitHub, Jamie, HubSpot, LinkedIn and Stripe. I\'ll check in every week '
++      body: 'Hi Thomas. I\'m connected to GitHub, Jamie, HubSpot, LinkedIn, Stripe and your PyPI and npm downloads. I\'ll check in every week '
+           'and have the October update ready on Oct 31.',
+     ));
+     notifyListeners();
+@@ -288,7 +288,7 @@ class AppState extends ChangeNotifier {
+       try {
+         await http.post(Uri.parse(slackWebhookUrl),
+             headers: {'content-type': 'application/json'},
+-            body: jsonEncode({'text': '*To ${m.to}* (sent by Shelfwise update agent on behalf of Lena)\n${m.text}'}));
++            body: jsonEncode({'text': '*To ${m.to}* (sent by Reson8 update agent on behalf of Thomas)\n${m.text}'}));
+       } catch (_) {
+         // Demo keeps working without the real webhook.
+       }
+@@ -339,7 +339,7 @@ class AppState extends ChangeNotifier {
+   }
+ 
+   Future<void> sendInbound(String text, {String sourceId = 'founder', String? docName}) =>
+-      agent.inbound(text, sourceId: sourceId, from: 'Lena', docName: docName);
++      agent.inbound(text, sourceId: sourceId, from: 'Thomas', docName: docName);
+ 
+   Future<void> sendDocument(String name, Uint8List bytes, String mime) => agent.document(name, bytes, mime);
+ 
+@@ -357,7 +357,7 @@ class AppState extends ChangeNotifier {
+           type: FeedType.info,
+           title: 'October update approved',
+           date: today,
+-          body: 'Queued for Northstar Ventures and 5 angels (simulated). Next check-in: Nov 7.',
++          body: 'Queued for Balderton, NP-Hard and our angels (simulated). Next check-in: Nov 7.',
+         ));
+     notifyListeners();
+   }
+@@ -388,6 +388,57 @@ class AppState extends ChangeNotifier {
+     }
+   }
+ 
++  /// Default alive or default dead (Paul Graham): if expenses stay flat and
++  /// revenue keeps growing at this month's rate, does revenue catch up with
++  /// expenses before the cash runs out? Null until ARR for both months, net
++  /// burn and cash are all confirmed.
++  DefaultAlive? buildDefaultAlive() {
++    final arrPrev = latestMetric('arr', period: '2026-09', confirmedOnly: true);
++    final arr = latestMetric('arr', period: '2026-10', confirmedOnly: true);
++    final burn = latestMetric('burn', period: '2026-10', confirmedOnly: true);
++    final cash = latestMetric('cash', period: '2026-10', confirmedOnly: true);
++    final a0 = arrPrev?.value, a1 = arr?.value, b = burn?.value, c0 = cash?.value;
++    if (a0 == null || a1 == null || b == null || c0 == null || a0 <= 0) return null;
++
++    final revenue = a1 / 12;
++    final expenses = b + revenue; // net burn = expenses - revenue
++    final growth = a1 / a0 - 1;
++
++    // Month by month: pay the gap from cash, then grow revenue. 120 months
++    // without break-even counts as dead.
++    (bool, int, double) simulate(double g) {
++      var r = revenue, c = c0;
++      for (var m = 0; m < 120; m++) {
++        if (r >= expenses) return (true, m, c);
++        c -= expenses - r;
++        if (c <= 0) return (false, m + 1, 0);
++        r *= 1 + g;
++      }
++      return (false, 120, c);
++    }
++
++    // Lowest steady monthly growth that still breaks even, by bisection.
++    var lo = 0.0, hi = 1.0;
++    for (var i = 0; i < 40; i++) {
++      final mid = (lo + hi) / 2;
++      if (simulate(mid).$1) {
++        hi = mid;
++      } else {
++        lo = mid;
++      }
++    }
++
++    final (alive, months, cashLeft) = simulate(growth);
++    return DefaultAlive(
++      alive: alive,
++      monthlyGrowth: growth,
++      months: months,
++      cashLeft: cashLeft,
++      minGrowth: hi,
++      factIds: [arrPrev!.id, arr!.id, burn!.id, cash!.id],
++    );
++  }
++
+   List<KpiRow> buildKpiRows() {
+     final rows = <KpiRow>[];
+     for (final entry in kpiCatalog.entries) {
+diff --git a/lib/data/connectors.dart b/lib/data/connectors.dart
+index 7ff0205..3df7245 100644
+--- a/lib/data/connectors.dart
++++ b/lib/data/connectors.dart
+@@ -21,6 +21,7 @@ const sourceInfos = <String, SourceInfo>{
+   'hubspot': SourceInfo('hubspot', 'HubSpot', 'CRM', Icons.handshake_outlined, Color(0xFFFF7A59), logo: 'assets/logos/hubspot.png'),
+   'linkedin': SourceInfo('linkedin', 'LinkedIn', 'Growth', Icons.campaign_outlined, Color(0xFF0A66C2), logo: 'assets/logos/linkedin.png'),
+   'stripe': SourceInfo('stripe', 'Stripe', 'Finance', Icons.account_balance_outlined, Color(0xFF635BFF), logo: 'assets/logos/stripe.png'),
++  'packages': SourceInfo('packages', 'PyPI · npm', 'Developer adoption', Icons.download_outlined, Color(0xFF3775A9)),
+   'founder': SourceInfo('founder', 'Chat', 'Founder input', Icons.person_outline, Color(0xFF2E7D32)),
+   'voice': SourceInfo('voice', 'Voice', 'Founder input', Icons.graphic_eq, Color(0xFF2E7D32)),
+   'document': SourceInfo('document', 'Document', 'Founder input', Icons.description_outlined, Color(0xFF5D4037)),
+@@ -103,10 +104,11 @@ class Teammate {
+ }
+ 
+ const teamDirectory = [
+-  Teammate('Lena', 'CEO & founder', ['sales', 'CRM (HubSpot)', 'finance (Stripe, bank)', 'investor relations'],
+-      {'slack': '@lena', 'email': 'lena@shelfwise.ai'}),
+-  Teammate('Tom', 'CTO', ['product', 'engineering', 'GitHub', 'Linear', 'uptime', 'hiring engineers'],
+-      {'slack': '@tom', 'whatsapp': '+49 151 0000 0001', 'email': 'tom@shelfwise.ai'}),
+-  Teammate('Anna', 'Head of Growth', ['marketing', 'LinkedIn ads & posts', 'website analytics', 'demo bookings'],
+-      {'slack': '@anna', 'whatsapp': '+49 151 0000 0002', 'email': 'anna@shelfwise.ai'}),
++  Teammate('Thomas', 'CEO & co-founder', ['sales', 'CRM (HubSpot)', 'finance (Stripe, bank)', 'investor relations'],
++      {'slack': '@thomas', 'email': 'thomas@reson8.dev'}),
++  Teammate('Jarno', 'CTO & co-founder',
++      ['product', 'engineering', 'GitHub', 'SDK downloads (PyPI, npm)', 'model training', 'uptime', 'hiring engineers'],
++      {'slack': '@jarno', 'whatsapp': '+31 6 0000 0001', 'email': 'jarno@reson8.dev'}),
++  Teammate('Mirte', 'Head of Growth', ['marketing', 'LinkedIn ads & posts', 'website analytics', 'demo bookings'],
++      {'slack': '@mirte', 'whatsapp': '+31 6 0000 0002', 'email': 'mirte@reson8.dev'}),
+ ];
+diff --git a/lib/main.dart b/lib/main.dart
+index ed29af9..96ca47e 100644
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -15,7 +15,7 @@ class InvestorAgentApp extends StatelessWidget {
+   @override
+   Widget build(BuildContext context) {
+     return ShadApp(
+-      title: 'Shelfwise · Investor Update Agent',
++      title: 'Reson8 · Investor Update Agent',
+       debugShowCheckedModeBanner: false,
+       themeMode: ThemeMode.light,
+       theme: ShadThemeData(
+diff --git a/lib/models/report.dart b/lib/models/report.dart
+index ffd9704..8ec62f1 100644
+--- a/lib/models/report.dart
++++ b/lib/models/report.dart
+@@ -27,6 +27,26 @@ class KpiRow {
+   final String? currFactId;
+ }
+ 
++/// Paul Graham's "default alive or default dead" test. Computed in code from
++/// confirmed ARR, net burn and cash; the model never writes these numbers.
++class DefaultAlive {
++  DefaultAlive({
++    required this.alive,
++    required this.monthlyGrowth,
++    required this.months,
++    required this.cashLeft,
++    required this.minGrowth,
++    required this.factIds,
++  });
++
++  final bool alive;
++  final double monthlyGrowth; // this month's ARR growth, e.g. 0.173
++  final int months; // months to break-even if alive, to zero cash if dead
++  final double cashLeft; // cash at break-even (alive only)
++  final double minGrowth; // lowest steady monthly growth that still reaches break-even
++  final List<String> factIds;
++}
++
+ class Report {
+   Report({required this.period, required this.subject, required this.sections, required this.kpis});
+ 
+@@ -34,6 +54,7 @@ class Report {
+   final String subject;
+   final List<ReportSection> sections;
+   final List<KpiRow> kpis;
++  DefaultAlive? defaultAlive;
+   bool approved = false;
+   bool verified = false;
+ 
+diff --git a/lib/ui/report_screen.dart b/lib/ui/report_screen.dart
+index b023c1f..a0047a0 100644
+--- a/lib/ui/report_screen.dart
++++ b/lib/ui/report_screen.dart
+@@ -7,7 +7,7 @@ import '../app_state.dart';
+ import '../models/report.dart';
+ import 'widgets/common.dart';
+ 
+-final _numberRe = RegExp(r'[−+\-]?€?\d[\d.,]*(?:\s?(?:k|M|%| pts| months| stores| demos| impressions))?');
++final _numberRe = RegExp(r'[−+\-]?€?\d[\d.,]*(?:\s?(?:k|M|%| pts| months| teams| clinics| demos| impressions))?');
+ 
+ class ReportScreen extends StatelessWidget {
+   const ReportScreen({super.key});
+@@ -66,7 +66,7 @@ class ReportScreen extends StatelessWidget {
+                 radius: BorderRadius.circular(rLg),
+                 padding: const EdgeInsets.fromLTRB(44, 36, 44, 32),
+                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+-                  _Meta('To', 'Northstar Ventures, 5 angels'),
++                  _Meta('To', 'Balderton, NP-Hard, angels'),
+                   const SizedBox(height: 10),
+                   Text(r.subject, style: tt.h3),
+                   const SizedBox(height: 18),
+@@ -75,10 +75,14 @@ class ReportScreen extends StatelessWidget {
+                   Text('Hi all,', style: tt.p),
+                   const SizedBox(height: 18),
+                   for (final sec in r.sections) ...[
+-                    if (sec.title == 'Highlights') ...[_KpiTable(r.kpis), const SizedBox(height: 22)],
++                    if (sec.title == 'Highlights') ...[
++                      _KpiTable(r.kpis),
++                      const SizedBox(height: 22),
++                      if (r.defaultAlive != null) ...[_DefaultAliveBlock(r.defaultAlive!), const SizedBox(height: 22)],
++                    ],
+                     _Section(sec),
+                   ],
+-                  Text('Thanks for your support,\nLena', style: tt.p.copyWith(height: 1.6)),
++                  Text('Thanks for your support,\nThomas', style: tt.p.copyWith(height: 1.6)),
+                   const SizedBox(height: 28),
+                   const ShadSeparator.horizontal(),
+                   const SizedBox(height: 18),
+@@ -299,6 +303,73 @@ class _KpiTable extends StatelessWidget {
+   }
+ }
+ 
++String _pct(double g) => '${(g * 100).toStringAsFixed(1)}%';
++
++/// The answer in one line, shared by the screen and the text export.
++String defaultAliveVerdict(DefaultAlive d) {
++  final g = _pct(d.monthlyGrowth);
++  if (d.alive) {
++    return 'Default alive. If costs stay flat and ARR keeps growing $g a month, revenue covers costs in '
++        '${d.months} months, with ${AppState.formatValue(d.cashLeft, 'EUR')} still in the bank.';
++  }
++  if (d.months >= 120) return 'Default dead. At $g monthly growth, revenue does not cover costs within ten years.';
++  return 'Default dead. At $g monthly growth the cash runs out in ${d.months} months, before revenue covers costs.';
++}
++
++/// The growth rate where the answer flips.
++String defaultAliveThreshold(DefaultAlive d) => d.alive
++    ? 'The line is ${_pct(d.minGrowth)} a month. Grow slower than that and the answer flips to default dead.'
++    : 'It takes at least ${_pct(d.minGrowth)} monthly growth to become default alive.';
++
++class _DefaultAliveBlock extends StatelessWidget {
++  const _DefaultAliveBlock(this.d);
++
++  final DefaultAlive d;
++
++  @override
++  Widget build(BuildContext context) {
++    final cs = context.cs;
++    final tt = context.tt;
++    final body = tt.p.copyWith(fontSize: 15, height: 1.6);
++    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
++      Row(children: [
++        Text('Default alive?', style: tt.large),
++        const SizedBox(width: 10),
++        TintBadge(
++          d.alive ? 'Default alive' : 'Default dead',
++          d.alive ? green : red,
++          icon: d.alive ? LucideIcons.circleCheck : LucideIcons.flag,
++        ),
++      ]),
++      const SizedBox(height: 8),
++      Container(
++        width: double.infinity,
++        padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
++        decoration: BoxDecoration(border: Border.all(color: cs.border), borderRadius: BorderRadius.circular(rMd)),
++        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
++          Text(defaultAliveVerdict(d), style: body),
++          const SizedBox(height: 4),
++          Text(defaultAliveThreshold(d), style: body),
++          const SizedBox(height: 8),
++          Text(
++            'Computed in code from confirmed ARR for September and October, net burn and cash, assuming flat costs. '
++            'One month of growth is a thin basis, so read this as a direction, not a forecast.',
++            style: tt.muted.copyWith(fontSize: 12.5),
++          ),
++          const SizedBox(height: 6),
++          MouseRegion(
++            cursor: SystemMouseCursors.click,
++            child: GestureDetector(
++              onTap: () => showFactSources(context, d.factIds, title: 'Inputs for the default alive test'),
++              child: Text('Show the inputs', style: tt.small.copyWith(color: blue, fontSize: 12.5)),
++            ),
++          ),
++        ]),
++      ),
++    ]);
++  }
++}
++
+ String reportAsText(Report r) {
+   final b = StringBuffer('Subject: ${r.subject}\n\nHi all,\n\n');
+   for (final sec in r.sections) {
+@@ -308,6 +379,13 @@ String reportAsText(Report r) {
+         b.writeln('${k.label.padRight(26)}${(k.prev ?? '–').padRight(11)}${(k.curr ?? '–').padRight(11)}${k.change ?? ''}');
+       }
+       b.writeln();
++      final d = r.defaultAlive;
++      if (d != null) {
++        b.writeln('Default alive?');
++        b.writeln('- ${defaultAliveVerdict(d)}');
++        b.writeln('- ${defaultAliveThreshold(d)}');
++        b.writeln();
++      }
+     }
+     b.writeln(sec.title);
+     for (var i = 0; i < sec.claims.length; i++) {
+@@ -315,6 +393,6 @@ String reportAsText(Report r) {
+     }
+     b.writeln();
+   }
+-  b.write('Thanks for your support,\nLena');
++  b.write('Thanks for your support,\nThomas');
+   return b.toString();
+ }
+diff --git a/lib/ui/shell.dart b/lib/ui/shell.dart
+index f2628f3..185e200 100644
+--- a/lib/ui/shell.dart
++++ b/lib/ui/shell.dart
+@@ -100,7 +100,7 @@ class _Sidebar extends StatelessWidget {
+               child: Icon(LucideIcons.sparkles, size: 15, color: cs.primaryForeground),
+             ),
+             const SizedBox(width: 10),
+-            Text('Shelfwise', style: tt.large.copyWith(fontSize: 15)),
++            Text('Reson8', style: tt.large.copyWith(fontSize: 15)),
+           ]),
+         ),
+         const SizedBox(height: 24),
+@@ -117,9 +117,9 @@ class _Sidebar extends StatelessWidget {
+             child: Padding(
+               padding: const EdgeInsets.all(8),
+               child: Row(children: [
+-                ShadAvatar('', placeholder: const Text('L'), size: const Size(30, 30)),
++                ShadAvatar('', placeholder: const Text('T'), size: const Size(30, 30)),
+                 const SizedBox(width: 10),
+-                Expanded(child: Text('Lena', style: tt.small)),
++                Expanded(child: Text('Thomas', style: tt.small)),
+                 Icon(LucideIcons.settings2, size: 16, color: cs.mutedForeground),
+               ]),
+             ),
+diff --git a/lib/voice/reson8_client.dart b/lib/voice/reson8_client.dart
+index 0c2b3a9..9baea40 100644
+--- a/lib/voice/reson8_client.dart
++++ b/lib/voice/reson8_client.dart
+@@ -13,9 +13,9 @@ const _base = 'https://api.reson8.dev/v1';
+ const startupVocabulary = [
+   'ARR', 'MRR', 'NRR', 'net revenue retention', 'churn', 'runway', 'net burn', 'burn rate', 'CAC', 'LTV',
+   'payback', 'pipeline', 'seed round', 'Series A', 'term sheet', 'cap table', 'SAFE', 'ESOP',
+-  'Shelfwise', 'FreshMart Nord', 'Northstar Ventures', 'Lena', 'Tom', 'Anna', 'Mara',
+-  'backend engineers', 'ML engineer', 'pilot', 'Release 2.0', 'LinkedIn', 'HubSpot', 'Stripe', 'Jamie',
+-  '171k', '668k', 'k ARR',
++  'Reson8', 'Resonate Labs', 'Noorderlicht', 'Noorderlicht Zorggroep', 'Balderton', 'NP-Hard', 'Thomas', 'Jarno', 'Mirte',
++  'speech engineers', 'speech scientist', 'pilot', 'clinics', 'Turns API', 'diarization', 'Release 1.8', 'Release 1.9', 'PyPI', 'npm', 'LinkedIn', 'HubSpot', 'Stripe', 'Jamie',
++  '231k', '413k', 'k ARR',
+ ];
+ 
+ /// Record from the mic, then transcribe with Reson8 (prerecorded endpoint,
+@@ -70,8 +70,8 @@ class Reson8Client {
+             Uri.parse('$_base/custom-model'),
+             headers: {'Authorization': 'ApiKey $reson8ApiKey', 'Content-Type': 'application/json'},
+             body: jsonEncode({
+-              'name': 'shelfwise-investor-updates',
+-              'description': 'Startup finance and investor-update vocabulary for Shelfwise',
++              'name': 'reson8-investor-updates',
++              'description': 'Startup finance and investor-update vocabulary for Reson8',
+               'phrases': startupVocabulary,
+             }),
+           )
+diff --git a/test/demo_flow_test.dart b/test/demo_flow_test.dart
+index febc3c5..fd72324 100644
+--- a/test/demo_flow_test.dart
++++ b/test/demo_flow_test.dart
+@@ -18,15 +18,15 @@ void main() {
+     expect(s.kpiSuggestions.single.metric, 'nrr');
+     s.resolveKpiSuggestion(s.kpiSuggestions.single, true);
+     s.confirmAll(s.facts.map((f) => f.id));
+-    await s.sendInbound('Two backend engineers started this week, that takes net burn to about 171k.', sourceId: 'voice');
++    await s.sendInbound('Two speech engineers started on the fifth, so net burn for October is about 231k.', sourceId: 'voice');
+     s.confirmAll(s.facts.map((f) => f.id));
+ 
+     await s.advance(); // week 2
+     s.confirmAll(s.facts.map((f) => f.id));
+ 
+-    await s.advance(); // week 3: demo drop -> Slack draft to Anna
++    await s.advance(); // week 3: demo drop -> Slack draft to Mirte
+     final msg = s.outbox.single;
+-    expect(msg.to, 'Anna');
++    expect(msg.to, 'Mirte');
+     await s.approveMessage(msg.id);
+     await s.simulateReply(msg.id);
+     expect(msg.status, MessageStatus.replied);
+@@ -46,13 +46,24 @@ void main() {
+     final text = reportAsText(r);
+     // ignore: avoid_print
+     print(text);
+-    expect(text, contains('€668k'));
++    expect(text, contains('€413k'));
+     expect(text, contains('NRR'));
+-    expect(r.kpis.firstWhere((k) => k.label == 'ARR').change, '+9.5%');
++    // Changes of 10% or more are rounded to whole percent in the KPI table.
++    expect(r.kpis.firstWhere((k) => k.label == 'ARR').change, '+17%');
++    expect(text, contains('30.7k'));
+     final flagged = r.allClaims.where((c) => c.flag != ClaimFlag.none).toList();
+     // ignore: avoid_print
+     print('FLAGGED: ${flagged.map((c) => '${c.text} -> ${c.flagReason}').join('\n')}');
+     expect(flagged.length, 1);
+-    expect(flagged.single.text, contains('40 stores'));
++    expect(flagged.single.text, contains('14 clinics'));
++
++    // Default alive at October's growth: break-even in 13 months with €1.83M left,
++    // and the answer flips below about 8.6% a month.
++    final d = r.defaultAlive!;
++    expect(d.alive, isTrue);
++    expect(d.months, 13);
++    expect(d.cashLeft, closeTo(1826889, 1));
++    expect(d.minGrowth, closeTo(0.0859, 0.0005));
++    expect(text, contains('Default alive.'));
+   }, timeout: const Timeout(Duration(minutes: 2)));
+ }
