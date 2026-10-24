@@ -52,11 +52,20 @@ the card in the chat. After week 4, the card closes the month.
 | 4 | Release 1.9. Noorderlicht says it wants all 14 clinics in Q1, but only in a meeting. |
 | Close | October numbers come in (€413k ARR, +17.3%). The agent drafts the update, and a separate verifier removes the "14 clinics" claim, which was only said in a meeting. |
 
-Under the KPI table, the update answers Paul Graham's
-[default alive or default dead](https://paulgraham.com/aord.html) question. It is computed
-in code from confirmed ARR, net burn and cash, assuming flat costs; the model never writes
-it. On the demo data: default alive, break-even in 13 months with €1.83M left, and default
-dead below about 8.6% monthly growth.
+The Report page is a full investor update, laid out like the sample in
+[`demo/investor-report/`](demo/investor-report/): in short, the ask, key numbers (September
+against October), default alive or dead, customers, the pipeline that isn't counted yet,
+highlights, challenges, product, team, next month, and every source it cites. Every figure
+opens its source.
+
+Everything with a number is computed in code from confirmed facts; the model never writes it.
+That covers the KPI table, Paul Graham's
+[default alive or default dead](https://paulgraham.com/aord.html) test with three charts that
+start from the September close (revenue against flat expenses, cash, and a dead or alive map),
+and the ARR bridge from €352k to €413k. On the demo data: default alive, break-even in November
+2027 with €1.83M left, default dead below about 8.6% monthly growth, and net burn could rise to
+about €356k before it flips. **Download PDF** saves the same update as an A4 PDF with the Ledger
+logo and the charts; **Copy** puts a plain-text version on the clipboard.
 
 The week 3 chase, step by step:
 

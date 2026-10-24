@@ -174,10 +174,62 @@ class WeekStepper extends StatelessWidget {
       return MouseRegion(cursor: SystemMouseCursors.click, child: GestureDetector(onTap: () => s.selectWeek(i), child: child));
     }
 
+    final allRan = [0, 1, 2, 3].every(s.ranWeeks.contains);
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(999)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [for (var i = 0; i < 4; i++) week(i)]),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        for (var i = 0; i < 4; i++) week(i),
+        if (allRan) ...[const SizedBox(width: 4), const _ReportButton()],
+      ]),
+    );
+  }
+}
+
+/// Round button at the end of the week stepper once all four weeks have run: opens or creates the
+/// report, or leads to the open questions first.
+class _ReportButton extends StatefulWidget {
+  const _ReportButton();
+
+  @override
+  State<_ReportButton> createState() => _ReportButtonState();
+}
+
+class _ReportButtonState extends State<_ReportButton> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.watch<AppState>();
+    final cs = context.cs;
+    final enabled = !s.isBusy;
+    final tip = s.report != null
+        ? 'Open the report'
+        : s.hasOpenQuestions
+            ? 'Answer open questions first'
+            : 'Create the report';
+    return ShadTooltip(
+      builder: (_) => Text(tip),
+      child: MouseRegion(
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: enabled ? s.openOrCreateReport : null,
+          // Same height as a week segment (7px padding around a 13-14px label).
+          child: SizedBox.square(
+            dimension: 33,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 120),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: cs.primary.withValues(alpha: !enabled ? 0.4 : (_hover ? 0.82 : 1)),
+              ),
+              child: Icon(LucideIcons.fileText, size: 15, color: cs.primaryForeground),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

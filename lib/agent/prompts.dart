@@ -85,9 +85,11 @@ Investors asked for: ${askedFor.isEmpty ? 'nothing specific' : askedFor.join('; 
 
 Write the update and submit it with submit_report:
 - subject: "Reson8 October 2026 update"
-- tldr: exactly 3 bullets, the three things an investor should remember (growth with the number, the biggest product news, and the most important risk).
-- highlights: wins, each with a number. lowlights: what went wrong, stated plainly, with what is being done about it; never skip them.
-- product: releases in one bullet. team: hires and open roles. asks: 2 specific requests investors can act on (intros, candidates), derived from the facts.
+- tldr: exactly 3 bullets: the headline numbers (ARR and growth, biggest new customer), whether the company is default alive (the app computes this; refer to it only in words), and the lowlights in one line.
+- highlights: wins, each with a number. lowlights: what went wrong, stated plainly, with its cause and, when a teammate's reply gives one, the fix (e.g. the expired card behind the demo drop); never skip them.
+- product: releases in one bullet. team: hires and open roles.
+- asks: 1 or 2 specific requests investors can act on, only where the facts support one (e.g. a hard-to-fill role). Never invent an ask to reach two.
+- next_month: 2 or 3 concrete plans for November that follow from the facts.
 - Every claim cites the fact ids it uses. Readable in 2 minutes.
 After submitting, reply "done".''';
 

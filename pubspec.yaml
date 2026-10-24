@@ -13,6 +13,7 @@ dependencies:
   http: ^1.6.0
   intl: ^0.20.2
   path_provider: ^2.1.5
+  pdf: ^3.12.0
   provider: ^6.1.5+1
   record: ^6.2.1
   shadcn_ui: ^0.53.6
@@ -30,3 +31,19 @@ flutter:
     - assets/mock/
     - assets/logos/
     - assets/brand/
+    - assets/fonts/
+  fonts:
+    # Geist as TTF, so charts and the PDF export render the same everywhere.
+    - family: GeistTtf
+      fonts:
+        - asset: assets/fonts/Geist-Regular.ttf
+        - asset: assets/fonts/Geist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Geist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Geist-Bold.ttf
+          weight: 700
+
+# pdf caps archive below 4.1, but image 4.11+ needs a newer archive. Pin image until pdf catches up.
+dependency_overrides:
+  image: ">=4.5.0 <4.11.0"

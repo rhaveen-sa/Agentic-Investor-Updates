@@ -131,8 +131,9 @@ final submitReportTool = _tool(
     'product': {'type': 'array', 'items': _claim},
     'team': {'type': 'array', 'items': _claim},
     'asks': {'type': 'array', 'items': _claim},
+    'next_month': {'type': 'array', 'items': _claim},
   },
-  ['subject', 'tldr', 'highlights', 'lowlights', 'product', 'team', 'asks'],
+  ['subject', 'tldr', 'highlights', 'lowlights', 'product', 'team', 'asks', 'next_month'],
 );
 
 final verifyClaimsTool = _tool(

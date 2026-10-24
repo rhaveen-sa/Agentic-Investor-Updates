@@ -397,6 +397,45 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Teammate messages still waiting: not yet approved, or sent without a reply.
+  List<OutboundMessage> get waitingMessages =>
+      outbox.where((m) => m.status == MessageStatus.draft || m.status == MessageStatus.sent).toList();
+
+  /// Pending facts or waiting teammate messages that should be answered before drafting the report.
+  bool get hasOpenQuestions => facts.any((f) => f.status == FactStatus.pending) || waitingMessages.isNotEmpty;
+
+  /// The report button next to the week stepper: opens the report if there is one, else goes to the
+  /// open questions, else closes the month (if needed), confirms the close run's facts and drafts.
+  Future<void> openOrCreateReport() async {
+    if (isBusy) return;
+    if (report != null) return setTab(3);
+    if (facts.any((f) => f.status == FactStatus.pending)) return setTab(1);
+    final waiting = waitingMessages;
+    if (waiting.isNotEmpty) {
+      final id = waiting.first.id;
+      for (final item in feed) {
+        if (item.run?.messageIds.contains(id) ?? false) {
+          selectWeek(item.week);
+          break;
+        }
+      }
+      return setTab(0);
+    }
+    if (!monthClosed) {
+      if (viewWeek != 3) selectWeek(3);
+      if (!canCloseMonth) return;
+      await closeMonth();
+    }
+    // The close run proposes October's KPIs as pending facts; accept them so the report can use them.
+    for (final item in feed) {
+      if (item.offersReport && item.run != null) {
+        confirmAll(item.run!.proposedFactIds);
+        break;
+      }
+    }
+    await draftReport();
+  }
+
   void approveReport() {
     report?.approved = true;
     addFeed(FeedItem(
@@ -447,12 +486,12 @@ class AppState extends ChangeNotifier {
     if (a0 == null || a1 == null || b == null || c0 == null || a0 <= 0) return null;
 
     final revenue = a1 / 12;
-    final expenses = b + revenue; // net burn = expenses - revenue
     final growth = a1 / a0 - 1;
 
     // Month by month: pay the gap from cash, then grow revenue. 120 months
-    // without break-even counts as dead.
-    (bool, int, double) simulate(double g) {
+    // without break-even counts as dead. Same model as demo/investor-report/build.py.
+    (bool, int, double) simulate(double g, {double? atBurn}) {
+      final expenses = (atBurn ?? b) + revenue; // net burn = expenses - revenue
       var r = revenue, c = c0;
       for (var m = 0; m < 120; m++) {
         if (r >= expenses) return (true, m, c);
@@ -464,15 +503,45 @@ class AppState extends ChangeNotifier {
     }
 
     // Lowest steady monthly growth that still breaks even, by bisection.
-    var lo = 0.0, hi = 1.0;
-    for (var i = 0; i < 40; i++) {
+    double minGrowth(double atBurn) {
+      var lo = 0.0, hi = 1.0;
+      for (var i = 0; i < 40; i++) {
+        final mid = (lo + hi) / 2;
+        if (simulate(mid, atBurn: atBurn).$1) {
+          hi = mid;
+        } else {
+          lo = mid;
+        }
+      }
+      return hi;
+    }
+
+    // Highest net burn that still breaks even at this month's growth.
+    var lo = b, hi = 2000000.0;
+    for (var i = 0; i < 60; i++) {
       final mid = (lo + hi) / 2;
-      if (simulate(mid).$1) {
-        hi = mid;
-      } else {
+      if (simulate(growth, atBurn: mid).$1) {
         lo = mid;
+      } else {
+        hi = mid;
       }
     }
+
+    final expenses = b + revenue;
+    final projection = <ProjectionPoint>[];
+    var r = revenue, c = c0;
+    for (var m = 0; m < 16; m++) {
+      projection.add(ProjectionPoint(m, r, expenses, c));
+      c += r - expenses;
+      r *= 1 + growth;
+    }
+
+    // September actuals, so the charts start there.
+    final sepBurn = latestMetric('burn', period: '2026-09', confirmedOnly: true)?.value;
+    final sepCash = latestMetric('cash', period: '2026-09', confirmedOnly: true)?.value;
+    final history = [
+      if (sepBurn != null && sepCash != null) ProjectionPoint(-1, a0 / 12, sepBurn + a0 / 12, sepCash),
+    ];
 
     final (alive, months, cashLeft) = simulate(growth);
     return DefaultAlive(
@@ -480,9 +549,49 @@ class AppState extends ChangeNotifier {
       monthlyGrowth: growth,
       months: months,
       cashLeft: cashLeft,
-      minGrowth: hi,
+      minGrowth: minGrowth(b),
       factIds: [arrPrev!.id, arr!.id, burn!.id, cash!.id],
+      burn: b,
+      cash: c0,
+      maxBurn: lo,
+      projection: projection,
+      edge: [
+        for (var i = 0; i <= 40; i++)
+          (burn: 150000 + 200000 * i / 40, growth: minGrowth(150000 + 200000 * i / 40)),
+      ],
+      history: history,
     );
+  }
+
+  /// New and lost customers from confirmed new_arr / churned_arr facts, and
+  /// the bridge from September to October ARR. Filters on metric, not kind:
+  /// some deals are logged as context.
+  ArrBridge? buildArrBridge() {
+    final start = latestMetric('arr', period: '2026-09', confirmedOnly: true);
+    final end = latestMetric('arr', period: '2026-10', confirmedOnly: true);
+    if (start?.value == null || end?.value == null) return null;
+    final rows = <CustomerRow>[];
+    for (final f in facts) {
+      if (f.status != FactStatus.confirmed || f.value == null) continue;
+      if (f.metric != 'new_arr' && f.metric != 'churned_arr') continue;
+      // The CRM record title names the customers, e.g. "Closed won: Brugman Verzekeringen".
+      final title = f.excerpt?.split('\n').first ?? f.text;
+      var name = title.contains(': ') ? title.split(': ').sublist(1).join(': ') : title;
+      var detail = '';
+      final paren = RegExp(r'^(.*?)\s*(?:paid pilot)?\s*\((.*)\)$').firstMatch(name);
+      if (paren != null) {
+        name = paren.group(1)!.trim();
+        detail = 'Paid pilot, ${paren.group(2)}';
+      } else if (name.endsWith(' paid pilot')) {
+        name = name.substring(0, name.length - ' paid pilot'.length);
+        detail = 'Paid pilot';
+      }
+      if (detail.isEmpty) detail = name.contains(', ') ? 'New paying teams' : 'New paying team';
+      if (f.metric == 'churned_arr') detail = 'Lost';
+      rows.add(CustomerRow(name: name, detail: detail, arr: f.value!, factId: f.id));
+    }
+    rows.sort((a, b) => b.arr.compareTo(a.arr));
+    return ArrBridge(start: start!.value!, end: end!.value!, rows: rows, startFactId: start.id, endFactId: end.id);
   }
 
   List<KpiRow> buildKpiRows() {

@@ -319,6 +319,7 @@ class Agent {
     final r = s.report;
     // Computed like the KPI table, after either path, so no model writes it.
     r?.defaultAlive = s.buildDefaultAlive();
+    r?.bridge = s.buildArrBridge();
     item.title = 'October update ready for approval';
     item.body = r == null
         ? 'Something went wrong while drafting.'
@@ -349,6 +350,7 @@ class Agent {
         ReportSection('Product', claims('product')),
         ReportSection('Team', claims('team')),
         ReportSection('Asks', claims('asks')),
+        ReportSection('Next month', claims('next_month')),
       ],
     );
   }

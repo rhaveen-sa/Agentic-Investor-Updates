@@ -199,8 +199,13 @@ Future<Report> scriptedReport(AppState s, ToolHost h, List<KpiRow> kpis) async {
         c('Two engineers joined; we are interviewing for a senior speech scientist.', [...hires, ...refs(['jamie-mtg-1019'])]),
       ]),
       ReportSection('Asks', [
-        c('Intros to operations leads at healthcare groups and clinic chains.', refs(['hs-deal-1160'])),
-        c('Referrals for a senior speech scientist.', refs(['jamie-mtg-1019'])),
+        c('Referrals for a senior speech scientist. The candidate pipeline for the role is thin, and an intro to anyone '
+            'strong in speech recognition for European languages would help most.', refs(['jamie-mtg-1019'])),
+      ]),
+      ReportSection('Next month', [
+        c('Close the senior speech scientist search, or widen it with your referrals.', refs(['jamie-mtg-1019'])),
+        c('Turn the Noorderlicht pilot into a full rollout decision.', refs(['hs-deal-1160'])),
+        c('Report net revenue retention in every update from now on.', [...metric('nrr'), ...metric('nrr', '2026-09')]),
       ]),
     ],
   );

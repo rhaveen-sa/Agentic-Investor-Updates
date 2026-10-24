@@ -216,7 +216,7 @@ class ChatTurn extends StatelessWidget {
                   Text(q, style: text),
                 ],
               for (final m in messages) _ApprovalCard(m),
-              if (item.offersReport && run != null && run.done)
+              if (item.offersReport && run != null && run.done && s.report == null)
                 Padding(
                   padding: const EdgeInsets.only(top: 14),
                   child: ShadButton(
@@ -400,43 +400,286 @@ class _ApprovalCard extends StatelessWidget {
   }
 }
 
-class _ReportLink extends StatelessWidget {
+/// Preview card for the drafted investor update, in the style of a document artifact.
+class _ReportLink extends StatefulWidget {
   const _ReportLink({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
+  State<_ReportLink> createState() => _ReportLinkState();
+}
+
+class _ReportLinkState extends State<_ReportLink> {
+  static const _width = 440.0;
+  static const _bannerHeight = 180.0;
+  static const _orange = Color(0xFFDD742A);
+  static const _brightOrange = Color(0xFFFF8616);
+  static const _brown = Color(0xFF411A14);
+
+  bool _hover = false;
+
+  @override
   Widget build(BuildContext context) {
     final cs = context.cs;
     final tt = context.tt;
+    final dark = isDark(context);
     final r = context.watch<AppState>().report!;
+    final accent = dark ? _brightOrange : _orange;
+    final alive = r.defaultAlive;
+    final subtitle = [
+      'Investor update',
+      '${r.kpis.length} ${r.kpis.length == 1 ? 'KPI' : 'KPIs'}',
+      if (alive != null) alive.alive ? 'Default alive' : 'Default dead',
+    ].join(' · ');
+    final badge = r.approved
+        ? const TintBadge('Sent', green, icon: LucideIcons.check)
+        : r.flaggedCount > 0
+            ? TintBadge('${r.flaggedCount} to check', amber)
+            : TintBadge('Draft', cs.mutedForeground);
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 360,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(rMd), border: Border.all(color: cs.border)),
-          child: Row(children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(rSm)),
-              child: const Icon(LucideIcons.fileText, size: 18),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(r.subject, style: tt.small, overflow: TextOverflow.ellipsis),
-                Text('Investor update', style: tt.muted.copyWith(fontSize: 12)),
-              ]),
-            ),
-            Icon(LucideIcons.chevronRight, size: 16, color: cs.mutedForeground),
-          ]),
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          curve: Curves.easeOut,
+          width: _width,
+          transform: Matrix4.translationValues(0, _hover ? -2 : 0, 0),
+          decoration: BoxDecoration(
+            color: cs.card,
+            borderRadius: BorderRadius.circular(rLg),
+            border: Border.all(color: _hover ? accent.withValues(alpha: 0.55) : cs.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _hover ? (dark ? 0.45 : 0.10) : (dark ? 0.25 : 0.04)),
+                blurRadius: _hover ? 22 : 8,
+                offset: Offset(0, _hover ? 8 : 2),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(rLg - 1),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              _banner(context, accent, dark),
+              Container(height: 1, color: cs.border),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+                child: Row(children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: dark ? 0.16 : 0.12),
+                      borderRadius: BorderRadius.circular(rSm),
+                    ),
+                    child: Icon(LucideIcons.fileText, size: 18, color: accent),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(
+                        r.subject,
+                        style: tt.small.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(subtitle, style: tt.muted.copyWith(fontSize: 12.5), overflow: TextOverflow.ellipsis),
+                    ]),
+                  ),
+                  const SizedBox(width: 10),
+                  badge,
+                  const SizedBox(width: 6),
+                  AnimatedSlide(
+                    duration: const Duration(milliseconds: 160),
+                    offset: Offset(_hover ? 0.15 : 0, 0),
+                    child: Icon(LucideIcons.chevronRight, size: 16, color: _hover ? accent : cs.mutedForeground),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
         ),
       ),
     );
+  }
+
+  /// Warm banner with a stylized preview of the update: two stacked sheets with skeleton lines.
+  Widget _banner(BuildContext context, Color accent, bool dark) {
+    final cs = context.cs;
+    const sheetWidth = 232.0;
+    const sheetLeft = (_width - sheetWidth) / 2;
+    final gradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: dark ? const [_brown, Color(0xFF2A120E)] : const [Color(0xFFF2A15F), _orange],
+    );
+    final glow = dark ? _brightOrange.withValues(alpha: 0.30) : Colors.white.withValues(alpha: 0.35);
+    return SizedBox(
+      height: _bannerHeight,
+      child: DecoratedBox(
+        decoration: BoxDecoration(gradient: gradient),
+        child: Stack(clipBehavior: Clip.hardEdge, children: [
+          Positioned(
+            right: -60,
+            top: -80,
+            child: Container(
+              width: 240,
+              height: 240,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [glow, glow.withValues(alpha: 0)]),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -40,
+            bottom: -90,
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(colors: [glow.withValues(alpha: glow.a * 0.6), glow.withValues(alpha: 0)]),
+              ),
+            ),
+          ),
+          // Sheet behind, tilted.
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            left: sheetLeft - 14,
+            top: _hover ? 30 : 36,
+            child: Transform.rotate(
+              angle: -0.07,
+              child: Container(
+                width: sheetWidth,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: dark
+                      ? Color.alphaBlend(_brightOrange.withValues(alpha: 0.14), cs.card)
+                      : cs.card.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: dark ? _brightOrange.withValues(alpha: 0.30) : Colors.white24),
+                ),
+              ),
+            ),
+          ),
+          // Front sheet with the skeleton of the update.
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            left: sheetLeft + 6,
+            top: _hover ? 18 : 26,
+            child: Transform.rotate(
+              angle: 0.015,
+              child: Container(
+                width: sheetWidth,
+                height: 200,
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                decoration: BoxDecoration(
+                  color: cs.card,
+                  borderRadius: BorderRadius.circular(8),
+                  border: dark ? Border.all(color: cs.border) : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: dark ? 0.45 : 0.18),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: _sheetContent(cs, accent),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _sheetContent(ShadColorScheme cs, Color accent) {
+    Widget bar(double width, double height, Color color) => Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(height)),
+        );
+    final line = cs.border;
+    final title = cs.foreground.withValues(alpha: 0.70);
+    const bars = [0.35, 0.45, 0.42, 0.58, 0.66, 0.80, 1.0];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        const AppLogo(size: 16),
+        const SizedBox(width: 8),
+        bar(96, 7, title),
+        const Spacer(),
+        bar(28, 5, line),
+      ]),
+      const SizedBox(height: 7),
+      bar(64, 4, line),
+      const SizedBox(height: 12),
+      // Mini KPI tiles.
+      Row(children: [
+        for (var i = 0; i < 3; i++) ...[
+          if (i > 0) const SizedBox(width: 6),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+              decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(5)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                bar(20, 3, line),
+                const SizedBox(height: 4),
+                bar(i == 0 ? 34 : 26, 6, i == 0 ? accent : title.withValues(alpha: 0.45)),
+              ]),
+            ),
+          ),
+        ],
+      ]),
+      const SizedBox(height: 10),
+      // Mini chart next to a few text lines.
+      Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        Container(
+          height: 44,
+          padding: const EdgeInsets.fromLTRB(6, 6, 6, 5),
+          decoration: BoxDecoration(color: cs.muted, borderRadius: BorderRadius.circular(5)),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            for (var i = 0; i < bars.length; i++) ...[
+              if (i > 0) const SizedBox(width: 3),
+              Container(
+                width: 7,
+                height: 33 * bars[i],
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.35 + 0.65 * i / (bars.length - 1)),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ]),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            bar(double.infinity, 4, line),
+            const SizedBox(height: 6),
+            bar(double.infinity, 4, line),
+            const SizedBox(height: 6),
+            bar(52, 4, line),
+            const SizedBox(height: 4),
+          ]),
+        ),
+      ]),
+      const SizedBox(height: 12),
+      bar(64, 5, title.withValues(alpha: 0.45)),
+      const SizedBox(height: 7),
+      bar(double.infinity, 4, line),
+      const SizedBox(height: 6),
+      bar(double.infinity, 4, line),
+      const SizedBox(height: 6),
+      bar(140, 4, line),
+    ]);
   }
 }
 

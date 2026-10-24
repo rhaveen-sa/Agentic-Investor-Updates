@@ -2,6 +2,7 @@ import 'package:agentic_investor_ai/app_state.dart';
 import 'package:agentic_investor_ai/models/fact.dart';
 import 'package:agentic_investor_ai/models/outbound_message.dart';
 import 'package:agentic_investor_ai/models/report.dart';
+import 'package:agentic_investor_ai/ui/report_pdf.dart';
 import 'package:agentic_investor_ai/ui/report_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,11 +61,13 @@ void main() {
     // Flagged claims stay out of what gets sent, and the update has no dashes.
     expect(text, isNot(contains('14 clinics')));
     expect(text, contains('Noorderlicht Zorggroep'));
-    final md = reportAsMarkdown(r);
-    for (final out in [text, md]) {
-      expect(out, isNot(contains('—')));
-      expect(out, isNot(contains('–')));
-    }
+    expect(text, isNot(contains('—')));
+    expect(text, isNot(contains('–')));
+
+    // The PDF export builds: fonts, logo and the five charts all render.
+    final pdf = await buildReportPdf(s, r);
+    expect(String.fromCharCodes(pdf.take(5)), '%PDF-');
+    expect(pdf.length, greaterThan(50000));
 
     // Default alive at October's growth: break-even in 13 months with €1.83M left,
     // and the answer flips below about 8.6% a month.
@@ -74,6 +77,19 @@ void main() {
     expect(d.cashLeft, closeTo(1826889, 1));
     expect(d.minGrowth, closeTo(0.0859, 0.0005));
     expect(text, contains('Default alive.'));
+
+    // Projection, map and ARR bridge, ported from demo/investor-report/build.py.
+    expect(d.projection.length, 16);
+    expect(d.projection[d.months].revenue, greaterThanOrEqualTo(d.projection[d.months].expenses));
+    expect(d.maxBurn, closeTo(356000, 2000));
+    expect(d.history.single.month, -1, reason: 'charts start from the September close');
+    final b = r.bridge!;
+    expect(b.reconciles, isTrue);
+    expect(b.end, 413000);
+    // ignore: avoid_print
+    print('BRIDGE: ${b.rows.map((c) => '${c.name} | ${c.detail} | ${c.arr}').join(' ; ')}');
+    expect(b.rows.where((c) => !c.lost).length, 3, reason: 'three deals, four new teams');
+    expect(b.rows.where((c) => c.lost).single.name, 'Helder Notarissen');
   }, timeout: const Timeout(Duration(minutes: 2)));
 
   test('weeks can be opened and run in any order', () async {
