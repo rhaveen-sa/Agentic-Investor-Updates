@@ -4,6 +4,40 @@ What changed in the demo kit, when and why. Newest first. Every entry is also a 
 GitHub, so this file and the PR list should always agree. If you change anything in `demo/`,
 add an entry here and update `HANDOFF.md` and the READMEs in the same PR.
 
+## 25 Oct 2026 · Name, a real run of the app, README rewrite
+
+**Name.** The project is called **Agentic Investor Updates**, after the repo, in the
+README, deck, script, sample report and the suggested GitHub description. The app still
+says "Ledger" in five files. `HANDOFF.md` section 7 lists them, and this PR changes no app
+code.
+
+**Ran the app.** On a machine without Flutter or Xcode, we installed Flutter 3.47.8 in a
+temp folder, ran `flutter test` (2 passed, live test skipped without a key) and built the
+web version. Then we clicked through October in Chrome from the week 1 check-in to an
+approved update. What that changed:
+
+- **Week selector:** it shows dates (Oct 7, 14, 21, 28), not week numbers. The shot list,
+  script and README now use the real labels.
+- **Two confirm cards:** a week can have two **Confirm all** cards. Missing the second one
+  leaves 6 facts pending, and the report then shows "6 claims not counted" and an ARR bridge
+  that doesn't add up. The shot list, handoff and README now say to clear Facts before
+  closing the month.
+- **Month close:** after closing the month, the button is **Confirm & draft the update**.
+- **Screenshots:** five real ones are in `img/app-*.png`. The README uses four, and the deck's
+  demo slide uses one.
+
+**README.** Rewritten for founders first:
+- **Opening:** benefits, a two-minute quickstart that needs no keys, and the click path.
+- **The month:** the demo month with screenshots.
+- **Trust:** why it can't make up a number, and how we know it works.
+- **Housekeeping:** the internals and the presenting notes are collapsed.
+
+Two independent judges scored the Ogilvy rubric at 72.5 before and 84 after (see
+`pitch-review.md`).
+
+**GitHub About.** Not set. Your account doesn't have admin rights on the repo. The text is
+in `HANDOFF.md` section 7 for Sean to paste.
+
 ## 24 Oct 2026 · Docs synced with the app at `0926e58`
 
 Sean's commits `6b37f49`, `333f32c` and `0926e58` applied the Reson8 switch, renamed the

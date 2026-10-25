@@ -35,8 +35,8 @@ Open on the room before you say what the product is:
 Wait for the hands to drop. Say your team name, then read the title:
 
 > Your update is already written, and every number shows its source. We built an agent for
-> founders who owe investors a monthly update, and called it Ledger. It collects your month
-> while it happens, and you confirm each fact before it reaches your investors.
+> founders who owe investors a monthly update: Agentic Investor Updates. It collects your
+> month while it happens, and you confirm each fact before it reaches your investors.
 
 Name the Reson8 thing once, lightly, then move on:
 
@@ -116,7 +116,7 @@ Point at the card.
 Switch windows now. The full click-path is in `shotlist.md`. Narrate lightly and let the
 app's own copy do the work.
 
-**Week 1.** Pick Week 1 in the week selector and click *Run the week 1 check-in*.
+**Week 1.** Pick **Oct 7** in the week selector and click *Run the week 1 check-in*.
 
 > It has already read GitHub, Stripe, HubSpot, LinkedIn and the meeting notes. It tells me
 > what happened and asks me to sign off.

@@ -40,20 +40,26 @@ than a perfect one. Small hesitations are fine. A wrong click that needs undoing
 
 ## The take
 
-Written from the app code on `main` at `0926e58` (week selector, chat cards, report page).
-It has not been checked against a running app. Rehearse it once and fix any label that
-differs before you record.
+Checked against the app on 25 Oct 2026: the web build of `main` was clicked through in
+Chrome from the first check-in to an approved update, and the labels below are the ones on
+screen. The week selector shows dates (Oct 7, Oct 14, Oct 21, Oct 28), not week numbers.
+
+**Confirm everything before you close the month.** A week can show two cards with
+**Confirm all** (the check-in, and later the reply from Mirte), and the second is easy to
+miss. If any fact is still pending when you draft, the report says "6 claims not counted"
+and "The bridge does not add up to October ARR" on screen. Before shot 8, open **Facts**:
+the badge next to it must show no number, and **Confirm N** clears anything left.
 
 | # | Time | Screen | Do this | What should land |
 | --- | --- | --- | --- | --- |
-| 1 | 0:00 to 0:10 | Agent | Start on **Week 1** in the week selector, on the "Good morning, Reson8" screen. Click **Run the week 1 check-in**. | The agent starts from the sources, not from a blank prompt box. |
-| 2 | 0:10 to 0:22 | Agent | Let the step list run ("Looking up GitHub data for...", "Writing down a fact"), expand it for a second, then confirm two facts on the check-in card. | It really read the sources and wrote facts down. If an amber "Live run failed, finished with the backup run" row appears, stop and fix the key. |
+| 1 | 0:00 to 0:10 | Agent | Start on **Oct 7** in the week selector, on the "Good morning, Reson8" screen. Click **Run the week 1 check-in**. | The agent starts from the sources, not from a blank prompt box. |
+| 2 | 0:10 to 0:22 | Agent | Let it run, then expand the **Used 14 tools** row for a second to show the steps ("Looking up GitHub data for...", "Writing down a fact"). Click **Confirm all**. | It really read the sources and wrote facts down. If an amber "Live run failed, finished with the backup run" row appears, stop and fix the key. |
 | 3 | 0:22 to 0:30 | Agent | The card **Add NRR to the KPIs?** appears. Click **Add**. | The agent changed what gets reported because of something said out loud on a call. |
 | 4 | 0:30 to 0:44 | Composer | Tap the microphone and say: *"Two speech engineers started on the fifth, so net burn for October is about 231k."* Let the transcript appear and become a pending fact. Confirm it. | **Reson8.** Hold on the transcript for two seconds. The vocabulary is the point. |
-| 5 | 0:44 to 0:52 | Week selector | Pick **Week 2** and click **Run the week 2 check-in**. Let it flash past and confirm all. | A month compresses into seconds. The agent was working the whole time. |
-| 6 | 0:52 to 1:10 | Agent | Pick **Week 3** and run it. Let the anomaly sit for three seconds, then click **Send** on the drafted message to Mirte. | Demos fell from 41 to 11, and the agent already knows who to ask. Give this room, it is the first moment that gets a reaction. |
-| 7 | 1:10 to 1:22 | Agent | Click **Simulate reply from Mirte**. Her reply lands and becomes a pending fact. Confirm it. | Gap, question, message, reply, fact. The loop closes on screen. |
-| 8 | 1:22 to 1:32 | Week selector | Pick **Week 4**, run it, then click **Close October and draft the update**. | The month is over and the update already exists. |
+| 5 | 0:44 to 0:52 | Week selector | Pick **Oct 14** and click **Run the week 2 check-in**. Let it flash past and click **Confirm all**. | A month compresses into seconds. The agent was working the whole time. |
+| 6 | 0:52 to 1:10 | Agent | Pick **Oct 21** and click **Run the week 3 check-in**. Click **Confirm all** on the facts. Let the anomaly sit for three seconds, then click **Send** on the drafted message to Mirte. | Demos fell from 41 to 11, and the agent already knows who to ask. Give this room, it is the first moment that gets a reaction. |
+| 7 | 1:10 to 1:22 | Agent | Click **Simulate reply from Mirte**. Her reply lands as a new card. Click its **Confirm all** too. | Gap, question, message, reply, fact. The loop closes on screen. |
+| 8 | 1:22 to 1:32 | Week selector | Pick **Oct 28**, run it and click **Confirm all**. Glance at **Facts**: no number next to it. Click **Close October and draft the update**, then **Confirm & draft the update**. | The month is over and the update already exists. |
 | 9 | 1:32 to 1:50 | Report | Open **Report**. Scroll steadily through In short, Ask, Key numbers, **Default alive or default dead?** with its three charts, and Customers. Pause on the dead or alive map. | The update answers the investor's real question, and the churn and shorter runway are in it too. |
 | 10 | 1:50 to 1:58 | Report | Click **€413k**. The dialog opens, titled "Source for €413k". Close it. | Every number is traceable. This is the product's signature. |
 | 11 | 1:58 to 2:10 | Report | Point at the amber **1 claim not counted** badge in the header, scroll to **Pipeline we are not counting yet**, and click the 14 clinics claim. The dialog shows a Jamie meeting note with an amber **Unconfirmed** tag. Hover the tag. | The money shot. Hold three full seconds. The tooltip reads "Only said in a meeting or chat, not backed by a system of record". |

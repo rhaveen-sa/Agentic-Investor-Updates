@@ -23,6 +23,7 @@ These are still model judgments, not measurements. The rehearsal checks at the e
 | Round 2: title, timings, judges' ask, second humanizer pass | 82 | 84 | **83** | 7, 7 |
 | Round 3: headline with a verb, last flagged lines | 86 | 83 | **84.5** | 8, 7 |
 | Synced with the app at `0926e58` (Ledger name, "not counted", new demo flow) | 81 | 83 | **82** | 7, 7 |
+| 25 Oct: renamed Agentic Investor Updates, demo slide with a real app screenshot and real labels | 81 | 86 | **83.5** | 7, 8 |
 
 The last round is a different version, not a re-score of round 3. It was judged after the
 deck and script were matched to Sean's app changes. The two points it lost came from:
@@ -31,6 +32,22 @@ deck and script were matched to Sean's app changes. The two points it lost came 
 - **Two calls to action:** the close now has two competing asks, the founders' "run it
   tonight" and the judges' "pick any number".
 - **Evidence:** still the lowest score, at 3.4 and 3.9.
+
+## The README, scored the same way
+
+The repo README was judged against the same rubric, read as a landing page. Two fresh judges
+per version, and the same prompt each time.
+
+| Version | Judge 1 | Judge 2 | Average | Sounds human |
+| --- | --- | --- | --- | --- |
+| Before (titled "Ledger", "Demo video: link coming") | 73 | 72 | **72.5** | 7, 7 |
+| Rewrite: founders first, real screenshots, quickstart with no keys, proof section | 81 | 81 | **81** | 8, 8 |
+| Round 2: benefit in the headline, jargon explained, housekeeping collapsed, closing ask | 84 | 84 | **84** | 8, 8 |
+
+What still costs points:
+- **Headline:** both judges marked down the word "Agentic" in it, which is the name you chose.
+- **Evidence:** they want proof from a real founder, such as a quote, a pilot or the time saved.
+- **No hosted demo:** trying it needs Flutter installed.
 
 ## Score by principle
 
@@ -103,7 +120,7 @@ A written version for submission forms and the repo description. It follows the 
 > late on the 31st, rebuilding the month from Slack, Stripe and memory, and memory keeps
 > the wins and drops the churn. Your investors can't check any of it.
 >
-> Ledger collects the month while it happens. Every week it reads GitHub,
+> Agentic Investor Updates collects the month while it happens. Every week it reads GitHub,
 > Stripe, HubSpot, LinkedIn and your meeting notes, then shows you what it found. You
 > confirm, edit or dismiss each fact. When a number drops, it works out who owns it and
 > drafts them a message, which sends only after you approve it.

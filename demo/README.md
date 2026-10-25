@@ -1,6 +1,6 @@
 # Demo kit
 
-Everything needed to present Ledger: the deck, what to say, how to record
+Everything needed to present Agentic Investor Updates: the deck, what to say, how to record
 the backup video, and the Reson8 dataset the demo runs on.
 
 <p align="center"><img src="img/slide-close.png" width="720" alt="Closing slide: the claim 'All 14 clinics in Q1' marked NOT COUNTED because it was only said in a meeting"></p>
@@ -9,7 +9,7 @@ the backup video, and the Reson8 dataset the demo runs on.
 
 | File | Use it for |
 | --- | --- |
-| [`deck.pdf`](deck.pdf) | The slides as a 16:9 PDF, the easiest way to present. Open it in Preview and press `Cmd + Shift + F` for full screen. Pages 1 to 8 are the talk, and 9 to 12 are the optional slides for Q&A. It has no speaker notes and no backup video. |
+| [`deck.pdf`](deck.pdf) | The slides as a 16:9 PDF, the easiest way to present. The demo slide shows a real screenshot of the app. Open it in Preview and press `Cmd + Shift + F` for full screen. Pages 1 to 8 are the talk, and 9 to 12 are the optional slides for Q&A. It has no speaker notes and no backup video. |
 | [`deck.html`](deck.html) | The same slides in a browser. Open in Chrome, press `F` for fullscreen. It adds speaker notes (`S`) and plays the backup video. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
@@ -19,7 +19,7 @@ the backup video, and the Reson8 dataset the demo runs on.
 | [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
 | [`investor-report/`](investor-report/) | A sample October investor update for Reson8, as PDF and HTML, generated from `reson8-mock/`. The app's Report page and **Download PDF** now produce the same update from the run. |
 | [`pitch-review.md`](pitch-review.md) | The pitch scored by independent judges against 15 Ogilvy principles over three rounds of edits, plus a written version for submission forms. |
-| [`img/`](img/) | Slide renders used in the READMEs. |
+| [`img/`](img/) | Slide renders, plus `app-*.png`: real screenshots from the web build, clicked through on 25 Oct 2026. |
 
 ## Deck keys
 

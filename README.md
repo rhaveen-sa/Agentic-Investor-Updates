@@ -1,219 +1,207 @@
-# Ledger
+# Agentic Investor Updates: investor updates your investors can check
 
-**Every number in your investor update, with its source.**
+**Your monthly update, drafted from facts you confirmed, with a source behind every number.**
 
-Founders owe their investors an update every month, and most write it late on the 31st
-from memory, which keeps the wins and drops the churn. This agent collects the month while
-it happens: each week it reads the company's tools, proposes facts for the founder to
-confirm, and chases teammates when a number looks off. At month end the update is already
-written from confirmed facts only, and every number in it opens its source.
+You owe your investors an update every month, and it usually gets written late on the 31st
+from memory. Writing from memory, it's easy to recall the new customers and miss the one
+that left. This app keeps track of the month for you. Each week an AI agent reads your company's tools, writes down what
+changed and asks you to confirm it. When a number drops, it finds out who owns it and drafts
+them a message. By the 31st the update is ready, and your investors can click any number in
+it to see where it came from.
 
-<p align="center"><img src="demo/img/slide-product.png" width="760" alt="Three rules: confirm, don't write; it chases the gaps; numbers open sources. A source card shows ARR €413,000 from Stripe month close, owner Thomas."></p>
+<p align="center"><img src="demo/img/app-report.png" width="820" alt="The Report page in the app: October 2026 update for Reson8 with an In short box, the Ask, and a key numbers table where every figure is a link to its source. A badge in the header reads '1 claim not counted'."></p>
+<p align="center"><em>The October update the agent drafted for the demo company. Every blue number opens its source.</em></p>
 
-<p align="center">
-  <a href="#run-it">Run it</a> ·
-  <a href="#the-demo">The demo</a> ·
-  <a href="#how-it-works">How it works</a> ·
-  <a href="demo/">Demo kit and slides</a>
-</p>
+## What you get
 
-Demo video: _link coming_
+- You confirm or fix facts as they come in each week, so the update is already drafted
+  when the 31st arrives.
+- Every figure in the update opens its source: the record, the date and the system it came
+  from. Your investors can check any number themselves.
+- A lost customer or a shorter runway goes in the same way a new customer does, once you've
+  confirmed it.
+- The update answers the question every investor has: at your current growth, do you reach
+  profit before the cash runs out? That's Paul Graham's
+  [default alive test](https://paulgraham.com/aord.html), worked out from your own numbers.
+- Messages to teammates and the update itself wait for your approval.
 
-## Run it
+## Try it in two minutes, no API keys needed
+
+You need [Flutter](https://docs.flutter.dev/get-started/install) 3.35 or newer. The macOS
+app also needs Xcode. The web build runs in Chrome without it.
 
 ```bash
-cp secrets.example.json secrets.json   # add ANTHROPIC_API_KEY and RESON8_API_KEY
+git clone https://github.com/seanjanke/Agentic-Investor-Updates.git
+cd Agentic-Investor-Updates
 flutter pub get
-flutter run -d macos --dart-define-from-file=secrets.json
+flutter run -d chrome        # or: flutter run -d macos
 ```
 
-You don't need any keys to try it. Without an `ANTHROPIC_API_KEY` the app runs in
-**scripted mode**, with the same tools and UI, and with decisions taken from the mock data
-instead of the model. If a live run fails, the app falls back to the scripted run
-automatically, and the agent's step list shows an amber "Live run failed, finished with
-the backup run" row. Scripted mode can also be switched on under Settings > Agent.
+Without keys the app runs in **scripted mode**: same tools, same screens, with the agent's
+decisions replayed from the demo data. For live runs, copy `secrets.example.json` to
+`secrets.json` and add `ANTHROPIC_API_KEY` (Claude) and `RESON8_API_KEY` (voice), then
+start it with `--dart-define-from-file=secrets.json`. Settings > Agent switches scripted mode
+on or off, and if a live call fails the step list shows an amber "Live run failed, finished
+with the backup run" row.
 
-`SLACK_WEBHOOK_URL` is optional. If it is set, approved Slack messages are also posted
-there.
+**Click through October:**
 
-## The demo
+1. Pick **Oct 7** in the week selector and click **Run the week 1 check-in**. Confirm the
+   facts it found, and click **Add** when it suggests reporting NRR.
+2. Do the same for **Oct 14**, **Oct 21** and **Oct 28**. In week 3, **Send** the message it
+   drafted to Mirte, then click **Simulate reply from Mirte**.
+3. Open **Facts** and click **Confirm** for anything still pending. A week can show more
+   than one card to confirm, and an unconfirmed fact never reaches the update.
+4. Click **Close October and draft the update**, then **Confirm & draft the update**, then
+   open **Report**.
 
-The app follows **Reson8**, an Amsterdam speech-recognition company (a domain-adaptable ASR
-API for 10 European languages, €5M pre-seed led by Balderton), through October 2026. The
-financials, customers and Mirte are invented for the demo; the founders, funding and product
-facts are public. Pick a week in the week selector at the top, then start its check-in from
-the card in the chat. After week 4, the card closes the month.
+## The demo month
 
-| Week | What happens |
+The app ships with one month of data for [Reson8](https://www.reson8.dev/), an Amsterdam
+speech-to-text company. Reson8's funding, founders and product are public, and so are its
+SDK download counts. The revenue, the customers and Mirte, the Head of Growth, are invented.
+
+| Week | What the agent does |
 | --- | --- |
-| 1 | Check-in: 2 new paying teams, barge-in tuning for the Turns API, 29 demos. The agent sees in a Jamie meeting note that Balderton asked for NRR, and suggests adding it to the KPIs. Thomas adds by voice that two engineers started. |
-| 2 | Release 1.8 (10 GA languages), Noorderlicht Zorggroep pilot (9 clinics, +€41k ARR), a record 41 demos. |
-| 3 | Demos drop to 11. The agent investigates, finds that Mirte owns LinkedIn, and drafts a Slack message. Thomas approves it, and Mirte's reply becomes a fact. |
-| 4 | Release 1.9. Noorderlicht says it wants all 14 clinics in Q1, but only in a meeting. |
-| Close | October numbers come in (€413k ARR, +17.3%). The agent drafts the update, and a separate verifier removes the "14 clinics" claim, which was only said in a meeting. |
+| Oct 7 | Reads the sources and proposes facts to confirm. In a meeting note it spots the lead investor asking for net revenue retention (NRR, how much revenue existing customers keep and grow), and suggests reporting it. |
+| Oct 14 | Logs a release and the first healthcare customer, a paid pilot across 9 clinics. Demo bookings hit a record 41. |
+| Oct 21 | Logs a customer lost after an acquisition (−€7k a year). Sees demo bookings fall from 41 to 11, finds that Mirte owns LinkedIn and drafts her a Slack message. Her reply (the ad account was suspended over an expired card) becomes a fact. |
+| Oct 28 | The healthcare customer says it wants all 14 clinics in Q1, but only says it in a meeting. |
+| Close | October closes at €413k in annual recurring revenue (ARR), up 17.3% on September. The update is drafted, and the verifier keeps the "14 clinics" claim out because nothing in writing backs it. |
 
-The Report page is a full investor update, laid out like the sample in
-[`demo/investor-report/`](demo/investor-report/): in short, the ask, key numbers (September
-against October), default alive or dead, customers, the pipeline that isn't counted yet,
-highlights, challenges, product, team, next month, and every source it cites. Every figure
-opens its source.
+<p align="center"><img src="demo/img/app-week3-anomaly.png" width="820" alt="Week of Oct 21 in the Agent chat: four facts to confirm, including the churned customer and the drop in demo bookings, followed by a drafted Slack message to Mirte with Discard, Edit and Send buttons."></p>
+<p align="center"><em>Week 3: the agent spots the drop, works out that Mirte owns LinkedIn and drafts the question. It sends only when you click Send.</em></p>
 
-Everything with a number is computed in code from confirmed facts; the model never writes it.
-That covers the KPI table, Paul Graham's
-[default alive or default dead](https://paulgraham.com/aord.html) test with three charts that
-start from the September close (revenue against flat expenses, cash, and a dead or alive map),
-and the ARR bridge from €352k to €413k. On the demo data: default alive, break-even in November
-2027 with €1.83M left, default dead below about 8.6% monthly growth, and net burn could rise to
-about €356k before it flips. **Download PDF** saves the same update as an A4 PDF with the Ledger
-logo and the charts; **Copy** puts a plain-text version on the clipboard.
+The finished update has the sections investors expect: in short, the ask, key numbers
+(September against October), default alive or dead with three charts, new and lost
+customers with a chart of how ARR got from €352k to €413k, the pipeline that isn't counted yet, highlights, challenges, product, team, next
+month and a list of every source it cites. **Download PDF** saves it as an A4 PDF, and
+**Copy** puts a plain-text version on the clipboard.
 
-The week 3 chase, step by step:
+<p align="center"><img src="demo/img/app-default-alive.png" width="820" alt="Default alive section of the report: cash in the bank falling to a low point of €1.83M, and a dead or alive map with October at 17.3% monthly growth and €231k net burn (cash spent each month beyond revenue), well inside the alive zone, and the edge at 8.6% growth."></p>
+<p align="center"><em>On the demo numbers: default alive, break-even in November 2027 with €1.83M left. Growth could fall to 8.6% a month before that flips.</em></p>
 
-```mermaid
-sequenceDiagram
-    participant S as Sources
-    participant A as Agent
-    participant F as Founder
-    participant T as Mirte, Head of Growth
-    S->>A: LinkedIn: demos 41 → 11
-    A->>A: Anomaly. Look for the cause in other sources
-    A->>A: team_directory: LinkedIn belongs to Mirte
-    A->>F: Draft Slack message, waiting for approval
-    F->>A: Approve
-    A->>T: Message sent
-    T->>A: "Our LinkedIn ad account got suspended on Oct 14 because the company card expired."
-    A->>F: New pending fact from the reply
-    F->>A: Confirm
-```
-
-## How it works
+## Why it can't make up a number
 
 ```mermaid
 flowchart LR
-    subgraph Sources["Sources (mocked)"]
-        GH[GitHub]
-        JM[Jamie meetings]
-        HS[HubSpot]
-        LI[LinkedIn]
-        ST[Stripe]
-        PK["PyPI · npm downloads (real)"]
-    end
-    IN["Founder: chat, voice (Reson8),<br/>documents · teammate replies"]
-    Sources -->|"SourceConnector.fetch(since, until)"| AG
-    IN --> AG
-    AG["Claude agent loop<br/>4 runs · 10 tools"] -->|ledger_propose| LG[("Facts ledger")]
-    AG -->|message_teammate| OUT["Message drafts"]
-    OUT -->|founder approves| SENT["Sent"]
-    LG -->|confirmed facts only| RP["Report"]
-    RP --> VF{{"Verifier<br/>separate Claude call"}}
-    LG --> VF
-    VF -->|unsupported claim| FL["Removed from the update"]
+    S["Sources<br/>GitHub · Stripe · HubSpot · LinkedIn<br/>meeting notes · SDK downloads"] --> A["Claude agent"]
+    V["You: chat, voice, documents"] --> A
+    A -->|proposes| P["Pending fact"]
+    P -->|you confirm| C["Confirmed fact"]
+    P -->|you dismiss| D["Dismissed, never reported"]
+    C --> R["Update<br/>numbers computed in code"]
+    C --> X{{"Second Claude check<br/>sees only the facts"}}
+    R --> X
+    X -->|no written source| N["Kept out, listed as not counted"]
 ```
 
-It is one Flutter macOS app with a [shadcn_ui](https://pub.dev/packages/shadcn_ui)
-interface. Everything runs locally except the Claude and Reson8 API calls.
+- The agent can only propose facts. You confirm each one before the update can use it.
+- Every number in the update, the charts and the default alive test is computed in code
+  from confirmed facts. The model writes the sentences around them.
+- A separate Claude call checks the draft. It sees each claim and the facts it cites, and
+  nothing else, so it judges each claim only against the facts.
 
-### Four agent runs, one tool set
+<p align="center"><img src="demo/img/app-source.png" width="640" alt="Dialog titled 'Source for €413k': a confirmed Stripe record from Oct 31 reading 'ARR at end of October: €413k', up 17.3% month on month, with the October finance close text below it."></p>
+<p align="center"><em>Clicking €413k opens the Stripe record it came from.</em></p>
 
-| Run | Trigger | Ends with |
+## How we know it works
+
+- **`flutter test` passes.** `test/demo_flow_test.dart` runs the whole October month in
+  scripted mode in about 30 seconds and checks:
+  - the numbers: €413k ARR, 44 paying teams, 17 months of runway
+  - default alive: break-even in month 13, €1.83M left, an 8.6% edge
+  - that new and lost customers add up from €352k to €413k ARR
+  - that exactly one claim, the 14 clinics, is kept out of the update
+  - that the PDF is generated
+  - that weeks can be run in any order
+
+  A second test, `test/live_smoke_test.dart`, runs week 1 against the real Claude API when
+  a key is set.
+- **We clicked through it.** The web build was run in Chrome on 25 Oct 2026 with Flutter
+  3.47.8, from the week 1 check-in to an approved update. The screenshots on this page come
+  from that run.
+- **One data source is real.** Download counts for Reson8's developer kits (its LiveKit
+  plugins) were pulled from PyPI and npm on 24 Oct 2026: 30,735 downloads from 1 to 23 October, against
+  21,568 in all of September.
+
+## What is real and what is mocked
+
+| Real | Mocked |
+| --- | --- |
+| The Claude agent and its 10 tools, the facts ledger, the report, the verifier, the approval step for messages, the whole interface, voice input through Reson8 | The five business sources read timestamped JSON in `assets/mock/` instead of live APIs |
+| The SDK download counts | The week selector stands in for a weekly schedule |
+| | Teammate replies come from a "Simulate reply" button instead of Slack |
+
+Each source sits behind one interface, `SourceConnector.fetch(since, until)`, so a real
+GitHub, Stripe, HubSpot or LinkedIn connector drops in without touching the agent.
+
+## Built with
+
+| | What it does here |
+| --- | --- |
+| **Claude** (`claude-sonnet-5-5`) | Runs the agent: the weekly check-in, chasing a dropped number, reading your chat and voice notes, and drafting the update. A second, separate call checks the draft. |
+| **Reson8** | Turns the founder's voice into text, tuned to startup words like ARR, NRR, runway and customer names, so "NRR" doesn't come back as "an are are". |
+| **Jamie** | Meeting notes as a source. Two of the month's most important facts, the investor asking for NRR and the 14 clinics, were only ever said out loud. |
+
+Everything runs on your machine except the Claude and Reson8 calls.
+
+<details>
+<summary><strong>How it works in detail</strong>: the four agent runs, the tools and the repo layout</summary>
+
+### Four agent runs, one set of tools
+
+| Run | Starts when | Ends with |
 | --- | --- | --- |
-| A. Weekly check-in | Founder-set cadence (week selector + check-in card) | Check-in card: facts to confirm, 1 to 3 questions |
-| B. Anomaly investigation | A metric drops sharply (demos −73%) | A message draft to the owner, waiting for approval |
-| C. Inbound processing | Founder chat, voice, document, or a teammate's reply | Proposed facts in the ledger |
-| D. Period report | End of the month | An update built from confirmed facts, checked by a separate verifier call |
+| A. Weekly check-in | You run a week's check-in | Facts to confirm and up to 3 questions |
+| B. Anomaly | A number drops sharply (demos down 73%) | A message drafted to the owner, waiting for you |
+| C. Inbound | You chat, speak or upload a document, or a teammate replies | New pending facts |
+| D. Report | You close the month | The update, built from confirmed facts and checked by the verifier |
 
-Tools: `list_sources`, `fetch_source`, `ledger_search`, `ledger_propose`, `suggest_kpi`,
-`team_directory`, `ask_founder`, `message_teammate` (needs approval), `submit_report`,
-`verify_claims`. The tools run locally and deterministically. The model chooses which to
-call and writes the text. The KPI table is computed from the ledger in code, and the model
-never writes it.
+The 10 tools are `list_sources`, `fetch_source`, `ledger_search`, `ledger_propose`,
+`suggest_kpi`, `team_directory`, `ask_founder`, `message_teammate` (needs your approval),
+`submit_report` and `verify_claims`. They run locally and give the same answer every time.
+The model decides which to call and writes the text.
 
-### How a fact gets into the update
+### How a fact moves
 
 ```mermaid
 stateDiagram-v2
     direction LR
     [*] --> Pending: agent proposes from a source
-    Pending --> Confirmed: founder confirms or edits
-    Pending --> Dismissed: founder dismisses
-    Confirmed --> Report: report writer sees only these
+    Pending --> Confirmed: you confirm or edit
+    Pending --> Dismissed: you dismiss
+    Confirmed --> Report: the report writer sees only these
     Dismissed --> [*]: kept on record, never reported
 ```
 
-The verifier gets each claim in the draft together with the ledger facts it cites, and
-nothing else. It never sees the reasoning that produced the report, so it can't be talked
-into agreeing with it.
-
-## What is mocked, and how real connectors plug in
-
-- **Sources** are timestamped JSON in `assets/mock/`. Each connector only returns data up
-  to the simulated date. A real connector implements the same
-  `SourceConnector.fetch(since, until)`: OAuth for GitHub, HubSpot, Stripe and LinkedIn,
-  the Jamie API for meetings, and Computer Use for dashboards without an API.
-- **SDK downloads (PyPI · npm)** are the one real data source: download counts for Reson8's
-  LiveKit plugins, pulled from pypistats.org and api.npmjs.org on 24 Oct 2026. They include
-  CI installs, so they track developer adoption, not users.
-- **Scheduling.** The week selector and check-in card stand in for a cron job per founder. Anomaly
-  checks would run from webhooks.
-- **Teammate messages.** Drafts are approved in the app and shown as sent. Replies come
-  from the "Simulate reply" button. Slack, WhatsApp and email are all channels of the same
-  `message_teammate` tool.
-
-## Partner tech
-
-| | Role |
-| --- | --- |
-| **Claude** (`claude-sonnet-5-5`) | The agent loop for all four runs, plus the separate verifier. |
-| **Reson8** | Voice input through the prerecorded speech-to-text API, biased with a custom model of startup vocabulary (ARR, NRR, churn, runway, company and people names). |
-| **Jamie** | Meeting notes as a source (mocked). Two of the month's most important facts were only ever said out loud. |
-
-## Repo layout
+### Repo layout
 
 ```
 lib/
-  agent/     Claude client (manual tool-use loop), tools, prompts, the four runs, scripted fallback
+  agent/     Claude client, tools, prompts, the four runs, scripted fallback
   data/      source connectors and the team directory
-  models/    facts, feed items, outbound messages, report (incl. default alive), agent runs
-  ui/        shell and week selector, agent chat, facts, sources, report, settings, widgets
+  models/    facts, feed items, messages, report (with default alive)
+  ui/        week selector, agent chat, facts, sources, report, charts, PDF, settings
   voice/     Reson8 client
-assets/mock/ the October dataset, one JSON file per source
-test/        demo_flow_test.dart runs the whole October scenario in scripted mode
-demo/        pitch deck, script, shot list, Reson8 dataset, investor report, handoff notes, work log
+assets/mock/ the October data, one JSON file per source
+test/        demo_flow_test.dart (scripted month), live_smoke_test.dart (real Claude)
+demo/        pitch deck, script, shot list, sample report, handoff, work log
 ```
 
-## Tests
+The interface is Flutter with [shadcn_ui](https://pub.dev/packages/shadcn_ui). The app
+window and logo still use the project's working name, "Ledger".
 
-```bash
-flutter test
-```
+The pitch deck ([PDF](demo/deck.pdf)), narration script, backup-video shot list and a sample
+investor report are in [`demo/`](demo/). Whoever runs the app on stage should read
+[`demo/HANDOFF.md`](demo/HANDOFF.md) first.
 
-`test/demo_flow_test.dart` runs the whole October scenario in scripted mode and checks the
-final report against the Reson8 numbers (€413k ARR, 44 paying teams, 17 months runway,
-default alive). It also checks that weeks can be run in any order, that flagged claims stay
-out of the exported update, and that the update contains no em or en dashes.
+</details>
 
-`test/live_smoke_test.dart` runs the week 1 check-in against the real Claude API. It costs a
-few cents and is skipped without a key:
+## Next: your own month
 
-```bash
-flutter test test/live_smoke_test.dart --dart-define-from-file=secrets.json
-```
-
-## Presenting it
-
-Everything for the pitch is in [`demo/`](demo/):
-
-- **Deck:** HTML that runs offline in Chrome.
-- **Script:** narration in 3, 5½ and 8 minute cuts.
-- **Shot list:** for the backup recording.
-- **Pitch review:** independent judges scored the pitch against Ogilvy's 15 principles, 84.5/100 after three rounds of edits.
-- **Investor report:** a sample October investor update (PDF), with a default alive map,
-  new customers and challenges.
-
-Start with [`demo/README.md`](demo/README.md). [`demo/HANDOFF.md`](demo/HANDOFF.md) says
-what whoever drives the app needs to do, and [`demo/WORKLOG.md`](demo/WORKLOG.md) records every
-change to the kit, PR by PR.
-
-<p align="center"><img src="demo/img/report-default-alive.png" width="560" alt="Investor report: default alive verdict, revenue against expenses, cash curve and the dead or alive map"></p>
-
-<p align="center"><img src="demo/img/slide-architecture.png" width="760" alt="Architecture slide, 'Why it can't make up a number': six sources feed a Claude agent with four jobs; facts go to a fact list; the report computes its numbers in code and a second Claude check reads only the confirmed facts."></p>
+Clone it and click through October today: it takes two minutes and no API keys. Then tell us
+which source you'd connect first. The next connectors on the list are Granola, Salesforce,
+Linear, Notion and Google Analytics, plus Claude Computer Use for dashboards that have no
+API. [Open an issue](https://github.com/seanjanke/Agentic-Investor-Updates/issues) with
+yours, and star the repo if you want to follow along.
