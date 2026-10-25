@@ -36,11 +36,11 @@ Two independent judges scored the Ogilvy rubric at 72.5 before and 84 after (see
 `pitch-review.md`).
 
 **Final humanizer pass.** The README, deck and script lines the last judges flagged were
-rewritten: the headline no longer repeats "investor", the update's sections are a list, and
-the verifier and connector sentences are plainer. In the deck, the "It checks its own work"
+rewritten. The README rewrite scored lower (82 against 84), so the README stays at the
+round 2 version. In the deck, the "It checks its own work"
 hook became "A second call checks the draft". The script lost "a month you already lived"
-and "attach to it rather than create one". A confirmation round with fresh judges is
-recorded in `pitch-review.md`.
+and "attach to it rather than create one". Fresh judges scored the final deck and script at 85 and 85,
+up from 83.5. All scores are in `pitch-review.md`.
 
 **GitHub About.** Not set. Your account doesn't have admin rights on the repo. The text is
 in `HANDOFF.md` section 7 for Sean to paste.
