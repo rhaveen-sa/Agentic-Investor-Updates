@@ -8,7 +8,7 @@ nothing else, so the demo has to work as a single unbroken click-path. That cons
 shaped this list: every beat flows into the next with no cuts, no window switching and no
 backtracking.
 
-Output: `demo-backup.mp4`, saved beside `deck.html`. The deck picks it up automatically.
+Output: `demo-backup.mp4`, saved in `demo/`. `pitch-deck.html` picks it up automatically.
 
 The founder is **Thomas**. The teammate who owns LinkedIn is **Mirte**. The customer in the
 flagged claim is **Noorderlicht Zorggroep**.
@@ -29,9 +29,9 @@ Capture:
 - `Cmd + Shift + 5`, choose Record Selected Portion, drag over the app window only.
 - Options: turn **Show Mouse Clicks** on, since the whole demo is about clicking things.
   Set Microphone to off and narrate live over the video instead of baking audio in.
-- Save to Desktop, rename to `demo-backup.mp4`, move it next to `deck.html`.
+- Save to Desktop, rename to `demo-backup.mp4`, move it into `demo/`.
 - If it saves as `.mov`, either convert it or change the `<source src="demo-backup.mp4">`
-  line in `deck.html` to match the real filename.
+  line in `pitch-deck.html` to match the real filename.
 
 Rehearse the click-path three times before recording. The goal is one clean take rather
 than a perfect one. Small hesitations are fine. A wrong click that needs undoing is not.
@@ -117,7 +117,7 @@ static artwork.
 ## After recording
 
 - [ ] Trim dead air off both ends in QuickTime: `Cmd + T`, drag the handles, `Cmd + S`.
-- [ ] Rename to `demo-backup.mp4` and put it next to `deck.html`.
+- [ ] Rename to `demo-backup.mp4` and put it in `demo/`.
 - [ ] Open the deck, go to the backup slide, confirm it loads and plays.
 - [ ] Watch it once fullscreen. If a beat is unreadable, re-record the whole take rather
       than trying to patch it.

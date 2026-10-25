@@ -9,11 +9,11 @@ the backup video, and the Reson8 dataset the demo runs on.
 
 | File | Use it for |
 | --- | --- |
-| [`deck.pdf`](deck.pdf) | The slides as a 16:9 PDF, the easiest way to present. The demo slide shows a real screenshot of the app. Open it in Preview and press `Cmd + Shift + F` for full screen. Pages 1 to 8 are the talk, and 9 to 12 are the optional slides for Q&A. It has no speaker notes and no backup video. |
-| [`deck.html`](deck.html) | The same slides in a browser. Open in Chrome, press `F` for fullscreen. It adds speaker notes (`S`) and plays the backup video. |
+| [`../pitch-deck.pdf`](../pitch-deck.pdf) | The slides as a 16:9 PDF, at the top of the repo, the easiest way to present. The demo slide shows a real screenshot of the app. Open it in Preview and press `Cmd + Shift + F` for full screen. Pages 1 to 8 are the talk, and 9 to 12 are the optional slides for Q&A. It has no speaker notes and no backup video. |
+| [`../pitch-deck.html`](../pitch-deck.html) | The same slides in a browser, also at the top of the repo. Open in Chrome, press `F` for fullscreen. It adds speaker notes (`S`) and plays the backup video. |
 | [`script.md`](script.md) | Word-for-word narration in three cuts (3, 5½ and 8 minutes), the demo click-path, what to say if the demo stalls, Q&A answers, rehearsal checks. |
 | [`shotlist.md`](shotlist.md) | Shot-by-shot plan for the backup recording, done as one continuous take. |
-| [`HANDOFF.md`](HANDOFF.md) | How to run and check the demo on the current app, what the deck promises, and the two copies of the investor report. For whoever drives the app. |
+| [`../HANDOFF.md`](../HANDOFF.md) | At the top of the repo: where the project stands, how to run it, the one thing that trips people up, and the open items. |
 | [`WORKLOG.md`](WORKLOG.md) | Every change to the kit, PR by PR, with what is still open. Add an entry with every PR. |
 | [`reson8-switch.patch`](reson8-switch.patch) | The Reson8 switch as one patch. Already applied on `main` in `6b37f49`, kept as a record. Don't apply it again. |
 | [`reson8-mock/`](reson8-mock/) | The Reson8 dataset on its own, including real PyPI and npm download counts. |
@@ -44,10 +44,10 @@ Do these in order. The first four take five minutes. The rest depend on the app.
       it took. Say the best answer on slide 2 in place of the Visible line. This is the
       biggest score gain left (see `pitch-review.md`).
 - [ ] Run the rehearsal checks at the end of `script.md` on someone who hasn't seen it.
-- [ ] Tick the checklist in `HANDOFF.md` section 3. The Reson8 switch is already on `main`.
+- [ ] Read `HANDOFF.md` at the top of the repo, especially "The one thing that trips people up".
 - [ ] Do a live run and confirm no step list shows the amber "Live run failed, finished with
       the backup run" row.
-- [ ] Record `demo-backup.mp4` following `shotlist.md` and save it next to `deck.html`.
+- [ ] Record `demo-backup.mp4` following `shotlist.md` and save it in `demo/`.
       Slide 6 plays it. Without the file, the deck drops that slide and the slides after it
       move up by one.
 - [ ] Turn on Do Not Disturb on the presenting laptop.

@@ -1,6 +1,6 @@
 # Narration script
 
-Deck: `deck.html`. Arrows navigate, `F` fullscreen, `S` speaker notes, `O` optional slides.
+Deck: `pitch-deck.html` (or `pitch-deck.pdf`), at the top of the repo. Arrows navigate, `F` fullscreen, `S` speaker notes, `O` optional slides.
 
 Standard is the default. Switch to Short or Long only if the organisers give you a different slot.
 

@@ -2,7 +2,19 @@
 
 What changed in the demo kit, when and why. Newest first. Every entry is also a PR on
 GitHub, so this file and the PR list should always agree. If you change anything in `demo/`,
-add an entry here and update `HANDOFF.md` and the READMEs in the same PR.
+add an entry here and update `HANDOFF.md` (top of the repo) and the READMEs in the same PR.
+
+## 25 Oct 2026 · After the hackathon: deck and handoff move to the top of the repo
+
+- **Deck:** `demo/deck.pdf` and `demo/deck.html` are now **`pitch-deck.pdf`** and
+  **`pitch-deck.html`** at the top of the repo. The HTML loads its screenshot from `demo/img/`
+  and the backup video from `demo/demo-backup.mp4`.
+- **Handoff:** `demo/HANDOFF.md` is now **`HANDOFF.md`** at the top of the repo, rewritten for
+  after the hackathon. It covers what exists, how to run it, the pending-facts trap, the open
+  items in order, the data notes and a map of the repo. The stage checklist is replaced by a
+  pointer to `demo/`.
+- **Links:** all links in the READMEs, script and shot list are updated. Older entries in this
+  log keep the old paths, because they describe what was true then.
 
 ## 25 Oct 2026 · Name, a real run of the app, README rewrite
 

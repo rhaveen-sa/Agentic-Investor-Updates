@@ -192,9 +192,9 @@ demo/        pitch deck, script, shot list, sample report, handoff, work log
 The interface is Flutter with [shadcn_ui](https://pub.dev/packages/shadcn_ui). The app
 window and logo still use the project's working name, "Ledger".
 
-The pitch deck ([PDF](demo/deck.pdf)), narration script, backup-video shot list and a sample
+The pitch deck ([`pitch-deck.pdf`](pitch-deck.pdf)), narration script, backup-video shot list and a sample
 investor report are in [`demo/`](demo/). Whoever runs the app on stage should read
-[`demo/HANDOFF.md`](demo/HANDOFF.md) first.
+[`HANDOFF.md`](HANDOFF.md) first.
 
 </details>
 
