@@ -1,10 +1,10 @@
-# Agentic Investor Updates: investor updates your investors can check
+# Agentic Investor Updates: every number in your update, with its source
 
-**Your monthly update, drafted from facts you confirmed, with a source behind every number.**
+**For founders who owe investors a monthly update. It's drafted from facts you confirmed, and your investors can check every figure.**
 
 You owe your investors an update every month, and it usually gets written late on the 31st
 from memory. Writing from memory, it's easy to recall the new customers and miss the one
-that left. This app keeps track of the month for you. Each week an AI agent reads your company's tools, writes down what
+that left. Here, an AI agent does the tracking. Each week it reads your company's tools, writes down what
 changed and asks you to confirm it. When a number drops, it finds out who owns it and drafts
 them a message. By the 31st the update is ready, and your investors can click any number in
 it to see where it came from.
@@ -20,8 +20,8 @@ it to see where it came from.
   from. Your investors can check any number themselves.
 - A lost customer or a shorter runway goes in the same way a new customer does, once you've
   confirmed it.
-- The update answers the question every investor has: at your current growth, do you reach
-  profit before the cash runs out? That's Paul Graham's
+- It answers the question investors ask most: at your current growth, do you reach profit
+  before the cash runs out? That's Paul Graham's
   [default alive test](https://paulgraham.com/aord.html), worked out from your own numbers.
 - Messages to teammates and the update itself wait for your approval.
 
@@ -72,11 +72,17 @@ SDK download counts. The revenue, the customers and Mirte, the Head of Growth, a
 <p align="center"><img src="demo/img/app-week3-anomaly.png" width="820" alt="Week of Oct 21 in the Agent chat: four facts to confirm, including the churned customer and the drop in demo bookings, followed by a drafted Slack message to Mirte with Discard, Edit and Send buttons."></p>
 <p align="center"><em>Week 3: the agent spots the drop, works out that Mirte owns LinkedIn and drafts the question. It sends only when you click Send.</em></p>
 
-The finished update has the sections investors expect: in short, the ask, key numbers
-(September against October), default alive or dead with three charts, new and lost
-customers with a chart of how ARR got from €352k to €413k, the pipeline that isn't counted yet, highlights, challenges, product, team, next
-month and a list of every source it cites. **Download PDF** saves it as an A4 PDF, and
-**Copy** puts a plain-text version on the clipboard.
+The finished update covers:
+
+- a short summary and one ask
+- key numbers, September against October
+- default alive or dead, with three charts
+- new and lost customers, and how ARR got from €352k to €413k
+- the pipeline that isn't counted yet
+- highlights, challenges, product, team and next month
+- every source it cites
+
+**Download PDF** saves it as an A4 PDF, and **Copy** puts a plain-text version on the clipboard.
 
 <p align="center"><img src="demo/img/app-default-alive.png" width="820" alt="Default alive section of the report: cash in the bank falling to a low point of €1.83M, and a dead or alive map with October at 17.3% monthly growth and €231k net burn (cash spent each month beyond revenue), well inside the alive zone, and the edge at 8.6% growth."></p>
 <p align="center"><em>On the demo numbers: default alive, break-even in November 2027 with €1.83M left. Growth could fall to 8.6% a month before that flips.</em></p>
@@ -99,8 +105,8 @@ flowchart LR
 - The agent can only propose facts. You confirm each one before the update can use it.
 - Every number in the update, the charts and the default alive test is computed in code
   from confirmed facts. The model writes the sentences around them.
-- A separate Claude call checks the draft. It sees each claim and the facts it cites, and
-  nothing else, so it judges each claim only against the facts.
+- A second Claude call, the verifier, checks the draft. It gets each claim and the facts the
+  claim cites, and never sees the reasoning that produced the draft.
 
 <p align="center"><img src="demo/img/app-source.png" width="640" alt="Dialog titled 'Source for €413k': a confirmed Stripe record from Oct 31 reading 'ARR at end of October: €413k', up 17.3% month on month, with the October finance close text below it."></p>
 <p align="center"><em>Clicking €413k opens the Stripe record it came from.</em></p>
@@ -133,8 +139,9 @@ flowchart LR
 | The SDK download counts | The week selector stands in for a weekly schedule |
 | | Teammate replies come from a "Simulate reply" button instead of Slack |
 
-Each source sits behind one interface, `SourceConnector.fetch(since, until)`, so a real
-GitHub, Stripe, HubSpot or LinkedIn connector drops in without touching the agent.
+Every source uses the same small interface, `SourceConnector.fetch(since, until)`. Adding a
+real GitHub, Stripe, HubSpot or LinkedIn connector means writing one class. The agent code
+stays as it is.
 
 ## Built with
 
@@ -142,9 +149,9 @@ GitHub, Stripe, HubSpot or LinkedIn connector drops in without touching the agen
 | --- | --- |
 | **Claude** (`claude-sonnet-5-5`) | Runs the agent: the weekly check-in, chasing a dropped number, reading your chat and voice notes, and drafting the update. A second, separate call checks the draft. |
 | **Reson8** | Turns the founder's voice into text, tuned to startup words like ARR, NRR, runway and customer names, so "NRR" doesn't come back as "an are are". |
-| **Jamie** | Meeting notes as a source. Two of the month's most important facts, the investor asking for NRR and the 14 clinics, were only ever said out loud. |
+| **Jamie** | Meeting notes as a source. Two key facts this month came from meetings and nowhere else: the investor asking for NRR, and the 14 clinics. |
 
-Everything runs on your machine except the Claude and Reson8 calls.
+Only the Claude and Reson8 calls leave your machine.
 
 <details>
 <summary><strong>How it works in detail</strong>: the four agent runs, the tools and the repo layout</summary>
@@ -203,5 +210,5 @@ investor report are in [`demo/`](demo/). Whoever runs the app on stage should re
 Clone it and click through October today: it takes two minutes and no API keys. Then tell us
 which source you'd connect first. The next connectors on the list are Granola, Salesforce,
 Linear, Notion and Google Analytics, plus Claude Computer Use for dashboards that have no
-API. [Open an issue](https://github.com/seanjanke/Agentic-Investor-Updates/issues) with
-yours, and star the repo if you want to follow along.
+API. [Open an issue](https://github.com/seanjanke/Agentic-Investor-Updates/issues) and name
+yours. That helps us decide which to build next.

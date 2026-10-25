@@ -55,7 +55,7 @@ The update is due."* Keep whichever gets the faster nod from your test listener.
 > It's the 31st. The update is due.
 >
 > You open a blank doc at eleven at night and you start scrolling. Slack, Stripe, GitHub,
-> your own calendar, rebuilding a month you already lived.
+> your own calendar, piecing the month back together.
 
 Beat.
 
@@ -78,7 +78,7 @@ update and how long it took. If you have a good answer, say it here in place of 
 
 ## 3. Insight, 25 seconds
 
-> The hard part is remembering, so that's the part we fixed.
+> Remembering is the hard part, so we capture the month as it happens.
 
 Gesture at the curve.
 
@@ -246,7 +246,7 @@ Stop. Don't add anything after that.
 | --- | --- |
 | The ledger | "How does a fact become a number?" Shows the proposed, pending, confirmed, dismissed lifecycle. |
 | October at Reson8 | "What does the output actually look like?" The KPI table, the lowlights, the flagged claim. |
-| What is real | "How much of this is mocked?" Answer it straight, the honesty buys credibility. |
+| What is real | "How much of this is mocked?" Answer it directly. Judges trust a team that says what is mocked. |
 | The business | A business-minded judge, or an investor on the panel. |
 
 ---
@@ -298,8 +298,8 @@ Stop. Don't add anything after that.
 **Who pays for this?**
 
 > Every funded startup owes investors an update monthly or quarterly, for the life of the
-> company. The deadline is set by someone else, so the habit already exists and we attach
-> to it rather than trying to create one.
+> company. Investors set the deadline, so founders already have the habit. We only make it
+> easier to keep.
 
 **Are those Reson8's real numbers?**
 
