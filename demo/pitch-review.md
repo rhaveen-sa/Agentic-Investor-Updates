@@ -46,9 +46,11 @@ per version, and the same prompt each time.
 | Round 2: benefit in the headline, jargon explained, housekeeping collapsed, closing ask | 84 | 84 | **84** | 8, 8 |
 | Tried: another humanizer pass, sections as bullets, plainer verifier and connector lines | 84 | 80 | **82** | 8, 7 |
 
-| Check: the committed README (commit `56798cf`, identical to round 2), fetched from GitHub | 82 | (pending) | | 8 |
+| Check: the committed README (commit `56798cf`, identical to round 2), fetched from GitHub | 82 | 79 | **80.5** | 8, 7 |
 
-The last README pass scored lower, so the repo keeps the round 2 version (84, 84). A
+The last README pass scored lower, so the repo keeps the round 2 version. Four judges have now
+scored that exact file: 84, 84, 82 and 79, an average of **82.25** against 72.5 before. Judges
+reading the same text differ by up to five points, so read any single score as roughly ±3. A
 two-point swing is within what two judges vary by, but the round 2 version also sounded more
 human.
 

@@ -37,7 +37,8 @@ Two independent judges scored the Ogilvy rubric at 72.5 before and 84 after (see
 
 **Final humanizer pass.** The README, deck and script lines the last judges flagged were
 rewritten. The README rewrite scored lower (82 against 84), so the README stays at the
-round 2 version. In the deck, the "It checks its own work"
+round 2 version. Two more judges then scored the committed README straight from GitHub (82
+and 79). Across four judges that file averages 82.25, against 72.5 before. In the deck, the "It checks its own work"
 hook became "A second call checks the draft". The script lost "a month you already lived"
 and "attach to it rather than create one". Fresh judges scored the final deck and script at 85 and 85,
 up from 83.5. All scores are in `pitch-review.md`.
